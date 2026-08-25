@@ -103,6 +103,78 @@
     font-weight: 700;
   }
 
+  .search-bar {
+    position: relative;
+    width: 100%;
+  }
+
+  .search-bar .search-ic {
+    position: absolute;
+    inset-inline-start: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 17px;
+    height: 17px;
+    stroke: var(--ink-faint);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  .search-bar input {
+    width: 100%;
+    height: 44px;
+    padding-inline-start: 40px;
+    padding-inline-end: 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14.5px;
+    outline: none;
+  }
+
+  .search-bar input::placeholder { color: var(--ink-faint); }
+  .search-bar input:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .chip-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .chip-row::-webkit-scrollbar { display: none; }
+
+  .chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chip[aria-pressed="true"] {
+    background: var(--chip-color, var(--accent));
+    border-color: var(--chip-color, var(--accent));
+    color: #fff;
+  }
+
+  .chip-row--topics .chip { font-weight: 500; font-size: 12.5px; padding: 6px 12px; }
+
   .stage {
     position: relative;
     width: 100%;
@@ -110,6 +182,28 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+  }
+
+  .stage.is-empty .arrow-btn { display: none; }
+
+  .card.is-empty {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+
+  .card.is-empty .clear-btn {
+    margin-top: 14px;
+    border: none;
+    background: var(--chip-bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
   }
 
   .arrow-btn {
@@ -353,6 +447,14 @@
   <div class="frame">
     <div class="eyebrow">מה בי״ם <strong>· תצוגת נתונים מהדאטהבייס</strong></div>
 
+    <div class="search-bar">
+      <svg class="search-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" id="searchInput" placeholder="חיפוש לפי שם, תיאור או ארגון…" aria-label="חיפוש פעילות">
+    </div>
+
+    <div class="chip-row" id="categoryChips" aria-label="סינון לפי קטגוריה"></div>
+    <div class="chip-row chip-row--topics" id="topicChips" aria-label="סינון לפי נושא" hidden></div>
+
     <div class="stage">
       <button class="arrow-btn" id="btnRight" aria-label="הפעילות הקודמת">
         <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
@@ -487,14 +589,89 @@
   const cardEl = document.getElementById("card");
   const dotsEl = document.getElementById("dots");
   const counterEl = document.getElementById("counter");
+  const stageEl = document.querySelector(".stage");
+  const categoryChipsEl = document.getElementById("categoryChips");
+  const topicChipsEl = document.getElementById("topicChips");
+  const searchInput = document.getElementById("searchInput");
+
+  const CATEGORY_ORDER = [...new Set(activities.map(a => a.category))];
+
+  const state = { q: "", category: null, topic: null };
   let index = 0;
 
+  function matchesQuery(a, q) {
+    if (!q) return true;
+    const hay = [a.title, a.short_description, a.description, a.organization_name, a.neighborhood, a.location_name].join(" ");
+    return hay.includes(q);
+  }
+
+  function visibleActivities() {
+    return activities.filter(a =>
+      matchesQuery(a, state.q) &&
+      (!state.category || a.category === state.category) &&
+      (!state.topic || (a.topics || []).includes(state.topic))
+    );
+  }
+
+  function topicsForCategory(cat) {
+    const set = new Set();
+    activities.filter(a => a.category === cat).forEach(a => (a.topics || []).forEach(t => set.add(t)));
+    return [...set];
+  }
+
+  function renderCategoryChips() {
+    const chips = [{ key: null, label: "הכל" }, ...CATEGORY_ORDER.map(c => ({ key: c, label: CATEGORY_LABEL[c] || c, color: CATEGORY_COLOR[c] }))];
+    categoryChipsEl.innerHTML = chips.map(c => `
+      <button type="button" class="chip" aria-pressed="${state.category === c.key}" data-cat="${c.key ?? ""}"${c.color ? ` style="--chip-color:${c.color}"` : ""}>${c.label}</button>
+    `).join("");
+  }
+
+  function renderTopicChips() {
+    const topics = state.category ? topicsForCategory(state.category) : [];
+    if (!topics.length) {
+      topicChipsEl.hidden = true;
+      topicChipsEl.innerHTML = "";
+      return;
+    }
+    topicChipsEl.hidden = false;
+    const chips = [{ key: null, label: "כל הנושאים" }, ...topics.map(t => ({ key: t, label: t }))];
+    topicChipsEl.innerHTML = chips.map(c => `
+      <button type="button" class="chip" aria-pressed="${state.topic === c.key}" data-topic="${c.key ?? ""}">${c.label}</button>
+    `).join("");
+  }
+
+  function clearFilters() {
+    state.q = ""; state.category = null; state.topic = null;
+    searchInput.value = "";
+    index = 0;
+    renderCategoryChips();
+    renderTopicChips();
+    render();
+  }
+
   function render() {
-    const a = activities[index];
+    const list = visibleActivities();
+    stageEl.classList.toggle("is-empty", list.length === 0);
+
+    if (!list.length) {
+      cardEl.classList.add("is-empty");
+      cardEl.innerHTML = `
+        <p>לא נמצאו פעילויות התואמות לחיפוש.</p>
+        <button type="button" class="clear-btn" id="clearFiltersBtn">איפוס סינון</button>
+      `;
+      document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
+      dotsEl.innerHTML = "";
+      counterEl.textContent = "";
+      return;
+    }
+
+    if (index >= list.length) index = 0;
+    const a = list[index];
     const when = whenText(a);
     const cta = ctaInfo(a);
     const color = CATEGORY_COLOR[a.category] || "var(--accent)";
 
+    cardEl.classList.remove("is-empty");
     cardEl.style.setProperty("--cat-color", color);
     cardEl.classList.remove("fade-in");
     void cardEl.offsetWidth;
@@ -533,14 +710,16 @@
       </div>
     `;
 
-    dotsEl.innerHTML = activities.map((_, i) =>
+    dotsEl.innerHTML = list.map((_, i) =>
       `<button aria-current="${i === index}" aria-label="עבור לפעילות ${i + 1}" data-i="${i}"></button>`
     ).join("");
-    counterEl.textContent = `${index + 1} מתוך ${activities.length}`;
+    counterEl.textContent = `${index + 1} מתוך ${list.length}`;
   }
 
   function go(delta) {
-    index = (index + delta + activities.length) % activities.length;
+    const list = visibleActivities();
+    if (!list.length) return;
+    index = (index + delta + list.length) % list.length;
     render();
   }
 
@@ -551,22 +730,52 @@
     if (btn) { index = Number(btn.dataset.i); render(); }
   });
 
+  categoryChipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-cat]");
+    if (!btn) return;
+    const val = btn.dataset.cat || null;
+    state.category = state.category === val ? null : val;
+    state.topic = null;
+    index = 0;
+    renderCategoryChips();
+    renderTopicChips();
+    render();
+  });
+
+  topicChipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-topic]");
+    if (!btn) return;
+    const val = btn.dataset.topic || null;
+    state.topic = state.topic === val ? null : val;
+    index = 0;
+    renderTopicChips();
+    render();
+  });
+
+  searchInput.addEventListener("input", (e) => {
+    state.q = e.target.value.trim();
+    index = 0;
+    render();
+  });
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") go(1);
     if (e.key === "ArrowRight") go(-1);
   });
 
   let touchX = null;
-  document.querySelector(".stage").addEventListener("touchstart", (e) => {
+  stageEl.addEventListener("touchstart", (e) => {
     touchX = e.touches[0].clientX;
   }, { passive: true });
-  document.querySelector(".stage").addEventListener("touchend", (e) => {
+  stageEl.addEventListener("touchend", (e) => {
     if (touchX == null) return;
     const dx = e.changedTouches[0].clientX - touchX;
     if (Math.abs(dx) > 40) go(dx > 0 ? -1 : 1);
     touchX = null;
   });
 
+  renderCategoryChips();
+  renderTopicChips();
   render();
   </script>
 </body>
