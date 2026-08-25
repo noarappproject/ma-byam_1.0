@@ -32,6 +32,7 @@
     --chip-bg: #E9EEE7;
     --shadow: 220 25% 12%;
     --danger: #C0392B;
+    --text-scale: 1;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -118,8 +119,14 @@
 
   .greeting-row .hi {
     font-family: "Suez One", "Heebo", serif;
-    font-size: 17px;
+    font-size: calc(17px * var(--text-scale));
     color: var(--ink);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .signout-btn {
@@ -303,7 +310,7 @@
 
   .quiz-title {
     font-family: "Suez One", "Heebo", serif;
-    font-size: 23px;
+    font-size: calc(23px * var(--text-scale));
     line-height: 1.3;
     color: var(--ink);
     margin: 4px 0 0;
@@ -311,7 +318,7 @@
   }
 
   .quiz-subtitle {
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
     color: var(--ink-soft);
     line-height: 1.55;
     margin: 6px 0 0;
@@ -415,6 +422,47 @@
   }
 
   .quiz-result .emoji { font-size: 40px; }
+
+  .profile-avatar-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .profile-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 999px;
+    background: var(--chip-bg) center/cover no-repeat;
+    border: 1px solid var(--line);
+  }
+
+  .quiz-add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .quiz-add-row input {
+    flex: 1;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .quiz-add-btn {
+    flex: 0 0 auto;
+    height: 42px;
+    padding: 0 18px;
+  }
 
   .quiz-skip {
     display: block;
@@ -637,7 +685,7 @@
   h1 {
     font-family: "Suez One", "Heebo", serif;
     font-weight: 400;
-    font-size: 24px;
+    font-size: calc(24px * var(--text-scale));
     line-height: 1.25;
     text-wrap: balance;
     margin: 0 0 6px;
@@ -645,7 +693,7 @@
   }
 
   .short-desc {
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     color: var(--ink-soft);
     line-height: 1.55;
     margin: 0 0 16px;
@@ -665,7 +713,7 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
     color: var(--ink);
   }
 
@@ -692,7 +740,7 @@
   }
 
   .desc {
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
     line-height: 1.65;
     color: var(--ink);
     margin: 0 0 16px;
@@ -709,7 +757,7 @@
     text-align: center;
     text-decoration: none;
     font-weight: 700;
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     padding: 12px 16px;
     border-radius: 12px;
     background: var(--accent);
@@ -772,29 +820,29 @@
 <body>
   <div class="frame" id="authScreen" hidden>
     <div class="auth-screen">
-      <div class="auth-logo">מה בי״ם<span>פעילות, חוגים ואירועים לבני נוער</span></div>
+      <div class="auth-logo"><span id="authTitleText"></span><span id="authTaglineText"></span></div>
 
       <div class="auth-tabs" role="tablist">
-        <button type="button" class="auth-tab" id="tabLogin" role="tab" aria-selected="true">התחברות</button>
-        <button type="button" class="auth-tab" id="tabSignup" role="tab" aria-selected="false">הרשמה</button>
+        <button type="button" class="auth-tab" id="tabLogin" role="tab" aria-selected="true"></button>
+        <button type="button" class="auth-tab" id="tabSignup" role="tab" aria-selected="false"></button>
       </div>
 
       <form class="auth-form" id="authForm">
         <div class="auth-field">
-          <label for="authUsername">שם משתמש</label>
+          <label for="authUsername" id="authUsernameLabel"></label>
           <input type="text" id="authUsername" autocomplete="username" required>
         </div>
         <div class="auth-field">
-          <label for="authPassword">סיסמה</label>
+          <label for="authPassword" id="authPasswordLabel"></label>
           <input type="password" id="authPassword" autocomplete="current-password" required minlength="6" maxlength="10">
         </div>
         <p class="auth-error" id="authError"></p>
-        <button type="submit" class="auth-submit" id="authSubmit">התחברות</button>
+        <button type="submit" class="auth-submit" id="authSubmit"></button>
       </form>
 
-      <div class="auth-divider">או</div>
+      <div class="auth-divider" id="authOrText"></div>
 
-      <button type="button" class="guest-btn" id="guestBtn">המשך כאורח</button>
+      <button type="button" class="guest-btn" id="guestBtn"></button>
     </div>
   </div>
 
@@ -805,27 +853,31 @@
   <div class="frame" id="appRoot" hidden>
     <div class="greeting-row">
       <span class="hi" id="userGreeting"></span>
-      <button type="button" class="signout-btn" id="signoutBtn">התנתקות</button>
+      <div class="nav-links">
+        <button type="button" class="signout-btn" id="profileBtn"></button>
+        <button type="button" class="signout-btn" id="settingsBtn"></button>
+        <button type="button" class="signout-btn" id="signoutBtn"></button>
+      </div>
     </div>
 
-    <div class="eyebrow">מה בי״ם <strong>· תצוגת נתונים מהדאטהבייס</strong></div>
+    <div class="eyebrow"><span id="eyebrowTitle"></span> <strong>· <span id="eyebrowSubText"></span></strong></div>
 
     <div class="search-bar">
       <svg class="search-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="search" id="searchInput" placeholder="חיפוש לפי שם, תיאור או ארגון…" aria-label="חיפוש פעילות">
+      <input type="search" id="searchInput" aria-label="Search">
     </div>
 
-    <div class="chip-row" id="categoryChips" aria-label="סינון לפי קטגוריה"></div>
-    <div class="chip-row chip-row--topics" id="topicChips" aria-label="סינון לפי נושא" hidden></div>
+    <div class="chip-row" id="categoryChips" aria-label="Filter by category"></div>
+    <div class="chip-row chip-row--topics" id="topicChips" aria-label="Filter by topic" hidden></div>
 
     <div class="stage">
-      <button class="arrow-btn" id="btnRight" aria-label="הפעילות הקודמת">
+      <button class="arrow-btn" id="btnRight">
         <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
       </button>
 
       <div class="card fade-in" id="card"></div>
 
-      <button class="arrow-btn" id="btnLeft" aria-label="הפעילות הבאה">
+      <button class="arrow-btn" id="btnLeft">
         <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
       </button>
     </div>
@@ -833,7 +885,15 @@
     <div class="dots" id="dots"></div>
     <div class="counter" id="counter"></div>
 
-    <p class="note">דמו סטטי לבדיקת עיצוב — הנתונים הם צילום מצב נוכחי של טבלת activities בסופאבייס, לא חיבור חי.</p>
+    <p class="note" id="noteTextEl"></p>
+  </div>
+
+  <div class="frame" id="profileScreen" hidden>
+    <div class="quiz-screen" id="profileContent"></div>
+  </div>
+
+  <div class="frame" id="settingsScreen" hidden>
+    <div class="quiz-screen" id="settingsContent"></div>
   </div>
 
   <script>
@@ -1128,40 +1188,33 @@
     }
   ];
 
-  const CATEGORY_LABEL = {
-    sport: "ספורט", tech: "טכנולוגיה ומדע", art: "אומנות ויצירה", music: "מוזיקה",
-    stage: "תיאטרון ומופעים", nature: "טבע וטיולים", volunteer: "התנדבות וקהילה",
-    leadership: "מנהיגות ונוער", learning: "לימודים והעשרה", gaming: "משחקים וגיימינג",
-    wellbeing: "רווחה ותמיכה"
-  };
-
   const CATEGORY_COLOR = {
     sport: "#E08A2C", tech: "#3457D5", art: "#C23B7A", music: "#7A4FE0",
     stage: "#DE5A3C", nature: "#3E9B5C", volunteer: "#1E9E8B", leadership: "#C0392B",
     learning: "#2A9DB8", gaming: "#8E44AD", wellbeing: "#5B9279"
   };
 
-  const DAY_NAME = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+  const LOCALE_TAG = { he: "he-IL", ar: "ar-IL", en: "en-GB", ru: "ru-RU" };
 
   function kindLabel(a) {
-    if (a.item_kind === "event") return "אירוע";
-    if (a.item_kind === "activity" && a.schedule_type === "recurring") return "חוג";
-    return "פעילות";
+    if (a.item_kind === "event") return L().kindEvent;
+    if (a.item_kind === "activity" && a.schedule_type === "recurring") return L().kindClub;
+    return L().kindActivity;
   }
 
   function fmtDate(iso) {
     const d = new Date(iso + "T00:00:00");
-    return new Intl.DateTimeFormat("he-IL", { day: "numeric", month: "long", year: "numeric" }).format(d);
+    return new Intl.DateTimeFormat(LOCALE_TAG[currentLang] || "he-IL", { day: "numeric", month: "long", year: "numeric" }).format(d);
   }
 
   function fmtTimeRange(a) {
-    return a.end_time ? `${a.start_time.slice(0,5)}–${a.end_time.slice(0,5)}` : `מתחיל ב-${a.start_time.slice(0,5)}`;
+    return a.end_time ? `${a.start_time.slice(0,5)}–${a.end_time.slice(0,5)}` : L().startsAt(a.start_time.slice(0,5));
   }
 
   function whenText(a) {
     if (a.schedule_type === "recurring") {
-      const days = (a.recurrence_days || []).map(d => DAY_NAME[d]).join(", ");
-      return { main: `כל יום ${days || "—"}`, sub: fmtTimeRange(a) + " · ללא תאריך סיום" };
+      const days = (a.recurrence_days || []).map(d => L().days[d]).join(", ");
+      return { main: L().weeklyOn(days || "—"), sub: fmtTimeRange(a) + " · " + L().noEndDate };
     }
     const range = a.end_date && a.end_date !== a.start_date
       ? `${fmtDate(a.start_date)} – ${fmtDate(a.end_date)}`
@@ -1170,23 +1223,23 @@
   }
 
   function ageText(a) {
-    if (a.age_min == null && a.age_max == null) return "כל הגילאים";
-    if (a.age_min != null && a.age_max != null) return `גילאי ${a.age_min}–${a.age_max}`;
-    if (a.age_min != null) return `מגיל ${a.age_min}`;
-    return `עד גיל ${a.age_max}`;
+    if (a.age_min == null && a.age_max == null) return L().allAges;
+    if (a.age_min != null && a.age_max != null) return L().ageRangeText(a.age_min, a.age_max);
+    if (a.age_min != null) return L().ageFrom(a.age_min);
+    return L().ageTo(a.age_max);
   }
 
   function priceText(a) {
-    if (a.price == null) return "המחיר לא פורסם";
-    if (a.price === 0) return "חינם";
-    const period = { total: "לכל התקופה", per_session: "למפגש", monthly: "לחודש" }[a.price_period] || "";
+    if (a.price == null) return L().priceNotPublished;
+    if (a.price === 0) return L().free;
+    const period = { total: L().perTotal, per_session: L().perSession, monthly: L().perMonth }[a.price_period] || "";
     return `${a.price} ₪${period ? " · " + period : ""}`;
   }
 
   function ctaInfo(a) {
-    if (a.registration_url) return { href: a.registration_url, label: "להרשמה", kind: "primary" };
-    if (a.source_url) return { href: a.source_url, label: "לפרטים ולמקור", kind: "secondary" };
-    return { href: null, label: "פרטי הרשמה יתפרסמו בקרוב", kind: "disabled" };
+    if (a.registration_url) return { href: a.registration_url, label: L().register, kind: "primary" };
+    if (a.source_url) return { href: a.source_url, label: L().moreInfoSource, kind: "secondary" };
+    return { href: null, label: L().registrationSoon, kind: "disabled" };
   }
 
   const cardEl = document.getElementById("card");
@@ -1223,7 +1276,7 @@
   }
 
   function renderCategoryChips() {
-    const chips = [{ key: null, label: "הכל" }, ...CATEGORY_ORDER.map(c => ({ key: c, label: CATEGORY_LABEL[c] || c, color: CATEGORY_COLOR[c] }))];
+    const chips = [{ key: null, label: L().chipAll }, ...CATEGORY_ORDER.map(c => ({ key: c, label: L().categories[c] || c, color: CATEGORY_COLOR[c] }))];
     categoryChipsEl.innerHTML = chips.map(c => `
       <button type="button" class="chip" aria-pressed="${state.category === c.key}" data-cat="${c.key ?? ""}"${c.color ? ` style="--chip-color:${c.color}"` : ""}>${c.label}</button>
     `).join("");
@@ -1237,7 +1290,7 @@
       return;
     }
     topicChipsEl.hidden = false;
-    const chips = [{ key: null, label: "כל הנושאים" }, ...topics.map(t => ({ key: t, label: t }))];
+    const chips = [{ key: null, label: L().topicsAllChip }, ...topics.map(t => ({ key: t, label: t }))];
     topicChipsEl.innerHTML = chips.map(c => `
       <button type="button" class="chip" aria-pressed="${state.topic === c.key}" data-topic="${c.key ?? ""}">${c.label}</button>
     `).join("");
@@ -1259,8 +1312,8 @@
     if (!list.length) {
       cardEl.classList.add("is-empty");
       cardEl.innerHTML = `
-        <p>לא נמצאו פעילויות התואמות לחיפוש.</p>
-        <button type="button" class="clear-btn" id="clearFiltersBtn">איפוס סינון</button>
+        <p>${L().emptyStateMsg}</p>
+        <button type="button" class="clear-btn" id="clearFiltersBtn">${L().clearFiltersBtn}</button>
       `;
       document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
       dotsEl.innerHTML = "";
@@ -1283,7 +1336,7 @@
     cardEl.innerHTML = `
       <div class="kind-row">
         <span class="kind-badge">${kindLabel(a)}</span>
-        <span class="category-label">${CATEGORY_LABEL[a.category] || a.category}</span>
+        <span class="category-label">${L().categories[a.category] || a.category}</span>
       </div>
       <h1>${a.title}</h1>
       <p class="short-desc">${a.short_description || ""}</p>
@@ -1388,6 +1441,248 @@
   const SUPABASE_ANON_KEY = "sb_publishable_Js1OgoSr1x7INhSfR_hfwQ_0aTH1vIW";
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // ---- i18n ----
+  const LANG_DIR = { he: "rtl", ar: "rtl", en: "ltr", ru: "ltr" };
+  const LANG_NAME = { he: "עברית", ar: "العربية", en: "English", ru: "Русский" };
+
+  const STRINGS = {
+    he: {
+      appTitle: "מה בי״ם", appTagline: "פעילות, חוגים ואירועים לבני נוער",
+      tabLogin: "התחברות", tabSignup: "הרשמה", usernameLabel: "שם משתמש", passwordLabel: "סיסמה",
+      or: "או", guestBtn: "המשך כאורח",
+      errUsernameFormat: "שם המשתמש צריך להתחיל באות, ומותר להשתמש רק באותיות, ספרות וקו תחתון (_).",
+      errPasswordLength: "הסיסמה צריכה להיות בין 6 ל-10 תווים.",
+      errUsernameTaken: "שם המשתמש הזה תפוס, נסה שם אחר.",
+      errSignupNeedsVerification: "ההרשמה בוצעה, אך נדרש עוד אימות. פנה למנהל המערכת.",
+      errLoginFailed: "שם משתמש או סיסמה שגויים.", errSignupFailed: "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה אחרת.",
+      eyebrowSub: "תצוגת נתונים מהדאטהבייס", searchPlaceholder: "חיפוש לפי שם, תיאור או ארגון…",
+      chipAll: "הכל", topicsAllChip: "כל הנושאים", signOut: "התנתקות", profileBtn: "פרופיל", settingsBtn: "הגדרות",
+      guestGreeting: "היי, אורח 👋", greeting: n => `היי, ${n} 👋`,
+      noteText: "דמו סטטי לבדיקת עיצוב — הנתונים הם צילום מצב נוכחי של טבלת activities בסופאבייס, לא חיבור חי.",
+      emptyStateMsg: "לא נמצאו פעילויות התואמות לחיפוש.", clearFiltersBtn: "איפוס סינון",
+      categories: { sport: "ספורט", tech: "טכנולוגיה ומדע", art: "אומנות ויצירה", music: "מוזיקה", stage: "תיאטרון ומופעים", nature: "טבע וטיולים", volunteer: "התנדבות וקהילה", leadership: "מנהיגות ונוער", learning: "לימודים והעשרה", gaming: "משחקים וגיימינג", wellbeing: "רווחה ותמיכה" },
+      kindClub: "חוג", kindEvent: "אירוע", kindActivity: "פעילות",
+      days: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"],
+      allAges: "כל הגילאים", ageFrom: n => `מגיל ${n}`, ageTo: n => `עד גיל ${n}`, ageRangeText: (a, b) => `גילאי ${a}–${b}`,
+      priceNotPublished: "המחיר לא פורסם", free: "חינם", perTotal: "לכל התקופה", perSession: "למפגש", perMonth: "לחודש",
+      spotsLeftText: (l, c) => `נותרו ${l} מתוך ${c} מקומות`, weeklyOn: d => `כל יום ${d}`, noEndDate: "ללא תאריך סיום", startsAt: t => `מתחיל ב-${t}`,
+      register: "להרשמה", moreInfoSource: "לפרטים ולמקור", registrationSoon: "פרטי הרשמה יתפרסמו בקרוב",
+      quizIntroTitle: "בוא נכיר אותך, כדי להתאים לך את האפליקציה", quizIntroSubtitle: "כמה שאלות קצרות, לוקח פחות מ-2 דקות. אפשר גם לדלג בכל שלב.",
+      startBtn: "בואו נתחיל", skipLink: "דלג על השאלון", backBtn: "הקודם", nextBtn: "הבא",
+      nameTitle: "מה השם שלך?", firstNameLabel: "שם פרטי (לא חובה)", lastNameLabel: "שם משפחה (לא חובה)",
+      demoTitle: "כמה פרטים בסיסיים", demoSubtitle: "גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך",
+      ageQLabel: "בן/בת כמה אתה?", gradeQLabel: "באיזו כיתה אתה?", areaQLabel: "באיזה אזור בירושלים אתה גר?",
+      typeOrPick: "בחר מהרשימה או הקלד",
+      topicsTitle: "באילו תחומים אתה מתעניין?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך",
+      addCustomTopicPlaceholder: "הוסף תחום משלך…", addBtn: "הוסף",
+      activityTypesTitle: "אילו סוגי פעילויות הכי מעניינים אותך?", finishBtn: "סיימתי",
+      outroTitle: "מעולה, סיימנו!", outroSubtitle: "האפליקציה מוכנה בשבילך, מותאמת אישית", enterAppBtn: "כניסה לאפליקציה",
+      gradeOptions: [["ז", "ז׳"], ["ח", "ח׳"], ["ט", "ט׳"], ["י", "י׳"], ["יא", "י\"א"], ["יב", "י\"ב"], ["not_studying", "לא לומד/ת כרגע"]],
+      areaOptions: ["מרכז", "צפון", "דרום", "מזרח", "מערב"],
+      activityTypeOptions: ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"],
+      topicOptions: ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"],
+      profileTitle: "הפרופיל שלי", avatarChange: "שינוי תמונת פרופיל", saveBtn: "שמור", savedMsg: "נשמר ✓", backToApp: "חזרה לאפליקציה",
+      settingsTitle: "הגדרות", themeLabel: "מצב תצוגה", themeLight: "בהיר", themeDark: "כהה", themeSystem: "לפי המכשיר",
+      textSizeLabel: "גודל טקסט", textSizeSmall: "קטן", textSizeMedium: "רגיל", textSizeLarge: "גדול", languageLabel: "שפה",
+      changeUsernameLabel: "שינוי שם משתמש", changePasswordLabel: "שינוי סיסמה",
+      newUsernamePlaceholder: "שם משתמש חדש", newPasswordPlaceholder: "סיסמה חדשה", updateBtn: "עדכן",
+      usernameUpdated: "שם המשתמש עודכן", passwordUpdated: "הסיסמה עודכנה"
+    },
+    ar: {
+      appTitle: "ما بي\"م", appTagline: "أنشطة ونوادي وفعاليات للشباب",
+      tabLogin: "تسجيل الدخول", tabSignup: "إنشاء حساب", usernameLabel: "اسم المستخدم", passwordLabel: "كلمة المرور",
+      or: "أو", guestBtn: "الاستمرار كزائر",
+      errUsernameFormat: "يجب أن يبدأ اسم المستخدم بحرف، ويُسمح فقط بحروف وأرقام وشرطة سفلية (_).",
+      errPasswordLength: "يجب أن تكون كلمة المرور بين 6 و-10 أحرف.",
+      errUsernameTaken: "اسم المستخدم هذا مستخدم، جرّب اسمًا آخر.",
+      errSignupNeedsVerification: "تم التسجيل، لكن مطلوب تأكيد إضافي. تواصل مع مدير النظام.",
+      errLoginFailed: "اسم المستخدم أو كلمة المرور غير صحيحة.", errSignupFailed: "فشل التسجيل. جرّب اسم مستخدم أو كلمة مرور مختلفة.",
+      eyebrowSub: "عرض بيانات من قاعدة البيانات", searchPlaceholder: "بحث بالاسم أو الوصف أو الجهة…",
+      chipAll: "الكل", topicsAllChip: "كل المواضيع", signOut: "تسجيل خروج", profileBtn: "الملف الشخصي", settingsBtn: "الإعدادات",
+      guestGreeting: "أهلًا، زائر 👋", greeting: n => `أهلًا، ${n} 👋`,
+      noteText: "عرض توضيحي ثابت — البيانات هي لقطة من حالة جدول activities في Supabase، وليست اتصالًا مباشرًا.",
+      emptyStateMsg: "لم يتم العثور على أنشطة مطابقة للبحث.", clearFiltersBtn: "إعادة ضبط الفلتر",
+      categories: { sport: "رياضة", tech: "تكنولوجيا وعلوم", art: "فنون وإبداع", music: "موسيقى", stage: "مسرح وعروض", nature: "طبيعة ورحلات", volunteer: "تطوع ومجتمع", leadership: "قيادة وشباب", learning: "تعلّم وإثراء", gaming: "ألعاب وجيمنج", wellbeing: "رفاهية ودعم" },
+      kindClub: "نادٍ", kindEvent: "فعالية", kindActivity: "نشاط",
+      days: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],
+      allAges: "لكل الأعمار", ageFrom: n => `من عمر ${n}`, ageTo: n => `حتى عمر ${n}`, ageRangeText: (a, b) => `أعمار ${a}–${b}`,
+      priceNotPublished: "السعر غير منشور", free: "مجاني", perTotal: "للفترة كاملة", perSession: "لكل لقاء", perMonth: "شهريًا",
+      spotsLeftText: (l, c) => `تبقّى ${l} من ${c} مقاعد`, weeklyOn: d => `كل يوم ${d}`, noEndDate: "بدون تاريخ انتهاء", startsAt: t => `يبدأ في ${t}`,
+      register: "التسجيل", moreInfoSource: "التفاصيل والمصدر", registrationSoon: "تفاصيل التسجيل ستُنشر قريبًا",
+      quizIntroTitle: "لنتعرف عليك، لنُخصّص لك التطبيق", quizIntroSubtitle: "بضعة أسئلة قصيرة، تستغرق أقل من دقيقتين. يمكن التخطي في أي وقت.",
+      startBtn: "لنبدأ", skipLink: "تخطي الاستبيان", backBtn: "السابق", nextBtn: "التالي",
+      nameTitle: "ما اسمك؟", firstNameLabel: "الاسم الأول (اختياري)", lastNameLabel: "اسم العائلة (اختياري)",
+      demoTitle: "بعض التفاصيل الأساسية", demoSubtitle: "هذه الخطوة أيضًا اختيارية — يمكن تركها فارغة والمتابعة",
+      ageQLabel: "كم عمرك؟", gradeQLabel: "في أي صف أنت؟", areaQLabel: "في أي منطقة بالقدس تسكن؟",
+      typeOrPick: "اختر من القائمة أو اكتب",
+      topicsTitle: "بأي مواضيع تهتم؟", topicsSubtitle: "يمكن اختيار أكثر من واحد، ويمكن أيضًا إضافة موضوع خاص بك",
+      addCustomTopicPlaceholder: "أضف موضوعك الخاص…", addBtn: "إضافة",
+      activityTypesTitle: "ما أنواع الأنشطة التي تهمك أكثر؟", finishBtn: "انتهيت",
+      outroTitle: "رائع، انتهينا!", outroSubtitle: "التطبيق جاهز لك، مخصّص لك", enterAppBtn: "الدخول إلى التطبيق",
+      gradeOptions: [["ז", "السابع"], ["ח", "الثامن"], ["ט", "التاسع"], ["י", "العاشر"], ["יא", "الحادي عشر"], ["יב", "الثاني عشر"], ["not_studying", "لا أدرس حاليًا"]],
+      areaOptions: ["المركز", "الشمال", "الجنوب", "الشرق", "الغرب"],
+      activityTypeOptions: ["دورات", "محاضرات", "نوادي", "عروض", "تطوع", "أماكن عمل"],
+      topicOptions: ["رياضة", "فنون وتصميم", "تكنولوجيا", "موسيقى", "طبخ", "علوم", "سينما وتصوير", "ريادة أعمال", "مجتمع"],
+      profileTitle: "ملفي الشخصي", avatarChange: "تغيير صورة الملف الشخصي", saveBtn: "حفظ", savedMsg: "تم الحفظ ✓", backToApp: "العودة إلى التطبيق",
+      settingsTitle: "الإعدادات", themeLabel: "المظهر", themeLight: "فاتح", themeDark: "داكن", themeSystem: "حسب الجهاز",
+      textSizeLabel: "حجم النص", textSizeSmall: "صغير", textSizeMedium: "عادي", textSizeLarge: "كبير", languageLabel: "اللغة",
+      changeUsernameLabel: "تغيير اسم المستخدم", changePasswordLabel: "تغيير كلمة المرور",
+      newUsernamePlaceholder: "اسم مستخدم جديد", newPasswordPlaceholder: "كلمة مرور جديدة", updateBtn: "تحديث",
+      usernameUpdated: "تم تحديث اسم المستخدم", passwordUpdated: "تم تحديث كلمة المرور"
+    },
+    en: {
+      appTitle: "Mah Ba\"im", appTagline: "Activities, clubs & events for teens",
+      tabLogin: "Log in", tabSignup: "Sign up", usernameLabel: "Username", passwordLabel: "Password",
+      or: "or", guestBtn: "Continue as guest",
+      errUsernameFormat: "Username must start with a letter, and can only contain letters, digits, and underscore (_).",
+      errPasswordLength: "Password must be 6–10 characters.",
+      errUsernameTaken: "That username is taken, try another one.",
+      errSignupNeedsVerification: "Signed up, but verification is still required. Contact the site admin.",
+      errLoginFailed: "Incorrect username or password.", errSignupFailed: "Sign-up failed. Try a different username or password.",
+      eyebrowSub: "Live database preview", searchPlaceholder: "Search by name, description, or organization…",
+      chipAll: "All", topicsAllChip: "All topics", signOut: "Sign out", profileBtn: "Profile", settingsBtn: "Settings",
+      guestGreeting: "Hi, guest 👋", greeting: n => `Hi, ${n} 👋`,
+      noteText: "Static demo — this data is a snapshot of the activities table in Supabase, not a live connection.",
+      emptyStateMsg: "No activities match your search.", clearFiltersBtn: "Clear filters",
+      categories: { sport: "Sport", tech: "Tech & science", art: "Art & design", music: "Music", stage: "Theatre & shows", nature: "Nature & hikes", volunteer: "Volunteering & community", leadership: "Leadership & youth", learning: "Learning & enrichment", gaming: "Gaming", wellbeing: "Wellbeing & support" },
+      kindClub: "Club", kindEvent: "Event", kindActivity: "Activity",
+      days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      allAges: "All ages", ageFrom: n => `From age ${n}`, ageTo: n => `Up to age ${n}`, ageRangeText: (a, b) => `Ages ${a}–${b}`,
+      priceNotPublished: "Price not published", free: "Free", perTotal: "for the whole period", perSession: "per session", perMonth: "per month",
+      spotsLeftText: (l, c) => `${l} of ${c} spots left`, weeklyOn: d => `Every ${d}`, noEndDate: "no end date", startsAt: t => `Starts at ${t}`,
+      register: "Register", moreInfoSource: "Details & source", registrationSoon: "Registration details coming soon",
+      quizIntroTitle: "Let's get to know you, to tailor the app for you", quizIntroSubtitle: "A few quick questions, under 2 minutes. You can skip at any step.",
+      startBtn: "Let's start", skipLink: "Skip the questionnaire", backBtn: "Back", nextBtn: "Next",
+      nameTitle: "What's your name?", firstNameLabel: "First name (optional)", lastNameLabel: "Last name (optional)",
+      demoTitle: "A few basic details", demoSubtitle: "This step is optional too — you can leave it blank and continue",
+      ageQLabel: "How old are you?", gradeQLabel: "What grade are you in?", areaQLabel: "Which area of Jerusalem do you live in?",
+      typeOrPick: "Pick from the list or type your own",
+      topicsTitle: "What topics are you interested in?", topicsSubtitle: "You can pick several, and add your own topic too",
+      addCustomTopicPlaceholder: "Add your own topic…", addBtn: "Add",
+      activityTypesTitle: "What kinds of activities interest you most?", finishBtn: "Done",
+      outroTitle: "All set!", outroSubtitle: "The app is ready and personalized for you", enterAppBtn: "Enter the app",
+      gradeOptions: [["ז", "7th"], ["ח", "8th"], ["ט", "9th"], ["י", "10th"], ["יא", "11th"], ["יב", "12th"], ["not_studying", "Not currently in school"]],
+      areaOptions: ["Center", "North", "South", "East", "West"],
+      activityTypeOptions: ["Courses", "Lectures", "Clubs", "Shows", "Volunteering", "Job placements"],
+      topicOptions: ["Sport", "Art & design", "Technology", "Music", "Cooking", "Science", "Film & photography", "Entrepreneurship", "Community"],
+      profileTitle: "My profile", avatarChange: "Change profile picture", saveBtn: "Save", savedMsg: "Saved ✓", backToApp: "Back to the app",
+      settingsTitle: "Settings", themeLabel: "Appearance", themeLight: "Light", themeDark: "Dark", themeSystem: "Match device",
+      textSizeLabel: "Text size", textSizeSmall: "Small", textSizeMedium: "Medium", textSizeLarge: "Large", languageLabel: "Language",
+      changeUsernameLabel: "Change username", changePasswordLabel: "Change password",
+      newUsernamePlaceholder: "New username", newPasswordPlaceholder: "New password", updateBtn: "Update",
+      usernameUpdated: "Username updated", passwordUpdated: "Password updated"
+    },
+    ru: {
+      appTitle: "Ма Баим", appTagline: "Кружки, занятия и мероприятия для подростков",
+      tabLogin: "Вход", tabSignup: "Регистрация", usernameLabel: "Имя пользователя", passwordLabel: "Пароль",
+      or: "или", guestBtn: "Продолжить как гость",
+      errUsernameFormat: "Имя пользователя должно начинаться с буквы и может содержать только буквы, цифры и подчёркивание (_).",
+      errPasswordLength: "Пароль должен быть от 6 до 10 символов.",
+      errUsernameTaken: "Это имя пользователя уже занято, попробуйте другое.",
+      errSignupNeedsVerification: "Регистрация выполнена, но требуется подтверждение. Обратитесь к администратору.",
+      errLoginFailed: "Неверное имя пользователя или пароль.", errSignupFailed: "Регистрация не удалась. Попробуйте другое имя пользователя или пароль.",
+      eyebrowSub: "Просмотр данных из базы данных", searchPlaceholder: "Поиск по названию, описанию или организации…",
+      chipAll: "Все", topicsAllChip: "Все темы", signOut: "Выйти", profileBtn: "Профиль", settingsBtn: "Настройки",
+      guestGreeting: "Привет, гость 👋", greeting: n => `Привет, ${n} 👋`,
+      noteText: "Статичная демонстрация — эти данные являются снимком таблицы activities в Supabase, а не живым подключением.",
+      emptyStateMsg: "Не найдено занятий, соответствующих поиску.", clearFiltersBtn: "Сбросить фильтры",
+      categories: { sport: "Спорт", tech: "Технологии и наука", art: "Искусство и дизайн", music: "Музыка", stage: "Театр и шоу", nature: "Природа и походы", volunteer: "Волонтёрство и община", leadership: "Лидерство и молодёжь", learning: "Учёба и развитие", gaming: "Игры", wellbeing: "Благополучие и поддержка" },
+      kindClub: "Кружок", kindEvent: "Мероприятие", kindActivity: "Занятие",
+      days: ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"],
+      allAges: "Для всех возрастов", ageFrom: n => `С ${n} лет`, ageTo: n => `До ${n} лет`, ageRangeText: (a, b) => `Возраст ${a}–${b}`,
+      priceNotPublished: "Цена не указана", free: "Бесплатно", perTotal: "за весь период", perSession: "за занятие", perMonth: "в месяц",
+      spotsLeftText: (l, c) => `Осталось ${l} из ${c} мест`, weeklyOn: d => `Каждый ${d}`, noEndDate: "без даты окончания", startsAt: t => `Начало в ${t}`,
+      register: "Регистрация", moreInfoSource: "Подробности и источник", registrationSoon: "Информация о регистрации появится позже",
+      quizIntroTitle: "Давайте познакомимся, чтобы настроить приложение для вас", quizIntroSubtitle: "Несколько коротких вопросов, менее 2 минут. Можно пропустить на любом шаге.",
+      startBtn: "Начать", skipLink: "Пропустить опрос", backBtn: "Назад", nextBtn: "Далее",
+      nameTitle: "Как вас зовут?", firstNameLabel: "Имя (необязательно)", lastNameLabel: "Фамилия (необязательно)",
+      demoTitle: "Немного базовой информации", demoSubtitle: "Этот шаг тоже необязателен — можно оставить пустым и продолжить",
+      ageQLabel: "Сколько вам лет?", gradeQLabel: "В каком вы классе?", areaQLabel: "В каком районе Иерусалима вы живёте?",
+      typeOrPick: "Выберите из списка или введите свой вариант",
+      topicsTitle: "Какие темы вас интересуют?", topicsSubtitle: "Можно выбрать несколько, а также добавить свою тему",
+      addCustomTopicPlaceholder: "Добавьте свою тему…", addBtn: "Добавить",
+      activityTypesTitle: "Какие виды занятий вам интереснее всего?", finishBtn: "Готово",
+      outroTitle: "Отлично, готово!", outroSubtitle: "Приложение готово и настроено для вас", enterAppBtn: "Войти в приложение",
+      gradeOptions: [["ז", "7 класс"], ["ח", "8 класс"], ["ט", "9 класс"], ["י", "10 класс"], ["יא", "11 класс"], ["יב", "12 класс"], ["not_studying", "Сейчас не учусь"]],
+      areaOptions: ["Центр", "Север", "Юг", "Восток", "Запад"],
+      activityTypeOptions: ["Курсы", "Лекции", "Кружки", "Концерты/шоу", "Волонтёрство", "Стажировки"],
+      topicOptions: ["Спорт", "Искусство и дизайн", "Технологии", "Музыка", "Кулинария", "Наука", "Кино и фотография", "Предпринимательство", "Сообщество"],
+      profileTitle: "Мой профиль", avatarChange: "Изменить фото профиля", saveBtn: "Сохранить", savedMsg: "Сохранено ✓", backToApp: "Назад в приложение",
+      settingsTitle: "Настройки", themeLabel: "Оформление", themeLight: "Светлая", themeDark: "Тёмная", themeSystem: "Как на устройстве",
+      textSizeLabel: "Размер текста", textSizeSmall: "Маленький", textSizeMedium: "Обычный", textSizeLarge: "Крупный", languageLabel: "Язык",
+      changeUsernameLabel: "Изменить имя пользователя", changePasswordLabel: "Изменить пароль",
+      newUsernamePlaceholder: "Новое имя пользователя", newPasswordPlaceholder: "Новый пароль", updateBtn: "Обновить",
+      usernameUpdated: "Имя пользователя обновлено", passwordUpdated: "Пароль обновлён"
+    }
+  };
+
+  let currentLang = localStorage.getItem("mb_lang") || "he";
+  function L() { return STRINGS[currentLang]; }
+
+  function applyDocLang() {
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = LANG_DIR[currentLang];
+  }
+
+  function applyStaticText() {
+    const t = L();
+    document.getElementById("authTitleText").textContent = t.appTitle;
+    document.getElementById("authTaglineText").textContent = t.appTagline;
+    document.getElementById("tabLogin").textContent = t.tabLogin;
+    document.getElementById("tabSignup").textContent = t.tabSignup;
+    document.getElementById("authUsernameLabel").textContent = t.usernameLabel;
+    document.getElementById("authPasswordLabel").textContent = t.passwordLabel;
+    document.getElementById("authSubmit").textContent = authMode === "signup" ? t.tabSignup : t.tabLogin;
+    document.getElementById("authOrText").textContent = t.or;
+    document.getElementById("guestBtn").textContent = t.guestBtn;
+    document.getElementById("profileBtn").textContent = t.profileBtn;
+    document.getElementById("settingsBtn").textContent = t.settingsBtn;
+    document.getElementById("signoutBtn").textContent = t.signOut;
+    document.getElementById("eyebrowTitle").textContent = t.appTitle;
+    document.getElementById("eyebrowSubText").textContent = t.eyebrowSub;
+    document.getElementById("searchInput").placeholder = t.searchPlaceholder;
+    document.getElementById("noteTextEl").textContent = t.noteText;
+  }
+
+  function applyTheme(pref) {
+    const root = document.documentElement;
+    if (pref === "light" || pref === "dark") root.setAttribute("data-theme", pref);
+    else root.removeAttribute("data-theme");
+  }
+
+  function applyTextSize(size) {
+    const scale = { small: "0.9", medium: "1", large: "1.2" }[size] || "1";
+    document.documentElement.style.setProperty("--text-scale", scale);
+  }
+
+  let userProfile = null;
+  let currentUserId = null;
+
+  async function loadAndApplyProfile(userId) {
+    currentUserId = userId;
+    const { data } = await sb.from("users")
+      .select("username, avatar_url, theme_pref, text_size, language")
+      .eq("id", userId).maybeSingle();
+    userProfile = data || null;
+    if (userProfile) {
+      setLanguage(userProfile.language || "he");
+      applyTheme(userProfile.theme_pref || "system");
+      applyTextSize(userProfile.text_size || "medium");
+    }
+  }
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem("mb_lang", lang);
+    applyDocLang();
+    applyStaticText();
+    if (categoryChipsEl) { renderCategoryChips(); renderTopicChips(); }
+    if (cardEl && appStarted) render();
+    if (quiz && !quizScreenEl.hidden) renderQuiz();
+  }
+
+  applyDocLang();
+
   const authScreenEl = document.getElementById("authScreen");
   const appRootEl = document.getElementById("appRoot");
   const userGreetingEl = document.getElementById("userGreeting");
@@ -1400,6 +1695,12 @@
   const tabSignupEl = document.getElementById("tabSignup");
   const guestBtnEl = document.getElementById("guestBtn");
   const signoutBtnEl = document.getElementById("signoutBtn");
+  const profileBtnEl = document.getElementById("profileBtn");
+  const settingsBtnEl = document.getElementById("settingsBtn");
+  const profileScreenEl = document.getElementById("profileScreen");
+  const settingsScreenEl = document.getElementById("settingsScreen");
+  const profileContentEl = document.getElementById("profileContent");
+  const settingsContentEl = document.getElementById("settingsContent");
 
   let authMode = "login";
   let appStarted = false;
@@ -1414,7 +1715,7 @@
     authMode = mode;
     tabLoginEl.setAttribute("aria-selected", mode === "login");
     tabSignupEl.setAttribute("aria-selected", mode === "signup");
-    authSubmitEl.textContent = mode === "login" ? "התחברות" : "הרשמה";
+    authSubmitEl.textContent = mode === "login" ? L().tabLogin : L().tabSignup;
     authPasswordEl.setAttribute("autocomplete", mode === "login" ? "current-password" : "new-password");
     authErrorEl.textContent = "";
   }
@@ -1425,14 +1726,21 @@
   function showApp(greetingName) {
     quizScreenEl.hidden = true;
     authScreenEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
     appRootEl.hidden = false;
-    userGreetingEl.textContent = greetingName ? `היי, ${greetingName} 👋` : "היי, אורח 👋";
+    userGreetingEl.textContent = greetingName ? L().greeting(greetingName) : L().guestGreeting;
+    const isGuest = localStorage.getItem("mb_guest") === "1";
+    profileBtnEl.hidden = isGuest;
+    settingsBtnEl.hidden = isGuest;
     if (!appStarted) { appStarted = true; initAppUI(); }
   }
 
   function showAuth() {
     appRootEl.hidden = true;
     quizScreenEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
     authScreenEl.hidden = false;
     authForm.reset();
     setAuthMode("login");
@@ -1441,6 +1749,7 @@
   // Registered users (login or signup) answer the onboarding questionnaire
   // exactly once; guests skip it entirely, since guest data is never collected.
   async function proceedAfterAuth(userId, greetingName) {
+    await loadAndApplyProfile(userId);
     const { data: prefs } = await sb.from("user_preferences").select("user_id").eq("user_id", userId).maybeSingle();
     if (prefs) {
       showApp(greetingName);
@@ -1457,21 +1766,21 @@
 
     authSubmitEl.disabled = true;
     authErrorEl.textContent = "";
-    const email = usernameToEmail(username);
 
     try {
       if (authMode === "signup") {
+        const email = usernameToEmail(username);
         if (!USERNAME_RE.test(username)) {
-          authErrorEl.textContent = "שם המשתמש צריך להתחיל באות, ומותר להשתמש רק באותיות, ספרות וקו תחתון (_).";
+          authErrorEl.textContent = L().errUsernameFormat;
           return;
         }
         if (password.length < 6 || password.length > 10) {
-          authErrorEl.textContent = "הסיסמה צריכה להיות בין 6 ל-10 תווים.";
+          authErrorEl.textContent = L().errPasswordLength;
           return;
         }
         const { data: existing } = await sb.from("users").select("id").eq("username", username).maybeSingle();
         if (existing) {
-          authErrorEl.textContent = "שם המשתמש הזה תפוס, נסה שם אחר.";
+          authErrorEl.textContent = L().errUsernameTaken;
           return;
         }
         const { data, error } = await sb.auth.signUp({
@@ -1480,22 +1789,22 @@
         });
         if (error) throw error;
         if (!data.session) {
-          authErrorEl.textContent = "ההרשמה בוצעה, אך נדרש עוד אימות. פנה למנהל המערכת.";
+          authErrorEl.textContent = L().errSignupNeedsVerification;
           return;
         }
         localStorage.removeItem("mb_guest");
         await proceedAfterAuth(data.user.id, username);
       } else {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        const { data: existing } = await sb.from("users").select("email").eq("username", username).maybeSingle();
+        if (!existing) throw new Error("not found");
+        const { data, error } = await sb.auth.signInWithPassword({ email: existing.email, password });
         if (error) throw error;
         localStorage.removeItem("mb_guest");
         const name = data.user?.user_metadata?.username || username;
         await proceedAfterAuth(data.user.id, name);
       }
     } catch (err) {
-      authErrorEl.textContent = authMode === "login"
-        ? "שם משתמש או סיסמה שגויים."
-        : "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה אחרת.";
+      authErrorEl.textContent = authMode === "login" ? L().errLoginFailed : L().errSignupFailed;
     } finally {
       authSubmitEl.disabled = false;
     }
@@ -1513,7 +1822,236 @@
     showAuth();
   });
 
+  // ---- Profile ----
+  let profileState = null;
+
+  async function showProfile() {
+    appRootEl.hidden = true;
+    profileScreenEl.hidden = false;
+    const { data: prefs } = await sb.from("user_preferences").select("*").eq("user_id", currentUserId).maybeSingle();
+    const gradeMatch = L().gradeOptions.find(g => g[0] === prefs?.grade);
+    profileState = {
+      firstName: prefs?.first_name || "", lastName: prefs?.last_name || "",
+      ageRange: prefs?.age_range || "", grade: prefs?.grade || null,
+      gradeLabel: gradeMatch ? gradeMatch[1] : (prefs?.grade || ""),
+      area: prefs?.area || "",
+      activityTypes: prefs?.activity_types || [], interestTopics: prefs?.interest_topics || []
+    };
+    renderProfile();
+  }
+
+  function renderProfile() {
+    const t = L();
+    profileContentEl.innerHTML = `
+      <h1 class="quiz-title">${t.profileTitle}</h1>
+      <div class="profile-avatar-row">
+        <div class="profile-avatar" id="avatarPreview" style="${userProfile?.avatar_url ? `background-image:url('${userProfile.avatar_url}')` : ""}"></div>
+        <button type="button" class="quiz-btn secondary" id="avatarBtn">${t.avatarChange}</button>
+        <input type="file" id="avatarInput" accept="image/*" hidden>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-field"><label for="pFirstName">${t.firstNameLabel}</label><input type="text" id="pFirstName" value="${profileState.firstName}"></div>
+        <div class="quiz-field"><label for="pLastName">${t.lastNameLabel}</label><input type="text" id="pLastName" value="${profileState.lastName}"></div>
+        ${comboFieldHtml("pAge", t.ageQLabel, ["12-13", "14-15", "16-17", "18+"], profileState.ageRange)}
+        ${comboFieldHtml("pGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
+        ${comboFieldHtml("pArea", t.areaQLabel, t.areaOptions, profileState.area)}
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.topicsTitle}</span>
+          ${pillOptionsHtml("ptopic", t.topicOptions, profileState.interestTopics, true)}
+          ${customTagsHtml("ptopic", t.topicOptions, profileState.interestTopics)}
+          ${addCustomRowHtml("pAddTopic", "pAddTopicBtn")}
+        </div>
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.activityTypesTitle}</span>
+          ${pillOptionsHtml("patype", t.activityTypeOptions, profileState.activityTypes, true)}
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button type="button" class="quiz-btn secondary" id="pBack">${t.backToApp}</button>
+        <button type="button" class="quiz-btn primary" id="pSave">${t.saveBtn}</button>
+      </div>
+      <p class="quiz-subtitle" id="pSavedMsg" style="text-align:center"></p>
+    `;
+    wireProfile();
+  }
+
+  async function handleAvatarUpload(e) {
+    const file = e.target.files[0];
+    if (!file || !currentUserId) return;
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${currentUserId}/avatar.${ext}`;
+    const { error } = await sb.storage.from("avatars").upload(path, file, { upsert: true });
+    if (error) return;
+    const { data } = sb.storage.from("avatars").getPublicUrl(path);
+    const url = data.publicUrl + "?t=" + Date.now();
+    await sb.from("users").update({ avatar_url: url }).eq("id", currentUserId);
+    if (userProfile) userProfile.avatar_url = url;
+    renderProfile();
+  }
+
+  function wireProfile() {
+    const t = L();
+    document.getElementById("pBack").addEventListener("click", () => { profileScreenEl.hidden = true; appRootEl.hidden = false; });
+    document.getElementById("avatarBtn").addEventListener("click", () => document.getElementById("avatarInput").click());
+    document.getElementById("avatarInput").addEventListener("change", handleAvatarUpload);
+    document.getElementById("pFirstName").addEventListener("input", e => profileState.firstName = e.target.value);
+    document.getElementById("pLastName").addEventListener("input", e => profileState.lastName = e.target.value);
+    document.getElementById("pAge").addEventListener("input", e => profileState.ageRange = e.target.value);
+    document.getElementById("pGrade").addEventListener("input", e => {
+      const match = t.gradeOptions.find(g => g[1] === e.target.value);
+      profileState.grade = match ? match[0] : (e.target.value || null);
+    });
+    document.getElementById("pArea").addEventListener("input", e => profileState.area = e.target.value);
+    profileContentEl.querySelectorAll("[data-ptopic]").forEach(btn => btn.addEventListener("click", () => {
+      const v = btn.dataset.ptopic;
+      const i = profileState.interestTopics.indexOf(v);
+      if (i === -1) profileState.interestTopics.push(v); else profileState.interestTopics.splice(i, 1);
+      renderProfile();
+    }));
+    profileContentEl.querySelectorAll("[data-ptopic-remove]").forEach(btn => btn.addEventListener("click", () => {
+      profileState.interestTopics = profileState.interestTopics.filter(x => x !== btn.dataset.ptopicRemove);
+      renderProfile();
+    }));
+    document.getElementById("pAddTopicBtn").addEventListener("click", () => {
+      const input = document.getElementById("pAddTopic");
+      const v = input.value.trim();
+      if (v && !profileState.interestTopics.includes(v)) profileState.interestTopics.push(v);
+      renderProfile();
+    });
+    profileContentEl.querySelectorAll("[data-patype]").forEach(btn => btn.addEventListener("click", () => {
+      const v = btn.dataset.patype;
+      const i = profileState.activityTypes.indexOf(v);
+      if (i === -1) profileState.activityTypes.push(v); else profileState.activityTypes.splice(i, 1);
+      renderProfile();
+    }));
+    document.getElementById("pSave").addEventListener("click", async () => {
+      await sb.from("user_preferences").upsert({
+        user_id: currentUserId,
+        first_name: profileState.firstName || null, last_name: profileState.lastName || null,
+        age_range: profileState.ageRange || null, grade: profileState.grade || null, area: profileState.area || null,
+        activity_types: profileState.activityTypes, interest_topics: profileState.interestTopics
+      });
+      document.getElementById("pSavedMsg").textContent = t.savedMsg;
+    });
+  }
+
+  profileBtnEl.addEventListener("click", showProfile);
+
+  // ---- Settings ----
+  async function saveProfileField(field, value) {
+    if (!userProfile) userProfile = {};
+    userProfile[field] = value;
+    if (currentUserId) await sb.from("users").update({ [field]: value }).eq("id", currentUserId);
+  }
+
+  function showSettings() {
+    appRootEl.hidden = true;
+    settingsScreenEl.hidden = false;
+    renderSettings();
+  }
+
+  function renderSettings() {
+    const t = L();
+    const theme = userProfile?.theme_pref || "system";
+    const size = userProfile?.text_size || "medium";
+    settingsContentEl.innerHTML = `
+      <h1 class="quiz-title">${t.settingsTitle}</h1>
+      <div class="quiz-body">
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.themeLabel}</span>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" aria-pressed="${theme === "light"}" data-theme-opt="light">${t.themeLight}</button>
+            <button type="button" class="quiz-option" aria-pressed="${theme === "dark"}" data-theme-opt="dark">${t.themeDark}</button>
+            <button type="button" class="quiz-option" aria-pressed="${theme === "system"}" data-theme-opt="system">${t.themeSystem}</button>
+          </div>
+        </div>
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.textSizeLabel}</span>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" aria-pressed="${size === "small"}" data-size-opt="small">${t.textSizeSmall}</button>
+            <button type="button" class="quiz-option" aria-pressed="${size === "medium"}" data-size-opt="medium">${t.textSizeMedium}</button>
+            <button type="button" class="quiz-option" aria-pressed="${size === "large"}" data-size-opt="large">${t.textSizeLarge}</button>
+          </div>
+        </div>
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.languageLabel}</span>
+          <div class="quiz-options">
+            ${Object.keys(LANG_NAME).map(l => `<button type="button" class="quiz-option" aria-pressed="${currentLang === l}" data-lang-opt="${l}">${LANG_NAME[l]}</button>`).join("")}
+          </div>
+        </div>
+        <div class="quiz-field">
+          <label for="sNewUsername">${t.changeUsernameLabel}</label>
+          <input type="text" id="sNewUsername" placeholder="${t.newUsernamePlaceholder}">
+          <button type="button" class="quiz-btn secondary" id="sUsernameBtn">${t.updateBtn}</button>
+          <p class="auth-error" id="sUsernameMsg"></p>
+        </div>
+        <div class="quiz-field">
+          <label for="sNewPassword">${t.changePasswordLabel}</label>
+          <input type="password" id="sNewPassword" placeholder="${t.newPasswordPlaceholder}" minlength="6" maxlength="10">
+          <button type="button" class="quiz-btn secondary" id="sPasswordBtn">${t.updateBtn}</button>
+          <p class="auth-error" id="sPasswordMsg"></p>
+        </div>
+      </div>
+      <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="sBack">${t.backToApp}</button></div>
+    `;
+    wireSettings();
+  }
+
+  function wireSettings() {
+    const t = L();
+    document.getElementById("sBack").addEventListener("click", () => { settingsScreenEl.hidden = true; appRootEl.hidden = false; });
+
+    settingsContentEl.querySelectorAll("[data-theme-opt]").forEach(btn => btn.addEventListener("click", async () => {
+      const v = btn.dataset.themeOpt;
+      applyTheme(v);
+      await saveProfileField("theme_pref", v);
+      renderSettings();
+    }));
+
+    settingsContentEl.querySelectorAll("[data-size-opt]").forEach(btn => btn.addEventListener("click", async () => {
+      const v = btn.dataset.sizeOpt;
+      applyTextSize(v);
+      await saveProfileField("text_size", v);
+      renderSettings();
+    }));
+
+    settingsContentEl.querySelectorAll("[data-lang-opt]").forEach(btn => btn.addEventListener("click", async () => {
+      const v = btn.dataset.langOpt;
+      setLanguage(v);
+      await saveProfileField("language", v);
+      renderSettings();
+    }));
+
+    document.getElementById("sUsernameBtn").addEventListener("click", async () => {
+      const msgEl = document.getElementById("sUsernameMsg");
+      const newUsername = document.getElementById("sNewUsername").value.trim();
+      if (!USERNAME_RE.test(newUsername)) { msgEl.textContent = t.errUsernameFormat; return; }
+      const { data: existing } = await sb.from("users").select("id").eq("username", newUsername).maybeSingle();
+      if (existing) { msgEl.textContent = t.errUsernameTaken; return; }
+      const { error } = await sb.auth.updateUser({ data: { username: newUsername, full_name: newUsername } });
+      if (error) { msgEl.textContent = t.errSignupFailed; return; }
+      await sb.from("users").update({ username: newUsername }).eq("id", currentUserId);
+      msgEl.style.color = "var(--accent)";
+      msgEl.textContent = t.usernameUpdated;
+      userGreetingEl.textContent = L().greeting(newUsername);
+    });
+
+    document.getElementById("sPasswordBtn").addEventListener("click", async () => {
+      const msgEl = document.getElementById("sPasswordMsg");
+      const newPassword = document.getElementById("sNewPassword").value;
+      if (newPassword.length < 6 || newPassword.length > 10) { msgEl.textContent = t.errPasswordLength; return; }
+      const { error } = await sb.auth.updateUser({ password: newPassword });
+      if (error) { msgEl.textContent = t.errSignupFailed; return; }
+      msgEl.style.color = "var(--accent)";
+      msgEl.textContent = t.passwordUpdated;
+      document.getElementById("sNewPassword").value = "";
+    });
+  }
+
+  settingsBtnEl.addEventListener("click", showSettings);
+
   (async function boot() {
+    applyStaticText();
     try {
       if (localStorage.getItem("mb_guest") === "1") {
         showApp(null);
@@ -1551,7 +2089,7 @@
   function showQuiz(userId, greetingName) {
     quiz = {
       userId, greetingName, step: 0,
-      firstName: "", lastName: "", ageRange: null, grade: null, area: null,
+      firstName: "", lastName: "", ageRange: null, grade: null, gradeLabel: "", area: null,
       activityTypes: [], interestTopics: [], interestOther: ""
     };
     appRootEl.hidden = true;
@@ -1579,97 +2117,117 @@
     }).join("")}</div>`;
   }
 
+  function comboFieldHtml(id, labelText, options, value) {
+    return `
+      <div class="quiz-field">
+        <label for="${id}">${labelText}</label>
+        <input type="text" id="${id}" list="${id}List" value="${value || ""}" placeholder="${L().typeOrPick}">
+        <datalist id="${id}List">${options.map(o => `<option value="${o}"></option>`).join("")}</datalist>
+      </div>
+    `;
+  }
+
+  function customTagsHtml(name, presetOptions, selected) {
+    const custom = selected.filter(v => !presetOptions.includes(v));
+    if (!custom.length) return "";
+    return `<div class="quiz-options">${custom.map(v =>
+      `<button type="button" class="quiz-option" aria-pressed="true" data-${name}-remove="${v}">${v} ✕</button>`
+    ).join("")}</div>`;
+  }
+
+  function addCustomRowHtml(inputId, btnId) {
+    return `
+      <div class="quiz-add-row">
+        <input type="text" id="${inputId}" placeholder="${L().addCustomTopicPlaceholder}">
+        <button type="button" id="${btnId}" class="quiz-btn secondary quiz-add-btn">${L().addBtn}</button>
+      </div>
+    `;
+  }
+
   function skipLinkHtml() {
-    return `<button type="button" class="quiz-skip" id="qSkip">דלג על השאלון</button>`;
+    return `<button type="button" class="quiz-skip" id="qSkip">${L().skipLink}</button>`;
   }
 
   function renderQuiz() {
     const s = quiz.step;
+    const t = L();
     let html = "";
 
     if (s === 0) {
       html = `
-        <div class="quiz-eyebrow">מה בי״ם</div>
-        <h1 class="quiz-title">בוא נכיר אותך, כדי להתאים לך את האפליקציה</h1>
-        <p class="quiz-subtitle">כמה שאלות קצרות, לוקח פחות מ-2 דקות. אפשר גם לדלג בכל שלב.</p>
-        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qNext">בואו נתחיל</button></div>
+        <div class="quiz-eyebrow">${t.appTitle}</div>
+        <h1 class="quiz-title">${t.quizIntroTitle}</h1>
+        <p class="quiz-subtitle">${t.quizIntroSubtitle}</p>
+        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qNext">${t.startBtn}</button></div>
         ${skipLinkHtml()}
       `;
     } else if (s === 1) {
       html = `
         ${quizProgressHtml(1)}
-        <h1 class="quiz-title">מה השם שלך?</h1>
+        <h1 class="quiz-title">${t.nameTitle}</h1>
         <div class="quiz-body">
           <div class="quiz-field">
-            <label for="qFirstName">שם פרטי (לא חובה)</label>
-            <input type="text" id="qFirstName" value="${quiz.firstName}" placeholder="שם פרטי">
+            <label for="qFirstName">${t.firstNameLabel}</label>
+            <input type="text" id="qFirstName" value="${quiz.firstName}">
           </div>
           <div class="quiz-field">
-            <label for="qLastName">שם משפחה (לא חובה)</label>
-            <input type="text" id="qLastName" value="${quiz.lastName}" placeholder="שם משפחה">
+            <label for="qLastName">${t.lastNameLabel}</label>
+            <input type="text" id="qLastName" value="${quiz.lastName}">
           </div>
         </div>
         <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
-          <button type="button" class="quiz-btn primary" id="qNext">הבא</button>
+          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
+          <button type="button" class="quiz-btn primary" id="qNext">${t.nextBtn}</button>
         </div>
         ${skipLinkHtml()}
       `;
     } else if (s === 2) {
       html = `
         ${quizProgressHtml(2)}
-        <h1 class="quiz-title">כמה פרטים בסיסיים</h1>
-        <p class="quiz-subtitle">גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך</p>
+        <h1 class="quiz-title">${t.demoTitle}</h1>
+        <p class="quiz-subtitle">${t.demoSubtitle}</p>
         <div class="quiz-body">
-          <div class="quiz-field">
-            <span class="quiz-section-label">בן/בת כמה אתה?</span>
-            ${pillOptionsHtml("age", AGE_OPTIONS, quiz.ageRange, false)}
-          </div>
-          <div class="quiz-field">
-            <span class="quiz-section-label">באיזו כיתה אתה?</span>
-            ${pillOptionsHtml("grade", GRADE_OPTIONS, quiz.grade, false)}
-          </div>
-          <div class="quiz-field">
-            <span class="quiz-section-label">באיזה אזור בירושלים אתה גר?</span>
-            ${pillOptionsHtml("area", AREA_OPTIONS, quiz.area, false)}
-          </div>
+          ${comboFieldHtml("qAge", t.ageQLabel, ["12-13", "14-15", "16-17", "18+"], quiz.ageRange)}
+          ${comboFieldHtml("qGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), quiz.gradeLabel)}
+          ${comboFieldHtml("qArea", t.areaQLabel, t.areaOptions, quiz.area)}
         </div>
         <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
-          <button type="button" class="quiz-btn primary" id="qNext">הבא</button>
+          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
+          <button type="button" class="quiz-btn primary" id="qNext">${t.nextBtn}</button>
         </div>
         ${skipLinkHtml()}
       `;
     } else if (s === 3) {
       html = `
         ${quizProgressHtml(3)}
-        <h1 class="quiz-title">באילו תחומים אתה מתעניין?</h1>
-        <p class="quiz-subtitle">אפשר לבחור כמה שרוצים</p>
+        <h1 class="quiz-title">${t.topicsTitle}</h1>
+        <p class="quiz-subtitle">${t.topicsSubtitle}</p>
         <div class="quiz-body">
           <div class="quiz-field">
-            ${pillOptionsHtml("topic", TOPIC_OPTIONS, quiz.interestTopics, true)}
-            <input type="text" id="qOther" value="${quiz.interestOther}" placeholder="אחר (טקסט חופשי)">
+            ${pillOptionsHtml("topic", t.topicOptions, quiz.interestTopics, true)}
+            ${customTagsHtml("topic", t.topicOptions, quiz.interestTopics)}
+            ${addCustomRowHtml("qAddTopic", "qAddTopicBtn")}
           </div>
         </div>
         <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
-          <button type="button" class="quiz-btn primary" id="qNext">הבא</button>
+          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
+          <button type="button" class="quiz-btn primary" id="qNext">${t.nextBtn}</button>
         </div>
         ${skipLinkHtml()}
       `;
     } else if (s === 4) {
       html = `
         ${quizProgressHtml(4)}
-        <h1 class="quiz-title">אילו סוגי פעילויות הכי מעניינים אותך?</h1>
-        <p class="quiz-subtitle">אפשר לבחור כמה שרוצים</p>
+        <h1 class="quiz-title">${t.activityTypesTitle}</h1>
+        <p class="quiz-subtitle">${t.topicsSubtitle}</p>
         <div class="quiz-body">
           <div class="quiz-field">
-            ${pillOptionsHtml("atype", ACTIVITY_TYPE_OPTIONS, quiz.activityTypes, true)}
+            ${pillOptionsHtml("atype", t.activityTypeOptions, quiz.activityTypes, true)}
           </div>
         </div>
         <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
-          <button type="button" class="quiz-btn primary" id="qNext">סיימתי</button>
+          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
+          <button type="button" class="quiz-btn primary" id="qNext">${t.finishBtn}</button>
         </div>
         ${skipLinkHtml()}
       `;
@@ -1677,10 +2235,10 @@
       html = `
         <div class="quiz-result">
           <div class="emoji">🎉</div>
-          <h1 class="quiz-title">מעולה, סיימנו!</h1>
-          <p class="quiz-subtitle">האפליקציה מוכנה בשבילך, מותאמת אישית</p>
+          <h1 class="quiz-title">${t.outroTitle}</h1>
+          <p class="quiz-subtitle">${t.outroSubtitle}</p>
         </div>
-        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qEnter">כניסה לאפליקציה</button></div>
+        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qEnter">${t.enterAppBtn}</button></div>
       `;
     }
 
@@ -1690,6 +2248,7 @@
 
   function wireQuizStep() {
     const s = quiz.step;
+    const t = L();
     const nextBtn = document.getElementById("qNext");
     const backBtn = document.getElementById("qBack");
     const enterBtn = document.getElementById("qEnter");
@@ -1704,12 +2263,13 @@
       document.getElementById("qLastName").addEventListener("input", e => quiz.lastName = e.target.value);
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 2; renderQuiz(); });
     } else if (s === 2) {
-      quizContentEl.querySelectorAll("[data-age]").forEach(btn =>
-        btn.addEventListener("click", () => { quiz.ageRange = btn.dataset.age; renderQuiz(); }));
-      quizContentEl.querySelectorAll("[data-grade]").forEach(btn =>
-        btn.addEventListener("click", () => { quiz.grade = btn.dataset.grade; renderQuiz(); }));
-      quizContentEl.querySelectorAll("[data-area]").forEach(btn =>
-        btn.addEventListener("click", () => { quiz.area = btn.dataset.area; renderQuiz(); }));
+      document.getElementById("qAge").addEventListener("input", e => quiz.ageRange = e.target.value);
+      document.getElementById("qGrade").addEventListener("input", e => {
+        quiz.gradeLabel = e.target.value;
+        const match = t.gradeOptions.find(g => g[1] === e.target.value);
+        quiz.grade = match ? match[0] : e.target.value || null;
+      });
+      document.getElementById("qArea").addEventListener("input", e => quiz.area = e.target.value);
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 3; renderQuiz(); });
     } else if (s === 3) {
       quizContentEl.querySelectorAll("[data-topic]").forEach(btn =>
@@ -1719,7 +2279,18 @@
           if (i === -1) quiz.interestTopics.push(v); else quiz.interestTopics.splice(i, 1);
           renderQuiz();
         }));
-      document.getElementById("qOther").addEventListener("input", e => quiz.interestOther = e.target.value);
+      quizContentEl.querySelectorAll("[data-topic-remove]").forEach(btn =>
+        btn.addEventListener("click", () => {
+          const v = btn.dataset.topicRemove;
+          quiz.interestTopics = quiz.interestTopics.filter(x => x !== v);
+          renderQuiz();
+        }));
+      document.getElementById("qAddTopicBtn").addEventListener("click", () => {
+        const input = document.getElementById("qAddTopic");
+        const v = input.value.trim();
+        if (v && !quiz.interestTopics.includes(v)) quiz.interestTopics.push(v);
+        renderQuiz();
+      });
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 4; renderQuiz(); });
     } else if (s === 4) {
       quizContentEl.querySelectorAll("[data-atype]").forEach(btn =>
@@ -1740,9 +2311,9 @@
       user_id: quiz.userId,
       first_name: quiz.firstName || null,
       last_name: quiz.lastName || null,
-      age_range: quiz.ageRange,
-      grade: quiz.grade,
-      area: quiz.area,
+      age_range: quiz.ageRange || null,
+      grade: quiz.grade || null,
+      area: quiz.area || null,
       activity_types: quiz.activityTypes,
       interest_topics: quiz.interestTopics,
       interest_other: quiz.interestOther || null
