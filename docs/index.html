@@ -416,6 +416,19 @@
 
   .quiz-result .emoji { font-size: 40px; }
 
+  .quiz-skip {
+    display: block;
+    margin: 0 auto;
+    border: none;
+    background: none;
+    color: var(--ink-faint);
+    font-family: inherit;
+    font-size: 13px;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 4px;
+  }
+
   .search-bar {
     position: relative;
     width: 100%;
@@ -1532,48 +1545,6 @@
   const ACTIVITY_TYPE_OPTIONS = ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"];
   const TOPIC_OPTIONS = ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"];
 
-  const VIBE_QUESTIONS = [
-    {
-      prompt: "קיבלת הודעה שנרשמת בהצלחה לפעילות. איך היית רוצה שהיא תיראה?",
-      options: [
-        { vibe: "energetic", text: "עולים רמה! את/ה בפנים 🔥" },
-        { vibe: "balanced", text: "מעולה! נרשמת בהצלחה — כל הפרטים בהמשך" },
-        { vibe: "serious", text: "ההרשמה נקלטה. פרטים מלאים יישלחו בהודעה נפרדת" }
-      ]
-    },
-    {
-      prompt: "מה יגרום לך יותר להירשם לפעילות?",
-      options: [
-        { vibe: "energetic", text: "לראות שהחברים שלי כבר שם" },
-        { vibe: "balanced", text: "לראות גם שהחברים שלי שם וגם פרטים ברורים (שעות, עלות)" },
-        { vibe: "serious", text: "לראות פרטים מדויקים ואמינים על הפעילות" }
-      ]
-    },
-    {
-      prompt: "איך היית רוצה שיזכירו לך על פעילות שנרשמת אליה?",
-      options: [
-        { vibe: "energetic", text: "מחר יש לך משהו מגניב, אל תפספס!" },
-        { vibe: "balanced", text: "תזכורת חמה: מחר יש לך [שם הפעילות] בשעה X" },
-        { vibe: "serious", text: "תזכורת: [שם פעילות] מתוזמנת למחר בשעה X" }
-      ]
-    },
-    {
-      prompt: "כשאתה מחפש עבודה או קורס, מה הכי חשוב לך שיהיה כתוב?",
-      options: [
-        { vibe: "energetic", text: "שיהיה כיף ומעניין" },
-        { vibe: "balanced", text: "גם שיהיה מעניין וגם שיהיה ברור מה בדיוק מקבלים (שכר / תעודה)" },
-        { vibe: "serious", text: "פרטים מדויקים: שכר, שעות, דרישות" }
-      ]
-    },
-    {
-      prompt: "מה הכי מרגיז אותך באפליקציות בכלל?",
-      options: [
-        { vibe: "energetic", text: "כשזה משעמם ורשמי מדי" },
-        { vibe: "balanced", text: "כשזה או משעמם מדי, או שלא ברור אם אפשר לסמוך על המידע" },
-        { vibe: "serious", text: "כשהמידע לא ברור, או כשמנסים 'למכור' לי דברים בטון מתחנף" }
-      ]
-    }
-  ];
 
   let quiz = null;
 
@@ -1581,7 +1552,6 @@
     quiz = {
       userId, greetingName, step: 0,
       firstName: "", lastName: "", ageRange: null, grade: null, area: null,
-      vibeAnswers: [null, null, null, null, null],
       activityTypes: [], interestTopics: [], interestOther: ""
     };
     appRootEl.hidden = true;
@@ -1590,7 +1560,7 @@
     renderQuiz();
   }
 
-  const TOTAL_QUIZ_STEPS = 8; // intro, stageA, 5x vibe, stageC (outro is separate)
+  const TOTAL_QUIZ_STEPS = 4; // name, demographics, topics, activity types (intro + outro aren't counted)
 
   function quizProgressHtml(step) {
     let dots = "";
@@ -1609,6 +1579,10 @@
     }).join("")}</div>`;
   }
 
+  function skipLinkHtml() {
+    return `<button type="button" class="quiz-skip" id="qSkip">דלג על השאלון</button>`;
+  }
+
   function renderQuiz() {
     const s = quiz.step;
     let html = "";
@@ -1617,22 +1591,36 @@
       html = `
         <div class="quiz-eyebrow">מה בי״ם</div>
         <h1 class="quiz-title">בוא נכיר אותך, כדי להתאים לך את האפליקציה</h1>
-        <p class="quiz-subtitle">כמה שאלות קצרות, לוקח פחות מ-2 דקות</p>
+        <p class="quiz-subtitle">כמה שאלות קצרות, לוקח פחות מ-2 דקות. אפשר גם לדלג בכל שלב.</p>
         <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qNext">בואו נתחיל</button></div>
+        ${skipLinkHtml()}
       `;
     } else if (s === 1) {
       html = `
         ${quizProgressHtml(1)}
-        <h1 class="quiz-title">כמה פרטים בסיסיים</h1>
+        <h1 class="quiz-title">מה השם שלך?</h1>
         <div class="quiz-body">
           <div class="quiz-field">
-            <label for="qFirstName">השם שלך (לא חובה)</label>
+            <label for="qFirstName">שם פרטי (לא חובה)</label>
             <input type="text" id="qFirstName" value="${quiz.firstName}" placeholder="שם פרטי">
           </div>
           <div class="quiz-field">
             <label for="qLastName">שם משפחה (לא חובה)</label>
             <input type="text" id="qLastName" value="${quiz.lastName}" placeholder="שם משפחה">
           </div>
+        </div>
+        <div class="quiz-nav">
+          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
+          <button type="button" class="quiz-btn primary" id="qNext">הבא</button>
+        </div>
+        ${skipLinkHtml()}
+      `;
+    } else if (s === 2) {
+      html = `
+        ${quizProgressHtml(2)}
+        <h1 class="quiz-title">כמה פרטים בסיסיים</h1>
+        <p class="quiz-subtitle">גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך</p>
+        <div class="quiz-body">
           <div class="quiz-field">
             <span class="quiz-section-label">בן/בת כמה אתה?</span>
             ${pillOptionsHtml("age", AGE_OPTIONS, quiz.ageRange, false)}
@@ -1648,49 +1636,44 @@
         </div>
         <div class="quiz-nav">
           <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
-          <button type="button" class="quiz-btn primary" id="qNext" ${quiz.ageRange && quiz.grade && quiz.area ? "" : "disabled"}>הבא</button>
+          <button type="button" class="quiz-btn primary" id="qNext">הבא</button>
         </div>
+        ${skipLinkHtml()}
       `;
-    } else if (s >= 2 && s <= 6) {
-      const qIndex = s - 2;
-      const q = VIBE_QUESTIONS[qIndex];
-      const selected = quiz.vibeAnswers[qIndex];
+    } else if (s === 3) {
       html = `
-        ${quizProgressHtml(s)}
-        <p class="quiz-eyebrow">שאלה ${qIndex + 1} מ-5</p>
-        <h1 class="quiz-title">${q.prompt}</h1>
-        <div class="quiz-options">
-          ${q.options.map(opt => `
-            <button type="button" class="quiz-option" aria-pressed="${selected === opt.vibe}" data-vibe-opt="${opt.vibe}">${opt.text}</button>
-          `).join("")}
-        </div>
-        <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
-          <button type="button" class="quiz-btn primary" id="qNext" ${selected ? "" : "disabled"}>הבא</button>
-        </div>
-      `;
-    } else if (s === 7) {
-      html = `
-        ${quizProgressHtml(7)}
-        <h1 class="quiz-title">מה מעניין אותך?</h1>
-        <p class="quiz-subtitle">בחר את כל מה שרלוונטי</p>
+        ${quizProgressHtml(3)}
+        <h1 class="quiz-title">באילו תחומים אתה מתעניין?</h1>
+        <p class="quiz-subtitle">אפשר לבחור כמה שרוצים</p>
         <div class="quiz-body">
           <div class="quiz-field">
-            <span class="quiz-section-label">אילו סוגי פעילויות הכי מעניינים אותך?</span>
-            ${pillOptionsHtml("atype", ACTIVITY_TYPE_OPTIONS, quiz.activityTypes, true)}
-          </div>
-          <div class="quiz-field">
-            <span class="quiz-section-label">באילו תחומים?</span>
             ${pillOptionsHtml("topic", TOPIC_OPTIONS, quiz.interestTopics, true)}
             <input type="text" id="qOther" value="${quiz.interestOther}" placeholder="אחר (טקסט חופשי)">
           </div>
         </div>
         <div class="quiz-nav">
           <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
+          <button type="button" class="quiz-btn primary" id="qNext">הבא</button>
+        </div>
+        ${skipLinkHtml()}
+      `;
+    } else if (s === 4) {
+      html = `
+        ${quizProgressHtml(4)}
+        <h1 class="quiz-title">אילו סוגי פעילויות הכי מעניינים אותך?</h1>
+        <p class="quiz-subtitle">אפשר לבחור כמה שרוצים</p>
+        <div class="quiz-body">
+          <div class="quiz-field">
+            ${pillOptionsHtml("atype", ACTIVITY_TYPE_OPTIONS, quiz.activityTypes, true)}
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
           <button type="button" class="quiz-btn primary" id="qNext">סיימתי</button>
         </div>
+        ${skipLinkHtml()}
       `;
-    } else if (s === 8) {
+    } else if (s === 5) {
       html = `
         <div class="quiz-result">
           <div class="emoji">🎉</div>
@@ -1710,33 +1693,25 @@
     const nextBtn = document.getElementById("qNext");
     const backBtn = document.getElementById("qBack");
     const enterBtn = document.getElementById("qEnter");
+    const skipBtn = document.getElementById("qSkip");
 
     if (backBtn) backBtn.addEventListener("click", () => { quiz.step--; renderQuiz(); });
     if (enterBtn) enterBtn.addEventListener("click", () => showApp(quiz.greetingName));
+    if (skipBtn) skipBtn.addEventListener("click", async () => { await saveQuizProgress(); showApp(quiz.greetingName); });
 
     if (s === 1) {
       document.getElementById("qFirstName").addEventListener("input", e => quiz.firstName = e.target.value);
       document.getElementById("qLastName").addEventListener("input", e => quiz.lastName = e.target.value);
+      if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 2; renderQuiz(); });
+    } else if (s === 2) {
       quizContentEl.querySelectorAll("[data-age]").forEach(btn =>
         btn.addEventListener("click", () => { quiz.ageRange = btn.dataset.age; renderQuiz(); }));
       quizContentEl.querySelectorAll("[data-grade]").forEach(btn =>
         btn.addEventListener("click", () => { quiz.grade = btn.dataset.grade; renderQuiz(); }));
       quizContentEl.querySelectorAll("[data-area]").forEach(btn =>
         btn.addEventListener("click", () => { quiz.area = btn.dataset.area; renderQuiz(); }));
-      if (nextBtn) nextBtn.addEventListener("click", () => { quiz.step++; renderQuiz(); });
-    } else if (s >= 2 && s <= 6) {
-      const qIndex = s - 2;
-      quizContentEl.querySelectorAll("[data-vibe-opt]").forEach(btn =>
-        btn.addEventListener("click", () => { quiz.vibeAnswers[qIndex] = btn.dataset.vibeOpt; renderQuiz(); }));
-      if (nextBtn) nextBtn.addEventListener("click", () => { quiz.step++; renderQuiz(); });
-    } else if (s === 7) {
-      quizContentEl.querySelectorAll("[data-atype]").forEach(btn =>
-        btn.addEventListener("click", () => {
-          const v = btn.dataset.atype;
-          const i = quiz.activityTypes.indexOf(v);
-          if (i === -1) quiz.activityTypes.push(v); else quiz.activityTypes.splice(i, 1);
-          renderQuiz();
-        }));
+      if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 3; renderQuiz(); });
+    } else if (s === 3) {
       quizContentEl.querySelectorAll("[data-topic]").forEach(btn =>
         btn.addEventListener("click", () => {
           const v = btn.dataset.topic;
@@ -1745,39 +1720,38 @@
           renderQuiz();
         }));
       document.getElementById("qOther").addEventListener("input", e => quiz.interestOther = e.target.value);
+      if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 4; renderQuiz(); });
+    } else if (s === 4) {
+      quizContentEl.querySelectorAll("[data-atype]").forEach(btn =>
+        btn.addEventListener("click", () => {
+          const v = btn.dataset.atype;
+          const i = quiz.activityTypes.indexOf(v);
+          if (i === -1) quiz.activityTypes.push(v); else quiz.activityTypes.splice(i, 1);
+          renderQuiz();
+        }));
       if (nextBtn) nextBtn.addEventListener("click", finishQuiz);
     } else if (s === 0) {
       if (nextBtn) nextBtn.addEventListener("click", () => { quiz.step = 1; renderQuiz(); });
     }
   }
 
-  function computeVibeResult() {
-    const counts = { energetic: 0, balanced: 0, serious: 0 };
-    quiz.vibeAnswers.forEach(v => counts[v]++);
-    const max = Math.max(counts.energetic, counts.balanced, counts.serious);
-    const winners = Object.keys(counts).filter(k => counts[k] === max);
-    if (winners.length === 1) return winners[0];
-    const tieBreak = { "12-13": "energetic", "14-15": "energetic", "16-17": "balanced", "18+": "serious" };
-    return tieBreak[quiz.ageRange] || "balanced";
-  }
-
-  async function finishQuiz() {
-    const vibeResult = computeVibeResult();
-    await sb.from("user_preferences").insert({
+  async function saveQuizProgress() {
+    await sb.from("user_preferences").upsert({
       user_id: quiz.userId,
       first_name: quiz.firstName || null,
       last_name: quiz.lastName || null,
       age_range: quiz.ageRange,
       grade: quiz.grade,
       area: quiz.area,
-      vibe_q1: quiz.vibeAnswers[0], vibe_q2: quiz.vibeAnswers[1], vibe_q3: quiz.vibeAnswers[2],
-      vibe_q4: quiz.vibeAnswers[3], vibe_q5: quiz.vibeAnswers[4],
-      vibe_result: vibeResult,
       activity_types: quiz.activityTypes,
       interest_topics: quiz.interestTopics,
       interest_other: quiz.interestOther || null
     });
-    quiz.step = 8;
+  }
+
+  async function finishQuiz() {
+    await saveQuizProgress();
+    quiz.step = 5;
     renderQuiz();
   }
   </script>
