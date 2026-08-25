@@ -1269,7 +1269,7 @@
     appRootEl.hidden = true;
     authScreenEl.hidden = false;
     authForm.reset();
-    authErrorEl.textContent = "";
+    setAuthMode("login");
   }
 
   authForm.addEventListener("submit", async (e) => {
