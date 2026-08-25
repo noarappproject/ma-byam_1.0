@@ -773,7 +773,7 @@
         </div>
         <div class="auth-field">
           <label for="authPassword">סיסמה</label>
-          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6">
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6" maxlength="10">
         </div>
         <p class="auth-error" id="authError"></p>
         <button type="submit" class="auth-submit" id="authSubmit">התחברות</button>
@@ -1391,6 +1391,8 @@
   let authMode = "login";
   let appStarted = false;
 
+  const USERNAME_RE = /^[A-Za-zא-ת][A-Za-zא-ת0-9_]*$/;
+
   function usernameToEmail(username) {
     return username.trim().toLowerCase().replace(/\s+/g, "_") + "@mahbaim.app";
   }
@@ -1446,6 +1448,14 @@
 
     try {
       if (authMode === "signup") {
+        if (!USERNAME_RE.test(username)) {
+          authErrorEl.textContent = "שם המשתמש צריך להתחיל באות, ומותר להשתמש רק באותיות, ספרות וקו תחתון (_).";
+          return;
+        }
+        if (password.length < 6 || password.length > 10) {
+          authErrorEl.textContent = "הסיסמה צריכה להיות בין 6 ל-10 תווים.";
+          return;
+        }
         const { data: existing } = await sb.from("users").select("id").eq("username", username).maybeSingle();
         if (existing) {
           authErrorEl.textContent = "שם המשתמש הזה תפוס, נסה שם אחר.";
@@ -1461,18 +1471,18 @@
           return;
         }
         localStorage.removeItem("mb_guest");
-        proceedAfterAuth(data.user.id, username);
+        await proceedAfterAuth(data.user.id, username);
       } else {
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
         localStorage.removeItem("mb_guest");
         const name = data.user?.user_metadata?.username || username;
-        proceedAfterAuth(data.user.id, name);
+        await proceedAfterAuth(data.user.id, name);
       }
     } catch (err) {
       authErrorEl.textContent = authMode === "login"
         ? "שם משתמש או סיסמה שגויים."
-        : "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה של 6 תווים לפחות.";
+        : "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה אחרת.";
     } finally {
       authSubmitEl.disabled = false;
     }
@@ -1491,15 +1501,19 @@
   });
 
   (async function boot() {
-    if (localStorage.getItem("mb_guest") === "1") {
-      showApp(null);
-      return;
-    }
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-      const name = session.user?.user_metadata?.username || session.user?.email;
-      proceedAfterAuth(session.user.id, name);
-    } else {
+    try {
+      if (localStorage.getItem("mb_guest") === "1") {
+        showApp(null);
+        return;
+      }
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        const name = session.user?.user_metadata?.username || session.user?.email;
+        await proceedAfterAuth(session.user.id, name);
+      } else {
+        showAuth();
+      }
+    } catch (err) {
       showAuth();
     }
   })();
