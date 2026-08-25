@@ -271,6 +271,151 @@
     cursor: pointer;
   }
 
+  .quiz-screen {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 8px 4px 32px;
+  }
+
+  .quiz-progress {
+    display: flex;
+    gap: 5px;
+  }
+
+  .quiz-progress span {
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--line);
+  }
+
+  .quiz-progress span.done { background: var(--accent); }
+
+  .quiz-eyebrow {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-faint);
+    letter-spacing: 0.03em;
+  }
+
+  .quiz-title {
+    font-family: "Suez One", "Heebo", serif;
+    font-size: 23px;
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 4px 0 0;
+    text-wrap: balance;
+  }
+
+  .quiz-subtitle {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 6px 0 0;
+  }
+
+  .quiz-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .quiz-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .quiz-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-field input {
+    height: 46px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .quiz-field input:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-options.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    width: 100%;
+    text-align: right;
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14.5px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .quiz-option[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+    font-weight: 700;
+  }
+
+  .quiz-section-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 4px 0 -2px;
+  }
+
+  .quiz-nav {
+    display: flex;
+    gap: 10px;
+  }
+
+  .quiz-btn {
+    flex: 1;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .quiz-btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .quiz-btn.primary:disabled { opacity: 0.5; cursor: default; }
+  .quiz-btn.secondary { background: var(--chip-bg); color: var(--ink); flex: 0 0 92px; }
+
+  .quiz-result {
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .quiz-result .emoji { font-size: 40px; }
+
   .search-bar {
     position: relative;
     width: 100%;
@@ -638,6 +783,10 @@
 
       <button type="button" class="guest-btn" id="guestBtn">המשך כאורח</button>
     </div>
+  </div>
+
+  <div class="frame" id="quizScreen" hidden>
+    <div class="quiz-screen" id="quizContent"></div>
   </div>
 
   <div class="frame" id="appRoot" hidden>
@@ -1259,6 +1408,7 @@
   tabSignupEl.addEventListener("click", () => setAuthMode("signup"));
 
   function showApp(greetingName) {
+    quizScreenEl.hidden = true;
     authScreenEl.hidden = true;
     appRootEl.hidden = false;
     userGreetingEl.textContent = greetingName ? `היי, ${greetingName} 👋` : "היי, אורח 👋";
@@ -1267,9 +1417,21 @@
 
   function showAuth() {
     appRootEl.hidden = true;
+    quizScreenEl.hidden = true;
     authScreenEl.hidden = false;
     authForm.reset();
     setAuthMode("login");
+  }
+
+  // Registered users (login or signup) answer the onboarding questionnaire
+  // exactly once; guests skip it entirely, since guest data is never collected.
+  async function proceedAfterAuth(userId, greetingName) {
+    const { data: prefs } = await sb.from("user_preferences").select("user_id").eq("user_id", userId).maybeSingle();
+    if (prefs) {
+      showApp(greetingName);
+    } else {
+      showQuiz(userId, greetingName);
+    }
   }
 
   authForm.addEventListener("submit", async (e) => {
@@ -1299,13 +1461,13 @@
           return;
         }
         localStorage.removeItem("mb_guest");
-        showApp(username);
+        proceedAfterAuth(data.user.id, username);
       } else {
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
         localStorage.removeItem("mb_guest");
         const name = data.user?.user_metadata?.username || username;
-        showApp(name);
+        proceedAfterAuth(data.user.id, name);
       }
     } catch (err) {
       authErrorEl.textContent = authMode === "login"
@@ -1336,11 +1498,274 @@
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
       const name = session.user?.user_metadata?.username || session.user?.email;
-      showApp(name);
+      proceedAfterAuth(session.user.id, name);
     } else {
       showAuth();
     }
   })();
+
+  // ---- Onboarding questionnaire ----
+  const quizScreenEl = document.getElementById("quizScreen");
+  const quizContentEl = document.getElementById("quizContent");
+
+  const AGE_OPTIONS = ["12-13", "14-15", "16-17", "18+"];
+  const GRADE_OPTIONS = [
+    { v: "ז", l: "ז׳" }, { v: "ח", l: "ח׳" }, { v: "ט", l: "ט׳" },
+    { v: "י", l: "י׳" }, { v: "יא", l: "י\"א" }, { v: "יב", l: "י\"ב" },
+    { v: "not_studying", l: "לא לומד/ת כרגע" }
+  ];
+  const AREA_OPTIONS = ["מרכז", "צפון", "דרום", "מזרח", "מערב"];
+  const ACTIVITY_TYPE_OPTIONS = ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"];
+  const TOPIC_OPTIONS = ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"];
+
+  const VIBE_QUESTIONS = [
+    {
+      prompt: "קיבלת הודעה שנרשמת בהצלחה לפעילות. איך היית רוצה שהיא תיראה?",
+      options: [
+        { vibe: "energetic", text: "עולים רמה! את/ה בפנים 🔥" },
+        { vibe: "balanced", text: "מעולה! נרשמת בהצלחה — כל הפרטים בהמשך" },
+        { vibe: "serious", text: "ההרשמה נקלטה. פרטים מלאים יישלחו בהודעה נפרדת" }
+      ]
+    },
+    {
+      prompt: "מה יגרום לך יותר להירשם לפעילות?",
+      options: [
+        { vibe: "energetic", text: "לראות שהחברים שלי כבר שם" },
+        { vibe: "balanced", text: "לראות גם שהחברים שלי שם וגם פרטים ברורים (שעות, עלות)" },
+        { vibe: "serious", text: "לראות פרטים מדויקים ואמינים על הפעילות" }
+      ]
+    },
+    {
+      prompt: "איך היית רוצה שיזכירו לך על פעילות שנרשמת אליה?",
+      options: [
+        { vibe: "energetic", text: "מחר יש לך משהו מגניב, אל תפספס!" },
+        { vibe: "balanced", text: "תזכורת חמה: מחר יש לך [שם הפעילות] בשעה X" },
+        { vibe: "serious", text: "תזכורת: [שם פעילות] מתוזמנת למחר בשעה X" }
+      ]
+    },
+    {
+      prompt: "כשאתה מחפש עבודה או קורס, מה הכי חשוב לך שיהיה כתוב?",
+      options: [
+        { vibe: "energetic", text: "שיהיה כיף ומעניין" },
+        { vibe: "balanced", text: "גם שיהיה מעניין וגם שיהיה ברור מה בדיוק מקבלים (שכר / תעודה)" },
+        { vibe: "serious", text: "פרטים מדויקים: שכר, שעות, דרישות" }
+      ]
+    },
+    {
+      prompt: "מה הכי מרגיז אותך באפליקציות בכלל?",
+      options: [
+        { vibe: "energetic", text: "כשזה משעמם ורשמי מדי" },
+        { vibe: "balanced", text: "כשזה או משעמם מדי, או שלא ברור אם אפשר לסמוך על המידע" },
+        { vibe: "serious", text: "כשהמידע לא ברור, או כשמנסים 'למכור' לי דברים בטון מתחנף" }
+      ]
+    }
+  ];
+
+  let quiz = null;
+
+  function showQuiz(userId, greetingName) {
+    quiz = {
+      userId, greetingName, step: 0,
+      firstName: "", lastName: "", ageRange: null, grade: null, area: null,
+      vibeAnswers: [null, null, null, null, null],
+      activityTypes: [], interestTopics: [], interestOther: ""
+    };
+    appRootEl.hidden = true;
+    authScreenEl.hidden = true;
+    quizScreenEl.hidden = false;
+    renderQuiz();
+  }
+
+  const TOTAL_QUIZ_STEPS = 8; // intro, stageA, 5x vibe, stageC (outro is separate)
+
+  function quizProgressHtml(step) {
+    let dots = "";
+    for (let i = 1; i <= TOTAL_QUIZ_STEPS; i++) {
+      dots += `<span class="${i <= step ? "done" : ""}"></span>`;
+    }
+    return `<div class="quiz-progress">${dots}</div>`;
+  }
+
+  function pillOptionsHtml(name, options, selected, multi) {
+    return `<div class="quiz-options">${options.map(opt => {
+      const v = typeof opt === "string" ? opt : opt.v;
+      const l = typeof opt === "string" ? opt : opt.l;
+      const isSel = multi ? selected.includes(v) : selected === v;
+      return `<button type="button" class="quiz-option" aria-pressed="${isSel}" data-${name}="${v}">${l}</button>`;
+    }).join("")}</div>`;
+  }
+
+  function renderQuiz() {
+    const s = quiz.step;
+    let html = "";
+
+    if (s === 0) {
+      html = `
+        <div class="quiz-eyebrow">מה בי״ם</div>
+        <h1 class="quiz-title">בוא נכיר אותך, כדי להתאים לך את האפליקציה</h1>
+        <p class="quiz-subtitle">כמה שאלות קצרות, לוקח פחות מ-2 דקות</p>
+        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qNext">בואו נתחיל</button></div>
+      `;
+    } else if (s === 1) {
+      html = `
+        ${quizProgressHtml(1)}
+        <h1 class="quiz-title">כמה פרטים בסיסיים</h1>
+        <div class="quiz-body">
+          <div class="quiz-field">
+            <label for="qFirstName">השם שלך (לא חובה)</label>
+            <input type="text" id="qFirstName" value="${quiz.firstName}" placeholder="שם פרטי">
+          </div>
+          <div class="quiz-field">
+            <label for="qLastName">שם משפחה (לא חובה)</label>
+            <input type="text" id="qLastName" value="${quiz.lastName}" placeholder="שם משפחה">
+          </div>
+          <div class="quiz-field">
+            <span class="quiz-section-label">בן/בת כמה אתה?</span>
+            ${pillOptionsHtml("age", AGE_OPTIONS, quiz.ageRange, false)}
+          </div>
+          <div class="quiz-field">
+            <span class="quiz-section-label">באיזו כיתה אתה?</span>
+            ${pillOptionsHtml("grade", GRADE_OPTIONS, quiz.grade, false)}
+          </div>
+          <div class="quiz-field">
+            <span class="quiz-section-label">באיזה אזור בירושלים אתה גר?</span>
+            ${pillOptionsHtml("area", AREA_OPTIONS, quiz.area, false)}
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
+          <button type="button" class="quiz-btn primary" id="qNext" ${quiz.ageRange && quiz.grade && quiz.area ? "" : "disabled"}>הבא</button>
+        </div>
+      `;
+    } else if (s >= 2 && s <= 6) {
+      const qIndex = s - 2;
+      const q = VIBE_QUESTIONS[qIndex];
+      const selected = quiz.vibeAnswers[qIndex];
+      html = `
+        ${quizProgressHtml(s)}
+        <p class="quiz-eyebrow">שאלה ${qIndex + 1} מ-5</p>
+        <h1 class="quiz-title">${q.prompt}</h1>
+        <div class="quiz-options">
+          ${q.options.map(opt => `
+            <button type="button" class="quiz-option" aria-pressed="${selected === opt.vibe}" data-vibe-opt="${opt.vibe}">${opt.text}</button>
+          `).join("")}
+        </div>
+        <div class="quiz-nav">
+          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
+          <button type="button" class="quiz-btn primary" id="qNext" ${selected ? "" : "disabled"}>הבא</button>
+        </div>
+      `;
+    } else if (s === 7) {
+      html = `
+        ${quizProgressHtml(7)}
+        <h1 class="quiz-title">מה מעניין אותך?</h1>
+        <p class="quiz-subtitle">בחר את כל מה שרלוונטי</p>
+        <div class="quiz-body">
+          <div class="quiz-field">
+            <span class="quiz-section-label">אילו סוגי פעילויות הכי מעניינים אותך?</span>
+            ${pillOptionsHtml("atype", ACTIVITY_TYPE_OPTIONS, quiz.activityTypes, true)}
+          </div>
+          <div class="quiz-field">
+            <span class="quiz-section-label">באילו תחומים?</span>
+            ${pillOptionsHtml("topic", TOPIC_OPTIONS, quiz.interestTopics, true)}
+            <input type="text" id="qOther" value="${quiz.interestOther}" placeholder="אחר (טקסט חופשי)">
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button type="button" class="quiz-btn secondary" id="qBack">הקודם</button>
+          <button type="button" class="quiz-btn primary" id="qNext">סיימתי</button>
+        </div>
+      `;
+    } else if (s === 8) {
+      html = `
+        <div class="quiz-result">
+          <div class="emoji">🎉</div>
+          <h1 class="quiz-title">מעולה, סיימנו!</h1>
+          <p class="quiz-subtitle">האפליקציה מוכנה בשבילך, מותאמת אישית</p>
+        </div>
+        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qEnter">כניסה לאפליקציה</button></div>
+      `;
+    }
+
+    quizContentEl.innerHTML = html;
+    wireQuizStep();
+  }
+
+  function wireQuizStep() {
+    const s = quiz.step;
+    const nextBtn = document.getElementById("qNext");
+    const backBtn = document.getElementById("qBack");
+    const enterBtn = document.getElementById("qEnter");
+
+    if (backBtn) backBtn.addEventListener("click", () => { quiz.step--; renderQuiz(); });
+    if (enterBtn) enterBtn.addEventListener("click", () => showApp(quiz.greetingName));
+
+    if (s === 1) {
+      document.getElementById("qFirstName").addEventListener("input", e => quiz.firstName = e.target.value);
+      document.getElementById("qLastName").addEventListener("input", e => quiz.lastName = e.target.value);
+      quizContentEl.querySelectorAll("[data-age]").forEach(btn =>
+        btn.addEventListener("click", () => { quiz.ageRange = btn.dataset.age; renderQuiz(); }));
+      quizContentEl.querySelectorAll("[data-grade]").forEach(btn =>
+        btn.addEventListener("click", () => { quiz.grade = btn.dataset.grade; renderQuiz(); }));
+      quizContentEl.querySelectorAll("[data-area]").forEach(btn =>
+        btn.addEventListener("click", () => { quiz.area = btn.dataset.area; renderQuiz(); }));
+      if (nextBtn) nextBtn.addEventListener("click", () => { quiz.step++; renderQuiz(); });
+    } else if (s >= 2 && s <= 6) {
+      const qIndex = s - 2;
+      quizContentEl.querySelectorAll("[data-vibe-opt]").forEach(btn =>
+        btn.addEventListener("click", () => { quiz.vibeAnswers[qIndex] = btn.dataset.vibeOpt; renderQuiz(); }));
+      if (nextBtn) nextBtn.addEventListener("click", () => { quiz.step++; renderQuiz(); });
+    } else if (s === 7) {
+      quizContentEl.querySelectorAll("[data-atype]").forEach(btn =>
+        btn.addEventListener("click", () => {
+          const v = btn.dataset.atype;
+          const i = quiz.activityTypes.indexOf(v);
+          if (i === -1) quiz.activityTypes.push(v); else quiz.activityTypes.splice(i, 1);
+          renderQuiz();
+        }));
+      quizContentEl.querySelectorAll("[data-topic]").forEach(btn =>
+        btn.addEventListener("click", () => {
+          const v = btn.dataset.topic;
+          const i = quiz.interestTopics.indexOf(v);
+          if (i === -1) quiz.interestTopics.push(v); else quiz.interestTopics.splice(i, 1);
+          renderQuiz();
+        }));
+      document.getElementById("qOther").addEventListener("input", e => quiz.interestOther = e.target.value);
+      if (nextBtn) nextBtn.addEventListener("click", finishQuiz);
+    } else if (s === 0) {
+      if (nextBtn) nextBtn.addEventListener("click", () => { quiz.step = 1; renderQuiz(); });
+    }
+  }
+
+  function computeVibeResult() {
+    const counts = { energetic: 0, balanced: 0, serious: 0 };
+    quiz.vibeAnswers.forEach(v => counts[v]++);
+    const max = Math.max(counts.energetic, counts.balanced, counts.serious);
+    const winners = Object.keys(counts).filter(k => counts[k] === max);
+    if (winners.length === 1) return winners[0];
+    const tieBreak = { "12-13": "energetic", "14-15": "energetic", "16-17": "balanced", "18+": "serious" };
+    return tieBreak[quiz.ageRange] || "balanced";
+  }
+
+  async function finishQuiz() {
+    const vibeResult = computeVibeResult();
+    await sb.from("user_preferences").insert({
+      user_id: quiz.userId,
+      first_name: quiz.firstName || null,
+      last_name: quiz.lastName || null,
+      age_range: quiz.ageRange,
+      grade: quiz.grade,
+      area: quiz.area,
+      vibe_q1: quiz.vibeAnswers[0], vibe_q2: quiz.vibeAnswers[1], vibe_q3: quiz.vibeAnswers[2],
+      vibe_q4: quiz.vibeAnswers[3], vibe_q5: quiz.vibeAnswers[4],
+      vibe_result: vibeResult,
+      activity_types: quiz.activityTypes,
+      interest_topics: quiz.interestTopics,
+      interest_other: quiz.interestOther || null
+    });
+    quiz.step = 8;
+    renderQuiz();
+  }
   </script>
 </body>
 </html>
