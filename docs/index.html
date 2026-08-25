@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="מה בי״ם — פעילות, חוגים ואירועים לבני נוער">
+  <meta name="theme-color" content="#F1F4F0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141815" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="מה בי״ם">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>מה בי״ם — תצוגת פעילות</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg: #F1F4F0;
+    --surface: #FFFFFF;
+    --surface-raised: #FFFFFF;
+    --ink: #1B2320;
+    --ink-soft: #59665C;
+    --ink-faint: #8A968C;
+    --accent: #DE5A3C;
+    --accent-ink: #FFFFFF;
+    --line: #DEE5DC;
+    --chip-bg: #E9EEE7;
+    --shadow: 220 25% 12%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141815;
+      --surface: #1E2420;
+      --surface-raised: #232A25;
+      --ink: #ECEFEA;
+      --ink-soft: #A8B2A9;
+      --ink-faint: #6E7A70;
+      --accent: #FF7A57;
+      --accent-ink: #1A100C;
+      --line: #303930;
+      --chip-bg: #283029;
+      --shadow: 0 0% 0%;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #141815;
+    --surface: #1E2420;
+    --surface-raised: #232A25;
+    --ink: #ECEFEA;
+    --ink-soft: #A8B2A9;
+    --ink-faint: #6E7A70;
+    --accent: #FF7A57;
+    --accent-ink: #1A100C;
+    --line: #303930;
+    --chip-bg: #283029;
+    --shadow: 0 0% 0%;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Heebo", "Segoe UI", system-ui, sans-serif;
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px 40px;
+  }
+
+  .frame {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  .eyebrow strong {
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .arrow-btn {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px hsl(var(--shadow) / 0.08);
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .arrow-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .arrow-btn:active {
+    transform: translateY(0) scale(0.96);
+  }
+
+  .arrow-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .arrow-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .card {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 22px 20px 20px;
+    box-shadow: 0 10px 30px hsl(var(--shadow) / 0.10);
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block: 0;
+    width: 6px;
+    background: var(--cat-color, var(--accent));
+  }
+
+  .card.fade-in { animation: cardIn 0.22s ease; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card.fade-in { animation: none; }
+    .arrow-btn { transition: none; }
+  }
+
+  .kind-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .kind-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--cat-color, var(--accent));
+    color: #fff;
+  }
+
+  .category-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--chip-bg);
+    padding: 5px 11px;
+    border-radius: 999px;
+  }
+
+  h1 {
+    font-family: "Suez One", "Heebo", serif;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.25;
+    text-wrap: balance;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+
+  .short-desc {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0 0 16px;
+  }
+
+  .facts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 14px;
+  }
+
+  .fact {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .fact .ic {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    stroke: var(--ink-faint);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .fact b {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fact .sub {
+    color: var(--ink-faint);
+    font-size: 12.5px;
+  }
+
+  .desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin: 0 0 16px;
+  }
+
+  .cta-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .cta {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: filter 0.15s ease;
+  }
+
+  .cta:hover { filter: brightness(1.06); }
+  .cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .cta.secondary {
+    background: var(--chip-bg);
+    color: var(--ink);
+  }
+
+  .cta.disabled {
+    background: var(--chip-bg);
+    color: var(--ink-faint);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dots button {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: none;
+    padding: 0;
+    background: var(--line);
+    cursor: pointer;
+  }
+
+  .dots button[aria-current="true"] {
+    width: 22px;
+    background: var(--accent);
+  }
+
+  .counter {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note {
+    max-width: 420px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="eyebrow">מה בי״ם <strong>· תצוגת נתונים מהדאטהבייס</strong></div>
+
+    <div class="stage">
+      <button class="arrow-btn" id="btnRight" aria-label="הפעילות הקודמת">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+
+      <div class="card fade-in" id="card"></div>
+
+      <button class="arrow-btn" id="btnLeft" aria-label="הפעילות הבאה">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+    </div>
+
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter"></div>
+
+    <p class="note">דמו סטטי לבדיקת עיצוב — הנתונים הם צילום מצב נוכחי של טבלת activities בסופאבייס, לא חיבור חי.</p>
+  </div>
+
+  <script>
+  const activities = [
+    {
+      item_kind: "activity", schedule_type: "recurring", category: "tech",
+      topics: ["רובוטיקה", "תכנות"],
+      title: "חוג רובוטיקה לנוער",
+      short_description: "בונים ומתכנתים רובוטים בסביבה תומכת לבני נוער",
+      description: "חוג שבועי לבני נוער החוקר עולם הרובוטיקה: תכנון, הרכבה ותכנות רובוטים באמצעות ערכות לגו ופייתון. אין צורך בידע קודם.",
+      organization_name: 'מתנ"ס בית הכרם',
+      location_name: 'מתנ"ס בית הכרם', neighborhood: "בית הכרם",
+      start_date: "2026-09-01", end_date: null, start_time: "17:30", end_time: "19:00",
+      recurrence_freq: "weekly", recurrence_days: [1], sessions_count: null,
+      age_min: 12, age_max: 17, is_accessible: true,
+      price: 150, price_period: "monthly",
+      registration_required: true, registration_url: "https://example.org/register/robotics-club",
+      registration_deadline: null, capacity: null, spots_left: null,
+      source_url: null, source_name: 'מתנ"ס ירושלים'
+    },
+    {
+      item_kind: "event", schedule_type: "one_time", category: "stage",
+      topics: ["הופעות"],
+      title: "הופעת מוזיקה בפארק המסילה",
+      short_description: "ערב מוזיקה חי לכל המשפחה בפארק המסילה",
+      description: "ערב קיץ עם הופעות חיות של להקות מקומיות, בכניסה חופשית, לכל הגילאים. יש להביא מצעים לישיבה על הדשא.",
+      organization_name: "עיריית ירושלים",
+      location_name: "פארק המסילה", neighborhood: "המושבה הגרמנית",
+      start_date: "2026-09-10", end_date: "2026-09-10", start_time: "20:00", end_time: "22:00",
+      recurrence_freq: "none", recurrence_days: null, sessions_count: 1,
+      age_min: null, age_max: null, is_accessible: null,
+      price: 0, price_period: null,
+      registration_required: false, registration_url: null,
+      registration_deadline: null, capacity: null, spots_left: null,
+      source_url: "https://www.jerusalem.muni.il/events/park-mesila-concert", source_name: null
+    },
+    {
+      item_kind: "activity", schedule_type: "one_time", category: "art",
+      topics: ["צילום"],
+      title: "סדנת צילום חד־פעמית לנוער",
+      short_description: "סדנה מעשית ללימוד יסודות הצילום הדיגיטלי",
+      description: "סדנה בת מפגש אחד ללימוד יסודות הקומפוזיציה, תאורה ועריכה בצילום דיגיטלי, כולל תרגול מעשי בשטח עם מצלמות סמארטפון.",
+      organization_name: "בית הנוער אחת העם",
+      location_name: "בית הנוער אחת העם", neighborhood: "קטמון",
+      start_date: "2026-09-15", end_date: "2026-09-15", start_time: "16:00", end_time: "19:00",
+      recurrence_freq: "none", recurrence_days: null, sessions_count: 1,
+      age_min: 13, age_max: 18, is_accessible: false,
+      price: 60, price_period: "total",
+      registration_required: true, registration_url: "https://example.org/register/photo-workshop",
+      registration_deadline: "2026-09-13T23:59:00+03:00", capacity: 15, spots_left: 8,
+      source_url: null, source_name: null
+    }
+  ];
+
+  const CATEGORY_LABEL = {
+    sport: "ספורט", tech: "טכנולוגיה ומדע", art: "אומנות ויצירה", music: "מוזיקה",
+    stage: "תיאטרון ומופעים", nature: "טבע וטיולים", volunteer: "התנדבות וקהילה",
+    leadership: "מנהיגות ונוער", learning: "לימודים והעשרה", gaming: "משחקים וגיימינג",
+    wellbeing: "רווחה ותמיכה"
+  };
+
+  const CATEGORY_COLOR = {
+    sport: "#E08A2C", tech: "#3457D5", art: "#C23B7A", music: "#7A4FE0",
+    stage: "#DE5A3C", nature: "#3E9B5C", volunteer: "#1E9E8B", leadership: "#C0392B",
+    learning: "#2A9DB8", gaming: "#8E44AD", wellbeing: "#5B9279"
+  };
+
+  const DAY_NAME = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+
+  function kindLabel(a) {
+    if (a.item_kind === "event") return "אירוע";
+    if (a.item_kind === "activity" && a.schedule_type === "recurring") return "חוג";
+    return "פעילות";
+  }
+
+  function fmtDate(iso) {
+    const d = new Date(iso + "T00:00:00");
+    return new Intl.DateTimeFormat("he-IL", { day: "numeric", month: "long", year: "numeric" }).format(d);
+  }
+
+  function fmtTimeRange(a) {
+    return a.end_time ? `${a.start_time.slice(0,5)}–${a.end_time.slice(0,5)}` : `מתחיל ב-${a.start_time.slice(0,5)}`;
+  }
+
+  function whenText(a) {
+    if (a.schedule_type === "recurring") {
+      const days = (a.recurrence_days || []).map(d => DAY_NAME[d]).join(", ");
+      return { main: `כל יום ${days || "—"}`, sub: fmtTimeRange(a) + " · ללא תאריך סיום" };
+    }
+    const range = a.end_date && a.end_date !== a.start_date
+      ? `${fmtDate(a.start_date)} – ${fmtDate(a.end_date)}`
+      : fmtDate(a.start_date);
+    return { main: range, sub: fmtTimeRange(a) };
+  }
+
+  function ageText(a) {
+    if (a.age_min == null && a.age_max == null) return "כל הגילאים";
+    if (a.age_min != null && a.age_max != null) return `גילאי ${a.age_min}–${a.age_max}`;
+    if (a.age_min != null) return `מגיל ${a.age_min}`;
+    return `עד גיל ${a.age_max}`;
+  }
+
+  function priceText(a) {
+    if (a.price == null) return "המחיר לא פורסם";
+    if (a.price === 0) return "חינם";
+    const period = { total: "לכל התקופה", per_session: "למפגש", monthly: "לחודש" }[a.price_period] || "";
+    return `${a.price} ₪${period ? " · " + period : ""}`;
+  }
+
+  function ctaInfo(a) {
+    if (a.registration_url) return { href: a.registration_url, label: "להרשמה", kind: "primary" };
+    if (a.source_url) return { href: a.source_url, label: "לפרטים ולמקור", kind: "secondary" };
+    return { href: null, label: "פרטי הרשמה יתפרסמו בקרוב", kind: "disabled" };
+  }
+
+  const cardEl = document.getElementById("card");
+  const dotsEl = document.getElementById("dots");
+  const counterEl = document.getElementById("counter");
+  let index = 0;
+
+  function render() {
+    const a = activities[index];
+    const when = whenText(a);
+    const cta = ctaInfo(a);
+    const color = CATEGORY_COLOR[a.category] || "var(--accent)";
+
+    cardEl.style.setProperty("--cat-color", color);
+    cardEl.classList.remove("fade-in");
+    void cardEl.offsetWidth;
+    cardEl.classList.add("fade-in");
+
+    cardEl.innerHTML = `
+      <div class="kind-row">
+        <span class="kind-badge">${kindLabel(a)}</span>
+        <span class="category-label">${CATEGORY_LABEL[a.category] || a.category}</span>
+      </div>
+      <h1>${a.title}</h1>
+      <p class="short-desc">${a.short_description || ""}</p>
+      <div class="facts">
+        <div class="fact">
+          <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+          <div><b>${when.main}</b><br><span class="sub">${when.sub}</span></div>
+        </div>
+        <div class="fact">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11a7 7 0 1 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <div><b>${a.location_name}</b>${a.neighborhood ? `<br><span class="sub">${a.neighborhood}</span>` : ""}</div>
+        </div>
+        <div class="fact">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15.3 14.2c2.9.4 4.7 2.4 4.7 5.8"/></svg>
+          <div><b>${ageText(a)}</b></div>
+        </div>
+        <div class="fact">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 6.5c0-1.9-2.2-3.5-5-3.5s-5 1.6-5 3.5S9.2 10 12 10s5 1.6 5 3.5-2.2 3.5-5 3.5-5-1.6-5-3.5"/></svg>
+          <div><b>${priceText(a)}</b>${a.capacity ? `<br><span class="sub">נותרו ${a.spots_left ?? "—"} מתוך ${a.capacity} מקומות</span>` : ""}</div>
+        </div>
+      </div>
+      <p class="desc">${a.description}</p>
+      <div class="cta-row">
+        ${cta.href
+          ? `<a class="cta ${cta.kind === "secondary" ? "secondary" : ""}" href="${cta.href}" target="_blank" rel="noopener">${cta.label}</a>`
+          : `<span class="cta disabled">${cta.label}</span>`}
+      </div>
+    `;
+
+    dotsEl.innerHTML = activities.map((_, i) =>
+      `<button aria-current="${i === index}" aria-label="עבור לפעילות ${i + 1}" data-i="${i}"></button>`
+    ).join("");
+    counterEl.textContent = `${index + 1} מתוך ${activities.length}`;
+  }
+
+  function go(delta) {
+    index = (index + delta + activities.length) % activities.length;
+    render();
+  }
+
+  document.getElementById("btnRight").addEventListener("click", () => go(-1));
+  document.getElementById("btnLeft").addEventListener("click", () => go(1));
+  dotsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-i]");
+    if (btn) { index = Number(btn.dataset.i); render(); }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") go(1);
+    if (e.key === "ArrowRight") go(-1);
+  });
+
+  let touchX = null;
+  document.querySelector(".stage").addEventListener("touchstart", (e) => {
+    touchX = e.touches[0].clientX;
+  }, { passive: true });
+  document.querySelector(".stage").addEventListener("touchend", (e) => {
+    if (touchX == null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) go(dx > 0 ? -1 : 1);
+    touchX = null;
+  });
+
+  render();
+  </script>
+</body>
+</html>

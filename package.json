@@ -1,0 +1,12 @@
+{
+  "name": "mah-baim-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PWA preview build for the מה בי\"ם activities app",
+  "scripts": {
+    "make-icons": "node tools/make-icons.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.3"
+  }
+}
