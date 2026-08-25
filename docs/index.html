@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
   :root {
     --bg: #F1F4F0;
@@ -30,6 +31,7 @@
     --line: #DEE5DC;
     --chip-bg: #E9EEE7;
     --shadow: 220 25% 12%;
+    --danger: #C0392B;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -45,6 +47,7 @@
       --line: #303930;
       --chip-bg: #283029;
       --shadow: 0 0% 0%;
+      --danger: #FF6B5E;
     }
   }
 
@@ -60,6 +63,7 @@
     --line: #303930;
     --chip-bg: #283029;
     --shadow: 0 0% 0%;
+    --danger: #FF6B5E;
   }
 
   * { box-sizing: border-box; }
@@ -101,6 +105,168 @@
   .eyebrow strong {
     color: var(--ink-soft);
     font-weight: 700;
+  }
+
+  .greeting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .greeting-row .hi {
+    font-family: "Suez One", "Heebo", serif;
+    font-size: 17px;
+    color: var(--ink);
+  }
+
+  .signout-btn {
+    border: none;
+    background: none;
+    color: var(--ink-faint);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .auth-screen {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 8px 4px 32px;
+  }
+
+  .auth-logo {
+    font-family: "Suez One", "Heebo", serif;
+    font-size: 30px;
+    color: var(--ink);
+    text-align: center;
+  }
+
+  .auth-logo span {
+    display: block;
+    font-family: "Heebo", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    width: 100%;
+    background: var(--chip-bg);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .auth-tab {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 9px 0;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .auth-tab[aria-selected="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 4px hsl(var(--shadow) / 0.12);
+  }
+
+  .auth-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .auth-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .auth-field input {
+    height: 46px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .auth-field input:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .auth-error {
+    font-size: 13px;
+    color: var(--danger);
+    text-align: center;
+    min-height: 1em;
+  }
+
+  .auth-submit {
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .auth-submit:disabled { opacity: 0.6; cursor: default; }
+
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    color: var(--ink-faint);
+    font-size: 12.5px;
+  }
+
+  .auth-divider::before, .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .guest-btn {
+    width: 100%;
+    height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
   }
 
   .search-bar {
@@ -444,7 +610,40 @@
   </style>
 </head>
 <body>
-  <div class="frame">
+  <div class="frame" id="authScreen" hidden>
+    <div class="auth-screen">
+      <div class="auth-logo">מה בי״ם<span>פעילות, חוגים ואירועים לבני נוער</span></div>
+
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab" id="tabLogin" role="tab" aria-selected="true">התחברות</button>
+        <button type="button" class="auth-tab" id="tabSignup" role="tab" aria-selected="false">הרשמה</button>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <div class="auth-field">
+          <label for="authUsername">שם משתמש</label>
+          <input type="text" id="authUsername" autocomplete="username" required>
+        </div>
+        <div class="auth-field">
+          <label for="authPassword">סיסמה</label>
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6">
+        </div>
+        <p class="auth-error" id="authError"></p>
+        <button type="submit" class="auth-submit" id="authSubmit">התחברות</button>
+      </form>
+
+      <div class="auth-divider">או</div>
+
+      <button type="button" class="guest-btn" id="guestBtn">המשך כאורח</button>
+    </div>
+  </div>
+
+  <div class="frame" id="appRoot" hidden>
+    <div class="greeting-row">
+      <span class="hi" id="userGreeting"></span>
+      <button type="button" class="signout-btn" id="signoutBtn">התנתקות</button>
+    </div>
+
     <div class="eyebrow">מה בי״ם <strong>· תצוגת נתונים מהדאטהבייס</strong></div>
 
     <div class="search-bar">
@@ -1014,9 +1213,132 @@
     touchX = null;
   });
 
-  renderCategoryChips();
-  renderTopicChips();
-  render();
+  function initAppUI() {
+    renderCategoryChips();
+    renderTopicChips();
+    render();
+  }
+
+  // ---- Auth ----
+  const SUPABASE_URL = "https://soncpzmasqcjxcawhqqw.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_Js1OgoSr1x7INhSfR_hfwQ_0aTH1vIW";
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const authScreenEl = document.getElementById("authScreen");
+  const appRootEl = document.getElementById("appRoot");
+  const userGreetingEl = document.getElementById("userGreeting");
+  const authForm = document.getElementById("authForm");
+  const authUsernameEl = document.getElementById("authUsername");
+  const authPasswordEl = document.getElementById("authPassword");
+  const authErrorEl = document.getElementById("authError");
+  const authSubmitEl = document.getElementById("authSubmit");
+  const tabLoginEl = document.getElementById("tabLogin");
+  const tabSignupEl = document.getElementById("tabSignup");
+  const guestBtnEl = document.getElementById("guestBtn");
+  const signoutBtnEl = document.getElementById("signoutBtn");
+
+  let authMode = "login";
+  let appStarted = false;
+
+  function usernameToEmail(username) {
+    return username.trim().toLowerCase().replace(/\s+/g, "_") + "@mahbaim.app";
+  }
+
+  function setAuthMode(mode) {
+    authMode = mode;
+    tabLoginEl.setAttribute("aria-selected", mode === "login");
+    tabSignupEl.setAttribute("aria-selected", mode === "signup");
+    authSubmitEl.textContent = mode === "login" ? "התחברות" : "הרשמה";
+    authPasswordEl.setAttribute("autocomplete", mode === "login" ? "current-password" : "new-password");
+    authErrorEl.textContent = "";
+  }
+
+  tabLoginEl.addEventListener("click", () => setAuthMode("login"));
+  tabSignupEl.addEventListener("click", () => setAuthMode("signup"));
+
+  function showApp(greetingName) {
+    authScreenEl.hidden = true;
+    appRootEl.hidden = false;
+    userGreetingEl.textContent = greetingName ? `היי, ${greetingName} 👋` : "היי, אורח 👋";
+    if (!appStarted) { appStarted = true; initAppUI(); }
+  }
+
+  function showAuth() {
+    appRootEl.hidden = true;
+    authScreenEl.hidden = false;
+    authForm.reset();
+    authErrorEl.textContent = "";
+  }
+
+  authForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = authUsernameEl.value.trim();
+    const password = authPasswordEl.value;
+    if (!username || !password) return;
+
+    authSubmitEl.disabled = true;
+    authErrorEl.textContent = "";
+    const email = usernameToEmail(username);
+
+    try {
+      if (authMode === "signup") {
+        const { data: existing } = await sb.from("users").select("id").eq("username", username).maybeSingle();
+        if (existing) {
+          authErrorEl.textContent = "שם המשתמש הזה תפוס, נסה שם אחר.";
+          return;
+        }
+        const { data, error } = await sb.auth.signUp({
+          email, password,
+          options: { data: { username, full_name: username } }
+        });
+        if (error) throw error;
+        if (!data.session) {
+          authErrorEl.textContent = "ההרשמה בוצעה, אך נדרש עוד אימות. פנה למנהל המערכת.";
+          return;
+        }
+        localStorage.removeItem("mb_guest");
+        showApp(username);
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        localStorage.removeItem("mb_guest");
+        const name = data.user?.user_metadata?.username || username;
+        showApp(name);
+      }
+    } catch (err) {
+      authErrorEl.textContent = authMode === "login"
+        ? "שם משתמש או סיסמה שגויים."
+        : "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה של 6 תווים לפחות.";
+    } finally {
+      authSubmitEl.disabled = false;
+    }
+  });
+
+  guestBtnEl.addEventListener("click", () => {
+    localStorage.setItem("mb_guest", "1");
+    showApp(null);
+  });
+
+  signoutBtnEl.addEventListener("click", async () => {
+    localStorage.removeItem("mb_guest");
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) await sb.auth.signOut();
+    showAuth();
+  });
+
+  (async function boot() {
+    if (localStorage.getItem("mb_guest") === "1") {
+      showApp(null);
+      return;
+    }
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      const name = session.user?.user_metadata?.username || session.user?.email;
+      showApp(name);
+    } else {
+      showAuth();
+    }
+  })();
   </script>
 </body>
 </html>
