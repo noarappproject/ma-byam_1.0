@@ -123,6 +123,47 @@
     color: var(--ink);
   }
 
+  body.has-bottom-nav { padding-bottom: 88px; }
+
+  .bottom-nav {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+    z-index: 50;
+  }
+
+  .bottom-nav-inner {
+    display: flex;
+    width: 100%;
+    max-width: 420px;
+    justify-content: space-around;
+  }
+
+  .bottom-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    border: none;
+    background: none;
+    color: var(--ink-faint);
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 4px;
+    border-radius: 10px;
+  }
+
+  .bottom-nav-btn .nav-icon { font-size: 20px; line-height: 1; }
+  .bottom-nav-btn[aria-current="true"] { color: var(--accent); }
+
   .nav-links {
     display: flex;
     align-items: center;
@@ -358,20 +399,15 @@
 
   .quiz-options {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .quiz-options.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    flex-flow: row wrap;
+    justify-content: center;
     gap: 10px;
   }
 
   .quiz-option {
-    width: 100%;
-    text-align: right;
-    padding: 13px 16px;
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 11px 16px;
     border-radius: 14px;
     border: 1px solid var(--line);
     background: var(--surface);
@@ -382,6 +418,38 @@
     cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
+
+  .quiz-select-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .quiz-select-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .quiz-select-field select {
+    width: 100%;
+    max-width: 260px;
+    height: 48px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    text-align: center;
+    text-align-last: center;
+    cursor: pointer;
+  }
+
+  .quiz-select-field select:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 1px; }
 
   .quiz-option[aria-pressed="true"] {
     border-color: var(--accent);
@@ -437,6 +505,107 @@
     border-radius: 999px;
     background: var(--chip-bg) center/cover no-repeat;
     border: 1px solid var(--line);
+  }
+
+  .profile-username {
+    font-family: "Suez One", "Heebo", serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  .profile-view-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .profile-view-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+
+  .profile-view-item span { color: var(--ink-faint); }
+  .profile-view-item b { color: var(--ink); font-weight: 600; }
+
+  .quiz-option.static { cursor: default; }
+
+  .settings-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 2px;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14.5px;
+    text-align: inherit;
+  }
+
+  .settings-row--nav { cursor: pointer; }
+  .settings-row--stack { flex-wrap: wrap; }
+
+  .settings-chevron {
+    color: var(--ink-faint);
+    font-size: 18px;
+  }
+
+  .settings-select {
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .quiz-option.compact {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .signout-row {
+    margin-top: 24px;
+    width: 100%;
+    height: 46px;
+    border: 1px solid var(--danger);
+    border-radius: 12px;
+    background: none;
+    color: var(--danger);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 14.5px;
+    cursor: pointer;
+  }
+
+  .settings-back {
+    align-self: flex-start;
+    border: none;
+    background: none;
+    color: var(--ink-faint);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px;
+    margin-bottom: 6px;
   }
 
   .quiz-add-row {
@@ -853,11 +1022,6 @@
   <div class="frame" id="appRoot" hidden>
     <div class="greeting-row">
       <span class="hi" id="userGreeting"></span>
-      <div class="nav-links">
-        <button type="button" class="signout-btn" id="profileBtn"></button>
-        <button type="button" class="signout-btn" id="settingsBtn"></button>
-        <button type="button" class="signout-btn" id="signoutBtn"></button>
-      </div>
     </div>
 
     <div class="eyebrow"><span id="eyebrowTitle"></span> <strong>· <span id="eyebrowSubText"></span></strong></div>
@@ -895,6 +1059,24 @@
   <div class="frame" id="settingsScreen" hidden>
     <div class="quiz-screen" id="settingsContent"></div>
   </div>
+
+  <div class="frame" id="accessibilityScreen" hidden>
+    <div class="quiz-screen" id="accessibilityContent"></div>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav" hidden>
+    <div class="bottom-nav-inner">
+      <button type="button" class="bottom-nav-btn" id="navHome" data-tab="home">
+        <span class="nav-icon">🏠</span><span id="navHomeLabel"></span>
+      </button>
+      <button type="button" class="bottom-nav-btn" id="navProfile" data-tab="profile">
+        <span class="nav-icon">👤</span><span id="navProfileLabel"></span>
+      </button>
+      <button type="button" class="bottom-nav-btn" id="navSettings" data-tab="settings">
+        <span class="nav-icon">⚙️</span><span id="navSettingsLabel"></span>
+      </button>
+    </div>
+  </nav>
 
   <script>
   const activities = [
@@ -1472,12 +1654,15 @@
       nameTitle: "מה השם שלך?", firstNameLabel: "שם פרטי (לא חובה)", lastNameLabel: "שם משפחה (לא חובה)",
       demoTitle: "כמה פרטים בסיסיים", demoSubtitle: "גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך",
       ageQLabel: "בן/בת כמה אתה?", gradeQLabel: "באיזו כיתה אתה?", areaQLabel: "באיזה אזור בירושלים אתה גר?",
-      typeOrPick: "בחר מהרשימה או הקלד",
+      typeOrPick: "בחר מהרשימה או הקלד", selectPlaceholder: "בחר…",
+      homeTab: "בית", accessibilityLabel: "נגישות", accessibilityTitle: "נגישות",
+      editProfileBtn: "עריכת פרופיל", cancelBtn: "ביטול",
+      currentUsernameLabel: "שם משתמש נוכחי", noneYet: "עדיין לא מולא",
       topicsTitle: "באילו תחומים אתה מתעניין?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך",
       addCustomTopicPlaceholder: "הוסף תחום משלך…", addBtn: "הוסף",
       activityTypesTitle: "אילו סוגי פעילויות הכי מעניינים אותך?", finishBtn: "סיימתי",
       outroTitle: "מעולה, סיימנו!", outroSubtitle: "האפליקציה מוכנה בשבילך, מותאמת אישית", enterAppBtn: "כניסה לאפליקציה",
-      gradeOptions: [["ז", "ז׳"], ["ח", "ח׳"], ["ט", "ט׳"], ["י", "י׳"], ["יא", "י\"א"], ["יב", "י\"ב"], ["not_studying", "לא לומד/ת כרגע"]],
+      gradeOptions: [["ז", "ז׳"], ["ח", "ח׳"], ["ט", "ט׳"], ["י", "י׳"], ["יא", "י״א"], ["יב", "י״ב"], ["not_studying", "לא לומד/ת כרגע"]],
       areaOptions: ["מרכז", "צפון", "דרום", "מזרח", "מערב"],
       activityTypeOptions: ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"],
       topicOptions: ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"],
@@ -1514,7 +1699,10 @@
       nameTitle: "ما اسمك؟", firstNameLabel: "الاسم الأول (اختياري)", lastNameLabel: "اسم العائلة (اختياري)",
       demoTitle: "بعض التفاصيل الأساسية", demoSubtitle: "هذه الخطوة أيضًا اختيارية — يمكن تركها فارغة والمتابعة",
       ageQLabel: "كم عمرك؟", gradeQLabel: "في أي صف أنت؟", areaQLabel: "في أي منطقة بالقدس تسكن؟",
-      typeOrPick: "اختر من القائمة أو اكتب",
+      typeOrPick: "اختر من القائمة أو اكتب", selectPlaceholder: "اختر…",
+      homeTab: "الرئيسية", accessibilityLabel: "إمكانية الوصول", accessibilityTitle: "إمكانية الوصول",
+      editProfileBtn: "تعديل الملف الشخصي", cancelBtn: "إلغاء",
+      currentUsernameLabel: "اسم المستخدم الحالي", noneYet: "لم تتم تعبئته بعد",
       topicsTitle: "بأي مواضيع تهتم؟", topicsSubtitle: "يمكن اختيار أكثر من واحد، ويمكن أيضًا إضافة موضوع خاص بك",
       addCustomTopicPlaceholder: "أضف موضوعك الخاص…", addBtn: "إضافة",
       activityTypesTitle: "ما أنواع الأنشطة التي تهمك أكثر؟", finishBtn: "انتهيت",
@@ -1556,7 +1744,10 @@
       nameTitle: "What's your name?", firstNameLabel: "First name (optional)", lastNameLabel: "Last name (optional)",
       demoTitle: "A few basic details", demoSubtitle: "This step is optional too — you can leave it blank and continue",
       ageQLabel: "How old are you?", gradeQLabel: "What grade are you in?", areaQLabel: "Which area of Jerusalem do you live in?",
-      typeOrPick: "Pick from the list or type your own",
+      typeOrPick: "Pick from the list or type your own", selectPlaceholder: "Select…",
+      homeTab: "Home", accessibilityLabel: "Accessibility", accessibilityTitle: "Accessibility",
+      editProfileBtn: "Edit profile", cancelBtn: "Cancel",
+      currentUsernameLabel: "Current username", noneYet: "Not filled in yet",
       topicsTitle: "What topics are you interested in?", topicsSubtitle: "You can pick several, and add your own topic too",
       addCustomTopicPlaceholder: "Add your own topic…", addBtn: "Add",
       activityTypesTitle: "What kinds of activities interest you most?", finishBtn: "Done",
@@ -1598,7 +1789,10 @@
       nameTitle: "Как вас зовут?", firstNameLabel: "Имя (необязательно)", lastNameLabel: "Фамилия (необязательно)",
       demoTitle: "Немного базовой информации", demoSubtitle: "Этот шаг тоже необязателен — можно оставить пустым и продолжить",
       ageQLabel: "Сколько вам лет?", gradeQLabel: "В каком вы классе?", areaQLabel: "В каком районе Иерусалима вы живёте?",
-      typeOrPick: "Выберите из списка или введите свой вариант",
+      typeOrPick: "Выберите из списка или введите свой вариант", selectPlaceholder: "Выбрать…",
+      homeTab: "Главная", accessibilityLabel: "Специальные возможности", accessibilityTitle: "Специальные возможности",
+      editProfileBtn: "Редактировать профиль", cancelBtn: "Отмена",
+      currentUsernameLabel: "Текущее имя пользователя", noneYet: "Пока не заполнено",
       topicsTitle: "Какие темы вас интересуют?", topicsSubtitle: "Можно выбрать несколько, а также добавить свою тему",
       addCustomTopicPlaceholder: "Добавьте свою тему…", addBtn: "Добавить",
       activityTypesTitle: "Какие виды занятий вам интереснее всего?", finishBtn: "Готово",
@@ -1615,6 +1809,8 @@
       usernameUpdated: "Имя пользователя обновлено", passwordUpdated: "Пароль обновлён"
     }
   };
+
+  const AGE_VALUES = ["10", "11", "12", "13", "14", "15", "16", "17", "18"];
 
   let currentLang = localStorage.getItem("mb_lang") || "he";
   function L() { return STRINGS[currentLang]; }
@@ -1635,9 +1831,9 @@
     document.getElementById("authSubmit").textContent = authMode === "signup" ? t.tabSignup : t.tabLogin;
     document.getElementById("authOrText").textContent = t.or;
     document.getElementById("guestBtn").textContent = t.guestBtn;
-    document.getElementById("profileBtn").textContent = t.profileBtn;
-    document.getElementById("settingsBtn").textContent = t.settingsBtn;
-    document.getElementById("signoutBtn").textContent = t.signOut;
+    document.getElementById("navHomeLabel").textContent = t.homeTab;
+    document.getElementById("navProfileLabel").textContent = t.profileBtn;
+    document.getElementById("navSettingsLabel").textContent = t.settingsBtn;
     document.getElementById("eyebrowTitle").textContent = t.appTitle;
     document.getElementById("eyebrowSubText").textContent = t.eyebrowSub;
     document.getElementById("searchInput").placeholder = t.searchPlaceholder;
@@ -1679,6 +1875,9 @@
     if (categoryChipsEl) { renderCategoryChips(); renderTopicChips(); }
     if (cardEl && appStarted) render();
     if (quiz && !quizScreenEl.hidden) renderQuiz();
+    if (profileState && !profileScreenEl.hidden) renderProfile();
+    if (!settingsScreenEl.hidden) renderSettings();
+    if (!accessibilityScreenEl.hidden) renderAccessibility();
   }
 
   applyDocLang();
@@ -1694,13 +1893,16 @@
   const tabLoginEl = document.getElementById("tabLogin");
   const tabSignupEl = document.getElementById("tabSignup");
   const guestBtnEl = document.getElementById("guestBtn");
-  const signoutBtnEl = document.getElementById("signoutBtn");
-  const profileBtnEl = document.getElementById("profileBtn");
-  const settingsBtnEl = document.getElementById("settingsBtn");
   const profileScreenEl = document.getElementById("profileScreen");
   const settingsScreenEl = document.getElementById("settingsScreen");
+  const accessibilityScreenEl = document.getElementById("accessibilityScreen");
   const profileContentEl = document.getElementById("profileContent");
   const settingsContentEl = document.getElementById("settingsContent");
+  const accessibilityContentEl = document.getElementById("accessibilityContent");
+  const bottomNavEl = document.getElementById("bottomNav");
+  const navHomeEl = document.getElementById("navHome");
+  const navProfileEl = document.getElementById("navProfile");
+  const navSettingsEl = document.getElementById("navSettings");
 
   let authMode = "login";
   let appStarted = false;
@@ -1723,16 +1925,26 @@
   tabLoginEl.addEventListener("click", () => setAuthMode("login"));
   tabSignupEl.addEventListener("click", () => setAuthMode("signup"));
 
+  function isGuestMode() { return localStorage.getItem("mb_guest") === "1"; }
+
+  function setActiveTab(tab) {
+    navHomeEl.setAttribute("aria-current", tab === "home");
+    navProfileEl.setAttribute("aria-current", tab === "profile");
+    navSettingsEl.setAttribute("aria-current", tab === "settings");
+  }
+
   function showApp(greetingName) {
     quizScreenEl.hidden = true;
     authScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
     appRootEl.hidden = false;
     userGreetingEl.textContent = greetingName ? L().greeting(greetingName) : L().guestGreeting;
-    const isGuest = localStorage.getItem("mb_guest") === "1";
-    profileBtnEl.hidden = isGuest;
-    settingsBtnEl.hidden = isGuest;
+    const guest = isGuestMode();
+    bottomNavEl.hidden = guest;
+    document.body.classList.toggle("has-bottom-nav", !guest);
+    setActiveTab("home");
     if (!appStarted) { appStarted = true; initAppUI(); }
   }
 
@@ -1741,10 +1953,17 @@
     quizScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
+    bottomNavEl.hidden = true;
+    document.body.classList.remove("has-bottom-nav");
     authScreenEl.hidden = false;
     authForm.reset();
     setAuthMode("login");
   }
+
+  navHomeEl.addEventListener("click", () => showApp(userProfile?.username || null));
+  navProfileEl.addEventListener("click", showProfile);
+  navSettingsEl.addEventListener("click", showSettings);
 
   // Registered users (login or signup) answer the onboarding questionnaire
   // exactly once; guests skip it entirely, since guest data is never collected.
@@ -1815,19 +2034,25 @@
     showApp(null);
   });
 
-  signoutBtnEl.addEventListener("click", async () => {
+  async function doSignOut() {
     localStorage.removeItem("mb_guest");
     const { data: { session } } = await sb.auth.getSession();
     if (session) await sb.auth.signOut();
     showAuth();
-  });
+  }
 
   // ---- Profile ----
   let profileState = null;
+  let profileMode = "view";
 
   async function showProfile() {
     appRootEl.hidden = true;
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
     profileScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    setActiveTab("profile");
+    profileMode = "view";
     const { data: prefs } = await sb.from("user_preferences").select("*").eq("user_id", currentUserId).maybeSingle();
     const gradeMatch = L().gradeOptions.find(g => g[0] === prefs?.grade);
     profileState = {
@@ -1840,21 +2065,54 @@
     renderProfile();
   }
 
+  function staticChipsHtml(values) {
+    if (!values.length) return `<p class="quiz-subtitle">${L().noneYet}</p>`;
+    return `<div class="quiz-options">${values.map(v => `<span class="quiz-option static" aria-pressed="true">${v}</span>`).join("")}</div>`;
+  }
+
   function renderProfile() {
     const t = L();
+    const avatarStyle = userProfile?.avatar_url ? `background-image:url('${userProfile.avatar_url}')` : "";
+
+    if (profileMode === "view") {
+      profileContentEl.innerHTML = `
+        <div class="profile-avatar-row">
+          <div class="profile-avatar" style="${avatarStyle}"></div>
+          <div class="profile-username">${userProfile?.username || ""}</div>
+        </div>
+        <div class="profile-view-list">
+          <div class="profile-view-item"><span>${t.firstNameLabel}</span><b>${profileState.firstName || t.noneYet}</b></div>
+          <div class="profile-view-item"><span>${t.lastNameLabel}</span><b>${profileState.lastName || t.noneYet}</b></div>
+          <div class="profile-view-item"><span>${t.ageQLabel}</span><b>${profileState.ageRange || t.noneYet}</b></div>
+          <div class="profile-view-item"><span>${t.gradeQLabel}</span><b>${profileState.gradeLabel || t.noneYet}</b></div>
+          <div class="profile-view-item"><span>${t.areaQLabel}</span><b>${profileState.area || t.noneYet}</b></div>
+        </div>
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.topicsTitle}</span>
+          ${staticChipsHtml(profileState.interestTopics)}
+        </div>
+        <div class="quiz-field">
+          <span class="quiz-section-label">${t.activityTypesTitle}</span>
+          ${staticChipsHtml(profileState.activityTypes)}
+        </div>
+        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="pEditBtn">${t.editProfileBtn}</button></div>
+      `;
+      document.getElementById("pEditBtn").addEventListener("click", () => { profileMode = "edit"; renderProfile(); });
+      return;
+    }
+
     profileContentEl.innerHTML = `
-      <h1 class="quiz-title">${t.profileTitle}</h1>
       <div class="profile-avatar-row">
-        <div class="profile-avatar" id="avatarPreview" style="${userProfile?.avatar_url ? `background-image:url('${userProfile.avatar_url}')` : ""}"></div>
+        <div class="profile-avatar" style="${avatarStyle}"></div>
         <button type="button" class="quiz-btn secondary" id="avatarBtn">${t.avatarChange}</button>
         <input type="file" id="avatarInput" accept="image/*" hidden>
       </div>
       <div class="quiz-body">
         <div class="quiz-field"><label for="pFirstName">${t.firstNameLabel}</label><input type="text" id="pFirstName" value="${profileState.firstName}"></div>
         <div class="quiz-field"><label for="pLastName">${t.lastNameLabel}</label><input type="text" id="pLastName" value="${profileState.lastName}"></div>
-        ${comboFieldHtml("pAge", t.ageQLabel, ["12-13", "14-15", "16-17", "18+"], profileState.ageRange)}
-        ${comboFieldHtml("pGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
-        ${comboFieldHtml("pArea", t.areaQLabel, t.areaOptions, profileState.area)}
+        ${selectFieldHtml("pAge", t.ageQLabel, AGE_VALUES, profileState.ageRange)}
+        ${selectFieldHtml("pGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
+        ${selectFieldHtml("pArea", t.areaQLabel, t.areaOptions, profileState.area)}
         <div class="quiz-field">
           <span class="quiz-section-label">${t.topicsTitle}</span>
           ${pillOptionsHtml("ptopic", t.topicOptions, profileState.interestTopics, true)}
@@ -1865,14 +2123,24 @@
           <span class="quiz-section-label">${t.activityTypesTitle}</span>
           ${pillOptionsHtml("patype", t.activityTypeOptions, profileState.activityTypes, true)}
         </div>
+        <div class="quiz-field">
+          <label for="pNewUsername">${t.changeUsernameLabel}</label>
+          <input type="text" id="pNewUsername" value="${userProfile?.username || ""}">
+          <p class="auth-error" id="pUsernameMsg"></p>
+        </div>
+        <div class="quiz-field">
+          <label for="pNewPassword">${t.changePasswordLabel}</label>
+          <input type="password" id="pNewPassword" placeholder="${t.newPasswordPlaceholder}" minlength="6" maxlength="10">
+          <p class="auth-error" id="pPasswordMsg"></p>
+        </div>
       </div>
       <div class="quiz-nav">
-        <button type="button" class="quiz-btn secondary" id="pBack">${t.backToApp}</button>
+        <button type="button" class="quiz-btn secondary" id="pCancel">${t.cancelBtn}</button>
         <button type="button" class="quiz-btn primary" id="pSave">${t.saveBtn}</button>
       </div>
       <p class="quiz-subtitle" id="pSavedMsg" style="text-align:center"></p>
     `;
-    wireProfile();
+    wireProfileEdit();
   }
 
   async function handleAvatarUpload(e) {
@@ -1889,19 +2157,20 @@
     renderProfile();
   }
 
-  function wireProfile() {
+  function wireProfileEdit() {
     const t = L();
-    document.getElementById("pBack").addEventListener("click", () => { profileScreenEl.hidden = true; appRootEl.hidden = false; });
+    document.getElementById("pCancel").addEventListener("click", () => { profileMode = "view"; showProfile(); });
     document.getElementById("avatarBtn").addEventListener("click", () => document.getElementById("avatarInput").click());
     document.getElementById("avatarInput").addEventListener("change", handleAvatarUpload);
     document.getElementById("pFirstName").addEventListener("input", e => profileState.firstName = e.target.value);
     document.getElementById("pLastName").addEventListener("input", e => profileState.lastName = e.target.value);
-    document.getElementById("pAge").addEventListener("input", e => profileState.ageRange = e.target.value);
-    document.getElementById("pGrade").addEventListener("input", e => {
+    document.getElementById("pAge").addEventListener("change", e => profileState.ageRange = e.target.value || null);
+    document.getElementById("pGrade").addEventListener("change", e => {
       const match = t.gradeOptions.find(g => g[1] === e.target.value);
-      profileState.grade = match ? match[0] : (e.target.value || null);
+      profileState.grade = match ? match[0] : null;
+      profileState.gradeLabel = e.target.value;
     });
-    document.getElementById("pArea").addEventListener("input", e => profileState.area = e.target.value);
+    document.getElementById("pArea").addEventListener("change", e => profileState.area = e.target.value || null);
     profileContentEl.querySelectorAll("[data-ptopic]").forEach(btn => btn.addEventListener("click", () => {
       const v = btn.dataset.ptopic;
       const i = profileState.interestTopics.indexOf(v);
@@ -1924,18 +2193,43 @@
       if (i === -1) profileState.activityTypes.push(v); else profileState.activityTypes.splice(i, 1);
       renderProfile();
     }));
+
     document.getElementById("pSave").addEventListener("click", async () => {
+      const savedMsgEl = document.getElementById("pSavedMsg");
+      const uMsgEl = document.getElementById("pUsernameMsg");
+      const pMsgEl = document.getElementById("pPasswordMsg");
+      uMsgEl.textContent = ""; pMsgEl.textContent = "";
+
+      const newUsername = document.getElementById("pNewUsername").value.trim();
+      if (newUsername && newUsername !== userProfile?.username) {
+        if (!USERNAME_RE.test(newUsername)) { uMsgEl.textContent = t.errUsernameFormat; return; }
+        const { data: existing } = await sb.from("users").select("id").eq("username", newUsername).maybeSingle();
+        if (existing) { uMsgEl.textContent = t.errUsernameTaken; return; }
+        const { error } = await sb.auth.updateUser({ data: { username: newUsername, full_name: newUsername } });
+        if (error) { uMsgEl.textContent = t.errSignupFailed; return; }
+        await sb.from("users").update({ username: newUsername }).eq("id", currentUserId);
+        userProfile.username = newUsername;
+      }
+
+      const newPassword = document.getElementById("pNewPassword").value;
+      if (newPassword) {
+        if (newPassword.length < 6 || newPassword.length > 10) { pMsgEl.textContent = t.errPasswordLength; return; }
+        const { error } = await sb.auth.updateUser({ password: newPassword });
+        if (error) { pMsgEl.textContent = t.errSignupFailed; return; }
+      }
+
       await sb.from("user_preferences").upsert({
         user_id: currentUserId,
         first_name: profileState.firstName || null, last_name: profileState.lastName || null,
         age_range: profileState.ageRange || null, grade: profileState.grade || null, area: profileState.area || null,
         activity_types: profileState.activityTypes, interest_topics: profileState.interestTopics
       });
-      document.getElementById("pSavedMsg").textContent = t.savedMsg;
+
+      savedMsgEl.textContent = t.savedMsg;
+      userGreetingEl.textContent = L().greeting(userProfile?.username);
+      setTimeout(() => { profileMode = "view"; showProfile(); }, 600);
     });
   }
-
-  profileBtnEl.addEventListener("click", showProfile);
 
   // ---- Settings ----
   async function saveProfileField(field, value) {
@@ -1946,60 +2240,53 @@
 
   function showSettings() {
     appRootEl.hidden = true;
+    profileScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
     settingsScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    setActiveTab("settings");
     renderSettings();
   }
 
   function renderSettings() {
     const t = L();
     const theme = userProfile?.theme_pref || "system";
-    const size = userProfile?.text_size || "medium";
     settingsContentEl.innerHTML = `
       <h1 class="quiz-title">${t.settingsTitle}</h1>
-      <div class="quiz-body">
-        <div class="quiz-field">
-          <span class="quiz-section-label">${t.themeLabel}</span>
+      <div class="settings-list">
+        <button type="button" class="settings-row settings-row--nav" id="goAccessibility">
+          <span>${t.accessibilityLabel}</span><span class="settings-chevron">${LANG_DIR[currentLang] === "rtl" ? "‹" : "›"}</span>
+        </button>
+        <div class="settings-row">
+          <span>${t.languageLabel}</span>
+          <select id="sLangSelect" class="settings-select">
+            ${Object.keys(LANG_NAME).map(l => `<option value="${l}" ${currentLang === l ? "selected" : ""}>${LANG_NAME[l]}</option>`).join("")}
+          </select>
+        </div>
+        <div class="settings-row settings-row--stack">
+          <span>${t.themeLabel}</span>
           <div class="quiz-options">
-            <button type="button" class="quiz-option" aria-pressed="${theme === "light"}" data-theme-opt="light">${t.themeLight}</button>
-            <button type="button" class="quiz-option" aria-pressed="${theme === "dark"}" data-theme-opt="dark">${t.themeDark}</button>
-            <button type="button" class="quiz-option" aria-pressed="${theme === "system"}" data-theme-opt="system">${t.themeSystem}</button>
+            <button type="button" class="quiz-option compact" aria-pressed="${theme === "light"}" data-theme-opt="light">${t.themeLight}</button>
+            <button type="button" class="quiz-option compact" aria-pressed="${theme === "dark"}" data-theme-opt="dark">${t.themeDark}</button>
+            <button type="button" class="quiz-option compact" aria-pressed="${theme === "system"}" data-theme-opt="system">${t.themeSystem}</button>
           </div>
-        </div>
-        <div class="quiz-field">
-          <span class="quiz-section-label">${t.textSizeLabel}</span>
-          <div class="quiz-options">
-            <button type="button" class="quiz-option" aria-pressed="${size === "small"}" data-size-opt="small">${t.textSizeSmall}</button>
-            <button type="button" class="quiz-option" aria-pressed="${size === "medium"}" data-size-opt="medium">${t.textSizeMedium}</button>
-            <button type="button" class="quiz-option" aria-pressed="${size === "large"}" data-size-opt="large">${t.textSizeLarge}</button>
-          </div>
-        </div>
-        <div class="quiz-field">
-          <span class="quiz-section-label">${t.languageLabel}</span>
-          <div class="quiz-options">
-            ${Object.keys(LANG_NAME).map(l => `<button type="button" class="quiz-option" aria-pressed="${currentLang === l}" data-lang-opt="${l}">${LANG_NAME[l]}</button>`).join("")}
-          </div>
-        </div>
-        <div class="quiz-field">
-          <label for="sNewUsername">${t.changeUsernameLabel}</label>
-          <input type="text" id="sNewUsername" placeholder="${t.newUsernamePlaceholder}">
-          <button type="button" class="quiz-btn secondary" id="sUsernameBtn">${t.updateBtn}</button>
-          <p class="auth-error" id="sUsernameMsg"></p>
-        </div>
-        <div class="quiz-field">
-          <label for="sNewPassword">${t.changePasswordLabel}</label>
-          <input type="password" id="sNewPassword" placeholder="${t.newPasswordPlaceholder}" minlength="6" maxlength="10">
-          <button type="button" class="quiz-btn secondary" id="sPasswordBtn">${t.updateBtn}</button>
-          <p class="auth-error" id="sPasswordMsg"></p>
         </div>
       </div>
-      <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="sBack">${t.backToApp}</button></div>
+      <button type="button" class="signout-row" id="sSignOut">${t.signOut}</button>
     `;
     wireSettings();
   }
 
   function wireSettings() {
-    const t = L();
-    document.getElementById("sBack").addEventListener("click", () => { settingsScreenEl.hidden = true; appRootEl.hidden = false; });
+    document.getElementById("goAccessibility").addEventListener("click", showAccessibility);
+    document.getElementById("sSignOut").addEventListener("click", doSignOut);
+
+    document.getElementById("sLangSelect").addEventListener("change", async (e) => {
+      const v = e.target.value;
+      setLanguage(v);
+      await saveProfileField("language", v);
+      renderSettings();
+    });
 
     settingsContentEl.querySelectorAll("[data-theme-opt]").forEach(btn => btn.addEventListener("click", async () => {
       const v = btn.dataset.themeOpt;
@@ -2007,48 +2294,37 @@
       await saveProfileField("theme_pref", v);
       renderSettings();
     }));
+  }
 
-    settingsContentEl.querySelectorAll("[data-size-opt]").forEach(btn => btn.addEventListener("click", async () => {
+  function showAccessibility() {
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = false;
+    renderAccessibility();
+  }
+
+  function renderAccessibility() {
+    const t = L();
+    const size = userProfile?.text_size || "medium";
+    accessibilityContentEl.innerHTML = `
+      <button type="button" class="settings-back" id="accBack">${LANG_DIR[currentLang] === "rtl" ? "› " + t.settingsTitle : "‹ " + t.settingsTitle}</button>
+      <h1 class="quiz-title">${t.accessibilityTitle}</h1>
+      <div class="settings-row settings-row--stack">
+        <span>${t.textSizeLabel}</span>
+        <div class="quiz-options">
+          <button type="button" class="quiz-option compact" aria-pressed="${size === "small"}" data-size-opt="small">${t.textSizeSmall}</button>
+          <button type="button" class="quiz-option compact" aria-pressed="${size === "medium"}" data-size-opt="medium">${t.textSizeMedium}</button>
+          <button type="button" class="quiz-option compact" aria-pressed="${size === "large"}" data-size-opt="large">${t.textSizeLarge}</button>
+        </div>
+      </div>
+    `;
+    document.getElementById("accBack").addEventListener("click", () => { accessibilityScreenEl.hidden = true; settingsScreenEl.hidden = false; });
+    accessibilityContentEl.querySelectorAll("[data-size-opt]").forEach(btn => btn.addEventListener("click", async () => {
       const v = btn.dataset.sizeOpt;
       applyTextSize(v);
       await saveProfileField("text_size", v);
-      renderSettings();
+      renderAccessibility();
     }));
-
-    settingsContentEl.querySelectorAll("[data-lang-opt]").forEach(btn => btn.addEventListener("click", async () => {
-      const v = btn.dataset.langOpt;
-      setLanguage(v);
-      await saveProfileField("language", v);
-      renderSettings();
-    }));
-
-    document.getElementById("sUsernameBtn").addEventListener("click", async () => {
-      const msgEl = document.getElementById("sUsernameMsg");
-      const newUsername = document.getElementById("sNewUsername").value.trim();
-      if (!USERNAME_RE.test(newUsername)) { msgEl.textContent = t.errUsernameFormat; return; }
-      const { data: existing } = await sb.from("users").select("id").eq("username", newUsername).maybeSingle();
-      if (existing) { msgEl.textContent = t.errUsernameTaken; return; }
-      const { error } = await sb.auth.updateUser({ data: { username: newUsername, full_name: newUsername } });
-      if (error) { msgEl.textContent = t.errSignupFailed; return; }
-      await sb.from("users").update({ username: newUsername }).eq("id", currentUserId);
-      msgEl.style.color = "var(--accent)";
-      msgEl.textContent = t.usernameUpdated;
-      userGreetingEl.textContent = L().greeting(newUsername);
-    });
-
-    document.getElementById("sPasswordBtn").addEventListener("click", async () => {
-      const msgEl = document.getElementById("sPasswordMsg");
-      const newPassword = document.getElementById("sNewPassword").value;
-      if (newPassword.length < 6 || newPassword.length > 10) { msgEl.textContent = t.errPasswordLength; return; }
-      const { error } = await sb.auth.updateUser({ password: newPassword });
-      if (error) { msgEl.textContent = t.errSignupFailed; return; }
-      msgEl.style.color = "var(--accent)";
-      msgEl.textContent = t.passwordUpdated;
-      document.getElementById("sNewPassword").value = "";
-    });
   }
-
-  settingsBtnEl.addEventListener("click", showSettings);
 
   (async function boot() {
     applyStaticText();
@@ -2117,12 +2393,14 @@
     }).join("")}</div>`;
   }
 
-  function comboFieldHtml(id, labelText, options, value) {
+  function selectFieldHtml(id, labelText, options, value) {
     return `
-      <div class="quiz-field">
+      <div class="quiz-select-field">
         <label for="${id}">${labelText}</label>
-        <input type="text" id="${id}" list="${id}List" value="${value || ""}" placeholder="${L().typeOrPick}">
-        <datalist id="${id}List">${options.map(o => `<option value="${o}"></option>`).join("")}</datalist>
+        <select id="${id}">
+          <option value="" ${!value ? "selected" : ""}>${L().selectPlaceholder}</option>
+          ${options.map(o => `<option value="${o}" ${value === o ? "selected" : ""}>${o}</option>`).join("")}
+        </select>
       </div>
     `;
   }
@@ -2187,9 +2465,9 @@
         <h1 class="quiz-title">${t.demoTitle}</h1>
         <p class="quiz-subtitle">${t.demoSubtitle}</p>
         <div class="quiz-body">
-          ${comboFieldHtml("qAge", t.ageQLabel, ["12-13", "14-15", "16-17", "18+"], quiz.ageRange)}
-          ${comboFieldHtml("qGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), quiz.gradeLabel)}
-          ${comboFieldHtml("qArea", t.areaQLabel, t.areaOptions, quiz.area)}
+          ${selectFieldHtml("qAge", t.ageQLabel, AGE_VALUES, quiz.ageRange)}
+          ${selectFieldHtml("qGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), quiz.gradeLabel)}
+          ${selectFieldHtml("qArea", t.areaQLabel, t.areaOptions, quiz.area)}
         </div>
         <div class="quiz-nav">
           <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
@@ -2263,13 +2541,13 @@
       document.getElementById("qLastName").addEventListener("input", e => quiz.lastName = e.target.value);
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 2; renderQuiz(); });
     } else if (s === 2) {
-      document.getElementById("qAge").addEventListener("input", e => quiz.ageRange = e.target.value);
-      document.getElementById("qGrade").addEventListener("input", e => {
+      document.getElementById("qAge").addEventListener("change", e => quiz.ageRange = e.target.value || null);
+      document.getElementById("qGrade").addEventListener("change", e => {
         quiz.gradeLabel = e.target.value;
         const match = t.gradeOptions.find(g => g[1] === e.target.value);
-        quiz.grade = match ? match[0] : e.target.value || null;
+        quiz.grade = match ? match[0] : null;
       });
-      document.getElementById("qArea").addEventListener("input", e => quiz.area = e.target.value);
+      document.getElementById("qArea").addEventListener("change", e => quiz.area = e.target.value || null);
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 3; renderQuiz(); });
     } else if (s === 3) {
       quizContentEl.querySelectorAll("[data-topic]").forEach(btn =>
