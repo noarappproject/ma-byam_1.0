@@ -98,7 +98,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: calc(12px * var(--text-scale));
     font-weight: 700;
     letter-spacing: 0.06em;
     color: var(--ink-faint);
@@ -154,14 +154,14 @@
     background: none;
     color: var(--ink-faint);
     font-family: inherit;
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--text-scale));
     font-weight: 600;
     cursor: pointer;
     padding: 6px 4px;
     border-radius: 10px;
   }
 
-  .bottom-nav-btn .nav-icon { font-size: 20px; line-height: 1; }
+  .bottom-nav-btn .nav-icon { font-size: calc(20px * var(--text-scale)); line-height: 1; }
   .bottom-nav-btn[aria-current="true"] { color: var(--accent); }
 
   .nav-links {
@@ -175,7 +175,7 @@
     background: none;
     color: var(--ink-faint);
     font-family: inherit;
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
     font-weight: 600;
     text-decoration: underline;
     cursor: pointer;
@@ -194,7 +194,7 @@
 
   .auth-logo {
     font-family: "Suez One", "Heebo", serif;
-    font-size: 30px;
+    font-size: calc(30px * var(--text-scale));
     color: var(--ink);
     text-align: center;
   }
@@ -202,7 +202,7 @@
   .auth-logo span {
     display: block;
     font-family: "Heebo", sans-serif;
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     font-weight: 600;
     color: var(--ink-faint);
     margin-top: 4px;
@@ -224,7 +224,7 @@
     padding: 9px 0;
     border-radius: 999px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
     font-weight: 700;
     color: var(--ink-soft);
     cursor: pointer;
@@ -250,7 +250,7 @@
   }
 
   .auth-field label {
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     font-weight: 600;
     color: var(--ink-soft);
   }
@@ -263,14 +263,14 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: calc(15px * var(--text-scale));
     outline: none;
   }
 
   .auth-field input:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 1px; }
 
   .auth-error {
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     color: var(--danger);
     text-align: center;
     min-height: 1em;
@@ -283,7 +283,7 @@
     background: var(--accent);
     color: var(--accent-ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: calc(15px * var(--text-scale));
     font-weight: 700;
     cursor: pointer;
   }
@@ -296,7 +296,7 @@
     gap: 10px;
     width: 100%;
     color: var(--ink-faint);
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
   }
 
   .auth-divider::before, .auth-divider::after {
@@ -314,7 +314,7 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     font-weight: 700;
     cursor: pointer;
   }
@@ -343,7 +343,7 @@
   .quiz-progress span.done { background: var(--accent); }
 
   .quiz-eyebrow {
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
     font-weight: 700;
     color: var(--ink-faint);
     letter-spacing: 0.03em;
@@ -378,7 +378,7 @@
   }
 
   .quiz-field label {
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     font-weight: 600;
     color: var(--ink-soft);
   }
@@ -391,7 +391,7 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: calc(15px * var(--text-scale));
     outline: none;
   }
 
@@ -413,7 +413,7 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     line-height: 1.4;
     cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
@@ -428,7 +428,7 @@
   }
 
   .quiz-select-field label {
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     font-weight: 600;
     color: var(--ink-soft);
   }
@@ -443,7 +443,7 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: calc(15px * var(--text-scale));
     text-align: center;
     text-align-last: center;
     cursor: pointer;
@@ -458,7 +458,7 @@
   }
 
   .quiz-section-label {
-    font-size: 13.5px;
+    font-size: calc(13.5px * var(--text-scale));
     font-weight: 700;
     color: var(--ink);
     margin: 4px 0 -2px;
@@ -475,7 +475,7 @@
     border: none;
     border-radius: 12px;
     font-family: inherit;
-    font-size: 15px;
+    font-size: calc(15px * var(--text-scale));
     font-weight: 700;
     cursor: pointer;
   }
@@ -489,7 +489,7 @@
     padding: 12px 0;
   }
 
-  .quiz-result .emoji { font-size: 40px; }
+  .quiz-result .emoji { font-size: calc(40px * var(--text-scale)); }
 
   .profile-avatar-row {
     display: flex;
@@ -509,7 +509,7 @@
 
   .profile-username {
     font-family: "Suez One", "Heebo", serif;
-    font-size: 18px;
+    font-size: calc(18px * var(--text-scale));
     color: var(--ink);
   }
 
@@ -526,7 +526,7 @@
     gap: 10px;
     padding: 12px 2px;
     border-bottom: 1px solid var(--line);
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
   }
 
   .profile-view-item span { color: var(--ink-faint); }
@@ -552,7 +552,7 @@
     background: none;
     color: var(--ink);
     font-family: inherit;
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     text-align: inherit;
   }
 
@@ -561,7 +561,7 @@
 
   .settings-chevron {
     color: var(--ink-faint);
-    font-size: 18px;
+    font-size: calc(18px * var(--text-scale));
   }
 
   .settings-select {
@@ -572,13 +572,13 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
     cursor: pointer;
   }
 
   .quiz-option.compact {
     padding: 8px 12px;
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
   }
 
   .signout-row {
@@ -591,7 +591,7 @@
     color: var(--danger);
     font-family: inherit;
     font-weight: 700;
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     cursor: pointer;
   }
 
@@ -601,7 +601,7 @@
     background: none;
     color: var(--ink-faint);
     font-family: inherit;
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     font-weight: 600;
     cursor: pointer;
     padding: 4px;
@@ -623,7 +623,7 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 14px;
+    font-size: calc(14px * var(--text-scale));
     outline: none;
   }
 
@@ -640,7 +640,7 @@
     background: none;
     color: var(--ink-faint);
     font-family: inherit;
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     text-decoration: underline;
     cursor: pointer;
     padding: 4px;
@@ -676,7 +676,7 @@
     background: var(--surface);
     color: var(--ink);
     font-family: inherit;
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
     outline: none;
   }
 
@@ -703,7 +703,7 @@
     background: var(--surface);
     color: var(--ink-soft);
     font-family: inherit;
-    font-size: 13px;
+    font-size: calc(13px * var(--text-scale));
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
@@ -716,7 +716,7 @@
     color: #fff;
   }
 
-  .chip-row--topics .chip { font-weight: 500; font-size: 12.5px; padding: 6px 12px; }
+  .chip-row--topics .chip { font-weight: 500; font-size: calc(12.5px * var(--text-scale)); padding: 6px 12px; }
 
   .stage {
     position: relative;
@@ -733,7 +733,7 @@
     text-align: center;
     padding: 40px 24px;
     color: var(--ink-soft);
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--text-scale));
   }
 
   .card.is-empty .clear-btn {
@@ -743,7 +743,7 @@
     color: var(--ink);
     font-family: inherit;
     font-weight: 700;
-    font-size: 13.5px;
+    font-size: calc(13.5px * var(--text-scale));
     padding: 9px 18px;
     border-radius: 999px;
     cursor: pointer;
@@ -834,7 +834,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
     font-weight: 700;
     padding: 5px 11px;
     border-radius: 999px;
@@ -843,7 +843,7 @@
   }
 
   .category-label {
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
     font-weight: 600;
     color: var(--ink-soft);
     background: var(--chip-bg);
@@ -905,7 +905,7 @@
 
   .fact .sub {
     color: var(--ink-faint);
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
   }
 
   .desc {
@@ -971,7 +971,7 @@
   }
 
   .counter {
-    font-size: 12.5px;
+    font-size: calc(12.5px * var(--text-scale));
     color: var(--ink-faint);
     font-variant-numeric: tabular-nums;
   }
@@ -979,7 +979,7 @@
   .note {
     max-width: 420px;
     text-align: center;
-    font-size: 12px;
+    font-size: calc(12px * var(--text-scale));
     color: var(--ink-faint);
     margin-top: 4px;
     line-height: 1.6;
@@ -1811,7 +1811,7 @@
     }
   };
 
-  const AGE_VALUES = ["10", "11", "12", "13", "14", "15", "16", "17", "18"];
+  const AGE_VALUES = ["12", "13", "14", "15", "16", "17", "18"];
 
   let currentLang = localStorage.getItem("mb_lang") || "he";
   function L() { return STRINGS[currentLang]; }
@@ -1945,9 +1945,10 @@
     appRootEl.hidden = false;
     userGreetingEl.textContent = greetingName ? L().greeting(greetingName) : L().guestGreeting;
     const guest = isGuestMode();
-    bottomNavEl.hidden = guest;
+    bottomNavEl.hidden = false;
+    navProfileEl.hidden = guest;
     guestExitBtnEl.hidden = !guest;
-    document.body.classList.toggle("has-bottom-nav", !guest);
+    document.body.classList.add("has-bottom-nav");
     setActiveTab("home");
     if (!appStarted) { appStarted = true; initAppUI(); }
   }
@@ -2035,6 +2036,8 @@
 
   guestBtnEl.addEventListener("click", () => {
     localStorage.setItem("mb_guest", "1");
+    currentUserId = null;
+    loadGuestSettings();
     showApp(null);
   });
 
@@ -2042,6 +2045,8 @@
 
   async function doSignOut() {
     localStorage.removeItem("mb_guest");
+    currentUserId = null;
+    userProfile = null;
     const { data: { session } } = await sb.auth.getSession();
     if (session) await sb.auth.signOut();
     showAuth();
@@ -2241,7 +2246,22 @@
   async function saveProfileField(field, value) {
     if (!userProfile) userProfile = {};
     userProfile[field] = value;
-    if (currentUserId) await sb.from("users").update({ [field]: value }).eq("id", currentUserId);
+    if (currentUserId) {
+      await sb.from("users").update({ [field]: value }).eq("id", currentUserId);
+    } else if (isGuestMode()) {
+      localStorage.setItem("mb_guest_" + field, value);
+    }
+  }
+
+  function loadGuestSettings() {
+    userProfile = {
+      theme_pref: localStorage.getItem("mb_guest_theme_pref") || "system",
+      text_size: localStorage.getItem("mb_guest_text_size") || "medium",
+      language: localStorage.getItem("mb_guest_language") || currentLang
+    };
+    applyTheme(userProfile.theme_pref);
+    applyTextSize(userProfile.text_size);
+    setLanguage(userProfile.language);
   }
 
   function showSettings() {
@@ -2332,39 +2352,9 @@
     }));
   }
 
-  (async function boot() {
-    applyStaticText();
-    try {
-      if (localStorage.getItem("mb_guest") === "1") {
-        showApp(null);
-        return;
-      }
-      const { data: { session } } = await sb.auth.getSession();
-      if (session) {
-        const name = session.user?.user_metadata?.username || session.user?.email;
-        await proceedAfterAuth(session.user.id, name);
-      } else {
-        showAuth();
-      }
-    } catch (err) {
-      showAuth();
-    }
-  })();
-
   // ---- Onboarding questionnaire ----
   const quizScreenEl = document.getElementById("quizScreen");
   const quizContentEl = document.getElementById("quizContent");
-
-  const AGE_OPTIONS = ["12-13", "14-15", "16-17", "18+"];
-  const GRADE_OPTIONS = [
-    { v: "ז", l: "ז׳" }, { v: "ח", l: "ח׳" }, { v: "ט", l: "ט׳" },
-    { v: "י", l: "י׳" }, { v: "יא", l: "י\"א" }, { v: "יב", l: "י\"ב" },
-    { v: "not_studying", l: "לא לומד/ת כרגע" }
-  ];
-  const AREA_OPTIONS = ["מרכז", "צפון", "דרום", "מזרח", "מערב"];
-  const ACTIVITY_TYPE_OPTIONS = ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"];
-  const TOPIC_OPTIONS = ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"];
-
 
   let quiz = null;
 
@@ -2609,6 +2599,27 @@
     quiz.step = 5;
     renderQuiz();
   }
+
+  (async function boot() {
+    applyStaticText();
+    try {
+      if (localStorage.getItem("mb_guest") === "1") {
+        currentUserId = null;
+        loadGuestSettings();
+        showApp(null);
+        return;
+      }
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        const name = session.user?.user_metadata?.username || session.user?.email;
+        await proceedAfterAuth(session.user.id, name);
+      } else {
+        showAuth();
+      }
+    } catch (err) {
+      showAuth();
+    }
+  })();
   </script>
 </body>
 </html>
