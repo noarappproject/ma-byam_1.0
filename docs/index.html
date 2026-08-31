@@ -404,6 +404,15 @@
     gap: 10px;
   }
 
+  .seg {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin: 4px 0 8px;
+  }
+
+  .seg .quiz-option { flex: 1; }
+
   .quiz-option {
     flex: 0 0 auto;
     text-align: center;
@@ -491,6 +500,44 @@
 
   .quiz-result .emoji { font-size: calc(40px * var(--text-scale)); }
 
+  .profile-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .profile-icon-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: none;
+    background: var(--chip-bg);
+    font-size: calc(18px * var(--text-scale));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .profile-icon-badge {
+    position: absolute;
+    top: 3px;
+    inset-inline-end: 3px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: #fff;
+    font-size: calc(10px * var(--text-scale));
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+  }
+
   .profile-avatar-row {
     display: flex;
     flex-direction: column;
@@ -511,6 +558,120 @@
     font-family: "Suez One", "Heebo", serif;
     font-size: calc(18px * var(--text-scale));
     color: var(--ink);
+  }
+
+  .profile-stats-row {
+    display: flex;
+    gap: 28px;
+    margin-top: 4px;
+  }
+
+  .profile-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .profile-stat b {
+    font-size: calc(16px * var(--text-scale));
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .profile-stat span {
+    font-size: calc(12px * var(--text-scale));
+    color: var(--ink-faint);
+  }
+
+  .user-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    border-inline: none;
+    border-top: none;
+    text-align: inherit;
+    cursor: pointer;
+  }
+
+  .user-row-avatar {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    background: var(--chip-bg) center/cover no-repeat;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(16px * var(--text-scale));
+  }
+
+  .user-row-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .user-row-name {
+    font-weight: 600;
+    font-size: calc(14.5px * var(--text-scale));
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .user-row-sub {
+    font-size: calc(12.5px * var(--text-scale));
+    color: var(--ink-faint);
+  }
+
+  .follow-btn {
+    flex: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: calc(13px * var(--text-scale));
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .follow-btn.primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+
+  .follow-btn.danger {
+    color: var(--danger);
+    border-color: var(--danger);
+    background: none;
+  }
+
+  .locked-profile {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--ink-soft);
+  }
+
+  .locked-profile .lock-emoji {
+    font-size: calc(34px * var(--text-scale));
+    display: block;
+    margin-bottom: 10px;
   }
 
   .profile-view-list {
@@ -1262,6 +1423,22 @@
     <div class="fav-list" id="favListEl"></div>
   </div>
 
+  <div class="frame" id="notificationsScreen" hidden>
+    <div class="quiz-screen" id="notificationsContent"></div>
+  </div>
+
+  <div class="frame" id="userSearchScreen" hidden>
+    <div class="quiz-screen" id="userSearchContent"></div>
+  </div>
+
+  <div class="frame" id="otherProfileScreen" hidden>
+    <div class="quiz-screen" id="otherProfileContent"></div>
+  </div>
+
+  <div class="frame" id="followListScreen" hidden>
+    <div class="quiz-screen" id="followListContent"></div>
+  </div>
+
   <nav class="bottom-nav" id="bottomNav" hidden>
     <div class="bottom-nav-inner">
       <button type="button" class="bottom-nav-btn" id="navHome" data-tab="home">
@@ -1676,6 +1853,21 @@
   const favState = { q: "", category: null, topic: null, sort: "soonest" };
   let favDetailOpenId = null;
 
+  const notificationsScreenEl = document.getElementById("notificationsScreen");
+  const notificationsContentEl = document.getElementById("notificationsContent");
+  const userSearchScreenEl = document.getElementById("userSearchScreen");
+  const userSearchContentEl = document.getElementById("userSearchContent");
+  const otherProfileScreenEl = document.getElementById("otherProfileScreen");
+  const otherProfileContentEl = document.getElementById("otherProfileContent");
+  const followListScreenEl = document.getElementById("followListScreen");
+  const followListContentEl = document.getElementById("followListContent");
+
+  let socialCounts = { followers: 0, following: 0, pending: 0 };
+  let otherProfileUserId = null;
+  let followListKind = "followers";
+  let followListUserId = null;
+  const userSearchState = { q: "" };
+
   const CATEGORY_ORDER = [...new Set(activities.map(a => a.category))];
 
   const state = { q: "", category: null, topic: null };
@@ -1942,7 +2134,8 @@
     return sorted;
   }
 
-  function favRowHtml(a) {
+  function favRowHtml(a, opts) {
+    const readOnly = opts && opts.readOnly;
     const when = whenText(a);
     const statusInfo = activityStatusInfo(a);
     return `
@@ -1957,7 +2150,7 @@
           <p class="fav-row-meta">${a.location_name}${a.neighborhood ? " · " + a.neighborhood : ""}</p>
           ${a.capacity != null ? `<p class="fav-row-meta">${L().spotsLeftText(a.spots_left ?? 0, a.capacity)}</p>` : ""}
         </div>
-        <button type="button" class="fav-star-btn" data-fav-id="${a.id}" aria-pressed="true" aria-label="${L().unfavoriteLabel}">⭐</button>
+        ${readOnly ? "" : `<button type="button" class="fav-star-btn" data-fav-id="${a.id}" aria-pressed="true" aria-label="${L().unfavoriteLabel}">⭐</button>`}
       </div>
     `;
   }
@@ -2105,11 +2298,394 @@
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
     favoritesScreenEl.hidden = false;
     bottomNavEl.hidden = false;
     setActiveTab("favorites");
     renderFavorites();
   }
+
+  // ---- Social (follow system) ----
+  // Note on scope: profile-picture/detail privacy is enforced here only at the UI
+  // layer (we simply don't fetch/render a photo or the favorites list when the
+  // viewer isn't allowed to see them). The `avatars` storage bucket is already
+  // fully public-read regardless of any flag, and Postgres RLS can't hide one
+  // column while exposing others on the same `users` row — real hardening would
+  // need a private bucket with signed URLs and/or a dedicated view. Not done here.
+
+  async function getRelationship(otherUserId) {
+    if (!currentUserId || otherUserId === currentUserId) return null;
+    const { data } = await sb.from("follows").select("status")
+      .eq("follower_id", currentUserId).eq("followee_id", otherUserId).maybeSingle();
+    return data ? data.status : null;
+  }
+
+  async function followUser(otherUserId, otherIsPrivate) {
+    if (!currentUserId) return;
+    const { error } = await sb.from("follows").insert({
+      follower_id: currentUserId,
+      followee_id: otherUserId,
+      status: otherIsPrivate ? "pending" : "accepted"
+    });
+    if (error) console.error(error);
+  }
+
+  async function unfollowOrCancel(otherUserId) {
+    if (!currentUserId) return;
+    const { error } = await sb.from("follows").delete()
+      .eq("follower_id", currentUserId).eq("followee_id", otherUserId);
+    if (error) console.error(error);
+  }
+
+  async function approveRequest(followerId) {
+    if (!currentUserId) return;
+    const { error } = await sb.from("follows").update({ status: "accepted" })
+      .eq("follower_id", followerId).eq("followee_id", currentUserId);
+    if (error) console.error(error);
+  }
+
+  async function denyOrRemove(followerId) {
+    if (!currentUserId) return;
+    const { error } = await sb.from("follows").delete()
+      .eq("follower_id", followerId).eq("followee_id", currentUserId);
+    if (error) console.error(error);
+  }
+
+  function canViewProfile(targetUser, relationship) {
+    if (!targetUser) return false;
+    return targetUser.id === currentUserId || targetUser.is_private === false || relationship === "accepted";
+  }
+
+  async function loadFavoritesFor(userId) {
+    const { data } = await sb.from("favorites").select("activity_id").eq("user_id", userId);
+    const ids = new Set((data || []).map(r => r.activity_id));
+    return activities.filter(a => a.id && ids.has(a.id));
+  }
+
+  async function loadSocialCounts(userId) {
+    const [followersRes, followingRes, pendingRes] = await Promise.all([
+      sb.from("follows").select("id", { count: "exact", head: true }).eq("followee_id", userId).eq("status", "accepted"),
+      sb.from("follows").select("id", { count: "exact", head: true }).eq("follower_id", userId).eq("status", "accepted"),
+      userId === currentUserId
+        ? sb.from("follows").select("id", { count: "exact", head: true }).eq("followee_id", userId).eq("status", "pending")
+        : Promise.resolve({ count: 0 })
+    ]);
+    return { followers: followersRes.count || 0, following: followingRes.count || 0, pending: pendingRes.count || 0 };
+  }
+
+  async function searchUsers(query) {
+    if (!query) return [];
+    const { data } = await sb.from("users")
+      .select("id, username, avatar_url, is_private")
+      .ilike("username", query + "%")
+      .neq("id", currentUserId)
+      .limit(20);
+    const rows = data || [];
+    if (!rows.length) return rows;
+    const ids = rows.map(r => r.id);
+    const { data: rel } = await sb.from("follows").select("followee_id, status")
+      .eq("follower_id", currentUserId).in("followee_id", ids);
+    const relMap = new Map((rel || []).map(r => [r.followee_id, r.status]));
+    return rows.map(r => ({ ...r, relationship: relMap.get(r.id) || null }));
+  }
+
+  function userAvatarStyle(u) {
+    return !u.is_private && u.avatar_url ? `background-image:url('${u.avatar_url}')` : "";
+  }
+
+  function followBtnHtml(userId, isPrivate, relationship) {
+    if (relationship === "accepted") {
+      return `<button type="button" class="follow-btn" data-unfollow="${userId}">${L().followingBtn}</button>`;
+    }
+    if (relationship === "pending") {
+      return `<button type="button" class="follow-btn" data-unfollow="${userId}">${L().requestedBtn}</button>`;
+    }
+    return `<button type="button" class="follow-btn primary" data-follow="${userId}" data-private="${!!isPrivate}">${L().followBtn}</button>`;
+  }
+
+  function userRowHtml(u, actionHtml) {
+    return `
+      <div class="user-row" data-open-user="${u.id}">
+        <div class="user-row-avatar" style="${userAvatarStyle(u)}"></div>
+        <div class="user-row-main"><span class="user-row-name">${u.username}${u.is_private ? " 🔒" : ""}</span></div>
+        ${actionHtml}
+      </div>
+    `;
+  }
+
+  // ---- Notifications (follow requests inbox today; the shape can grow to
+  // other notification types later without a redesign — no generic
+  // notifications table yet since there's exactly one live-queryable type) ----
+  function showNotifications() {
+    appRootEl.hidden = true;
+    favoritesScreenEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
+    notificationsScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    renderNotifications();
+  }
+
+  async function renderNotifications() {
+    const t = L();
+    notificationsContentEl.innerHTML = `
+      <button type="button" class="settings-back" id="notifBack">${LANG_DIR[currentLang] === "rtl" ? "› " + t.profileTitle : "‹ " + t.profileTitle}</button>
+      <h1 class="quiz-title">${t.notificationsLabel}</h1>
+      <div id="notifList"><p class="quiz-subtitle">…</p></div>
+    `;
+    document.getElementById("notifBack").addEventListener("click", showProfile);
+    const listEl = document.getElementById("notifList");
+    if (!currentUserId) { listEl.innerHTML = ""; return; }
+    const { data: pendingRows } = await sb.from("follows").select("follower_id, created_at")
+      .eq("followee_id", currentUserId).eq("status", "pending").order("created_at", { ascending: false });
+    const rows = pendingRows || [];
+    if (!rows.length) { listEl.innerHTML = `<p class="quiz-subtitle">${t.noRequestsMsg}</p>`; return; }
+    const ids = rows.map(r => r.follower_id);
+    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", ids);
+    const usersById = new Map((users || []).map(u => [u.id, u]));
+    listEl.innerHTML = rows.map(r => {
+      const u = usersById.get(r.follower_id);
+      if (!u) return "";
+      return userRowHtml(u, `
+        <div style="display:flex;gap:6px">
+          <button type="button" class="follow-btn primary" data-approve="${u.id}">${t.approveBtn}</button>
+          <button type="button" class="follow-btn danger" data-deny="${u.id}">${t.denyBtn}</button>
+        </div>
+      `);
+    }).join("");
+  }
+
+  notificationsContentEl.addEventListener("click", async (e) => {
+    const approveBtn = e.target.closest("[data-approve]");
+    if (approveBtn) { await approveRequest(approveBtn.dataset.approve); renderNotifications(); return; }
+    const denyBtn = e.target.closest("[data-deny]");
+    if (denyBtn) { await denyOrRemove(denyBtn.dataset.deny); renderNotifications(); return; }
+    const row = e.target.closest("[data-open-user]");
+    if (row) showOtherProfile(row.dataset.openUser);
+  });
+
+  // ---- User search ----
+  function showUserSearch() {
+    appRootEl.hidden = true;
+    favoritesScreenEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
+    userSearchScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    userSearchState.q = "";
+    renderUserSearch();
+  }
+
+  function renderUserSearch() {
+    const t = L();
+    userSearchContentEl.innerHTML = `
+      <button type="button" class="settings-back" id="usBack">${LANG_DIR[currentLang] === "rtl" ? "› " + t.profileTitle : "‹ " + t.profileTitle}</button>
+      <h1 class="quiz-title">${t.searchUsersLabel}</h1>
+      <div class="search-bar">
+        <svg class="search-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="usInput" placeholder="${t.userSearchPlaceholder}">
+      </div>
+      <div id="usResults"></div>
+    `;
+    document.getElementById("usBack").addEventListener("click", showProfile);
+    const input = document.getElementById("usInput");
+    input.addEventListener("input", async (e) => {
+      const q = e.target.value.trim();
+      userSearchState.q = q;
+      const results = q ? await searchUsers(q) : [];
+      // Guard against out-of-order responses: only render if this request's own
+      // query is still the current one (a later keystroke may have resolved first).
+      if (userSearchState.q === q) renderUserSearchResults(results);
+    });
+    input.focus();
+    renderUserSearchResults([]);
+  }
+
+  function renderUserSearchResults(results) {
+    const t = L();
+    const el = document.getElementById("usResults");
+    if (!el) return;
+    if (!userSearchState.q) { el.innerHTML = ""; return; }
+    if (!results.length) { el.innerHTML = `<p class="quiz-subtitle">${t.noUsersFoundMsg}</p>`; return; }
+    el.innerHTML = results.map(u => userRowHtml(u, followBtnHtml(u.id, u.is_private, u.relationship))).join("");
+  }
+
+  userSearchContentEl.addEventListener("click", async (e) => {
+    const followBtn = e.target.closest("[data-follow]");
+    if (followBtn) {
+      await followUser(followBtn.dataset.follow, followBtn.dataset.private === "true");
+      renderUserSearchResults(await searchUsers(userSearchState.q));
+      return;
+    }
+    const unfollowBtn = e.target.closest("[data-unfollow]");
+    if (unfollowBtn) {
+      await unfollowOrCancel(unfollowBtn.dataset.unfollow);
+      renderUserSearchResults(await searchUsers(userSearchState.q));
+      return;
+    }
+    const row = e.target.closest("[data-open-user]");
+    if (row) showOtherProfile(row.dataset.openUser);
+  });
+
+  // ---- Other user's profile ----
+  function showOtherProfile(userId) {
+    if (userId === currentUserId) { showProfile(); return; }
+    appRootEl.hidden = true;
+    favoritesScreenEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    otherProfileUserId = userId;
+    renderOtherProfile();
+  }
+
+  async function renderOtherProfile() {
+    const t = L();
+    const userId = otherProfileUserId;
+    otherProfileContentEl.innerHTML = `<p class="quiz-subtitle">…</p>`;
+    const [{ data: targetUser }, relationship, counts] = await Promise.all([
+      sb.from("users").select("id, username, avatar_url, is_private").eq("id", userId).maybeSingle(),
+      getRelationship(userId),
+      loadSocialCounts(userId)
+    ]);
+    if (otherProfileUserId !== userId) return; // navigated away while loading
+    if (!targetUser) { otherProfileContentEl.innerHTML = `<p class="quiz-subtitle">${t.noUsersFoundMsg}</p>`; return; }
+    const visible = canViewProfile(targetUser, relationship);
+    const avatarStyle = visible && targetUser.avatar_url ? `background-image:url('${targetUser.avatar_url}')` : "";
+
+    let bodyHtml;
+    if (visible) {
+      const favs = await loadFavoritesFor(userId);
+      if (otherProfileUserId !== userId) return;
+      bodyHtml = `
+        <p class="quiz-section-label">${t.favoritesOfUser(targetUser.username)}</p>
+        ${favs.length ? favs.map(a => favRowHtml(a, { readOnly: true })).join("") : `<p class="quiz-subtitle">${t.noFavoritesForUserMsg}</p>`}
+      `;
+    } else {
+      bodyHtml = `<div class="locked-profile"><span class="lock-emoji">🔒</span><p>${t.lockedProfileMsg}</p></div>`;
+    }
+
+    otherProfileContentEl.innerHTML = `
+      <button type="button" class="settings-back" id="opBack">${LANG_DIR[currentLang] === "rtl" ? "› " + t.profileTitle : "‹ " + t.profileTitle}</button>
+      <div class="profile-avatar-row">
+        <div class="profile-avatar" style="${avatarStyle}"></div>
+        <div class="profile-username">${targetUser.username}${targetUser.is_private ? " 🔒" : ""}</div>
+        <div class="profile-stats-row">
+          ${visible
+            ? `<button type="button" class="profile-stat" data-open-follow-list="followers"><b>${counts.followers}</b><span>${t.followersLabel}</span></button>
+               <button type="button" class="profile-stat" data-open-follow-list="following"><b>${counts.following}</b><span>${t.followingLabel}</span></button>`
+            : `<span class="profile-stat"><b>${counts.followers}</b><span>${t.followersLabel}</span></span>
+               <span class="profile-stat"><b>${counts.following}</b><span>${t.followingLabel}</span></span>`}
+        </div>
+        ${followBtnHtml(targetUser.id, targetUser.is_private, relationship)}
+      </div>
+      ${bodyHtml}
+    `;
+    document.getElementById("opBack").addEventListener("click", () => { otherProfileUserId = null; showProfile(); });
+  }
+
+  otherProfileContentEl.addEventListener("click", async (e) => {
+    const followBtn = e.target.closest("[data-follow]");
+    if (followBtn) { await followUser(followBtn.dataset.follow, followBtn.dataset.private === "true"); renderOtherProfile(); return; }
+    const unfollowBtn = e.target.closest("[data-unfollow]");
+    if (unfollowBtn) { await unfollowOrCancel(unfollowBtn.dataset.unfollow); renderOtherProfile(); return; }
+    const listBtn = e.target.closest("[data-open-follow-list]");
+    if (listBtn) { showFollowList(listBtn.dataset.openFollowList, otherProfileUserId); return; }
+    const favRow = e.target.closest(".fav-row[data-open-id]");
+    if (favRow) openFavDetail(favRow.dataset.openId);
+  });
+
+  // ---- Followers / following list (shared screen, segmented by kind) ----
+  function showFollowList(kind, userId) {
+    appRootEl.hidden = true;
+    favoritesScreenEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    followListKind = kind;
+    followListUserId = userId;
+    renderFollowList();
+  }
+
+  async function renderFollowList() {
+    const t = L();
+    const kind = followListKind, userId = followListUserId;
+    followListContentEl.innerHTML = `
+      <button type="button" class="settings-back" id="flBack">${LANG_DIR[currentLang] === "rtl" ? "› " + t.profileTitle : "‹ " + t.profileTitle}</button>
+      <div class="seg" id="flSeg">
+        <button type="button" class="quiz-option compact" data-fl-kind="followers" aria-pressed="${kind === "followers"}">${t.followersLabel}</button>
+        <button type="button" class="quiz-option compact" data-fl-kind="following" aria-pressed="${kind === "following"}">${t.followingLabel}</button>
+      </div>
+      <div id="flList"><p class="quiz-subtitle">…</p></div>
+    `;
+    document.getElementById("flBack").addEventListener("click", () => {
+      if (userId === currentUserId) showProfile(); else showOtherProfile(userId);
+    });
+    const filterCol = kind === "followers" ? "followee_id" : "follower_id";
+    const targetCol = kind === "followers" ? "follower_id" : "followee_id";
+    const { data: relRows } = await sb.from("follows").select(targetCol).eq(filterCol, userId).eq("status", "accepted");
+    if (followListUserId !== userId || followListKind !== kind) return;
+    const ids = (relRows || []).map(r => r[targetCol]);
+    if (!ids.length) { renderFollowListRows([]); return; }
+    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", ids);
+    if (followListUserId !== userId || followListKind !== kind) return;
+    renderFollowListRows(users || []);
+  }
+
+  async function renderFollowListRows(users) {
+    const t = L();
+    const el = document.getElementById("flList");
+    if (!el) return;
+    if (!users.length) {
+      el.innerHTML = `<p class="quiz-subtitle">${followListKind === "followers" ? t.noFollowersMsg : t.noFollowingMsg}</p>`;
+      return;
+    }
+    const isOwnFollowers = followListKind === "followers" && followListUserId === currentUserId;
+    let relMap = new Map();
+    if (!isOwnFollowers) {
+      const ids = users.map(u => u.id);
+      const { data: rel } = await sb.from("follows").select("followee_id, status")
+        .eq("follower_id", currentUserId).in("followee_id", ids);
+      relMap = new Map((rel || []).map(r => [r.followee_id, r.status]));
+    }
+    el.innerHTML = users.map(u => userRowHtml(u, isOwnFollowers
+      ? `<button type="button" class="follow-btn danger" data-remove-follower="${u.id}">${t.removeFollowerBtn}</button>`
+      : followBtnHtml(u.id, u.is_private, relMap.get(u.id) || null))).join("");
+  }
+
+  followListContentEl.addEventListener("click", async (e) => {
+    const seg = e.target.closest("[data-fl-kind]");
+    if (seg) { followListKind = seg.dataset.flKind; renderFollowList(); return; }
+    const followBtn = e.target.closest("[data-follow]");
+    if (followBtn) { await followUser(followBtn.dataset.follow, followBtn.dataset.private === "true"); renderFollowList(); return; }
+    const unfollowBtn = e.target.closest("[data-unfollow]");
+    if (unfollowBtn) { await unfollowOrCancel(unfollowBtn.dataset.unfollow); renderFollowList(); return; }
+    const removeBtn = e.target.closest("[data-remove-follower]");
+    if (removeBtn) { await denyOrRemove(removeBtn.dataset.removeFollower); renderFollowList(); return; }
+    const row = e.target.closest("[data-open-user]");
+    if (row) showOtherProfile(row.dataset.openUser);
+  });
 
   // ---- Auth ----
   const SUPABASE_URL = "https://soncpzmasqcjxcawhqqw.supabase.co";
@@ -2170,7 +2746,22 @@
       textSizeLabel: "גודל טקסט", textSizeSmall: "קטן", textSizeMedium: "רגיל", textSizeLarge: "גדול", languageLabel: "שפה",
       changeUsernameLabel: "שינוי שם משתמש", changePasswordLabel: "שינוי סיסמה",
       newUsernamePlaceholder: "שם משתמש חדש", newPasswordPlaceholder: "סיסמה חדשה", updateBtn: "עדכן",
-      usernameUpdated: "שם המשתמש עודכן", passwordUpdated: "הסיסמה עודכנה"
+      usernameUpdated: "שם המשתמש עודכן", passwordUpdated: "הסיסמה עודכנה",
+      notificationsLabel: "התראות", searchUsersLabel: "חיפוש משתמשים",
+      followersLabel: "עוקבים", followingLabel: "במעקב",
+      followBtn: "עקוב", requestedBtn: "ממתין לאישור", followingBtn: "עוקב",
+      approveBtn: "אישור", denyBtn: "דחייה", removeFollowerBtn: "הסרה",
+      privateProfileLabel: "פרופיל פרטי",
+      privateOn: "פרטי", privateOff: "ציבורי",
+      privateProfileHint: "כשהפרופיל פרטי, מי שרוצה לעקוב אחריך צריך לשלוח בקשה שתאשר/י. פרופיל ציבורי — כל אחד יכול לעקוב מיד.",
+      lockedProfileMsg: "הפרופיל הזה פרטי. יש לעקוב ולקבל אישור כדי לראות את המועדפים שלו/שלה.",
+      userSearchPlaceholder: "חיפוש לפי שם משתמש…",
+      noUsersFoundMsg: "לא נמצאו משתמשים.",
+      noRequestsMsg: "אין בקשות מעקב חדשות.",
+      noFollowersMsg: "אין עדיין עוקבים.",
+      noFollowingMsg: "עוד לא עוקבים אחרי אף אחד.",
+      noFavoritesForUserMsg: "עדיין לא נבחרו מועדפים.",
+      favoritesOfUser: n => `המועדפים של ${n}`
     },
     ar: {
       appTitle: "ما بي\"م", appTagline: "أنشطة ونوادي وفعاليات للشباب",
@@ -2221,7 +2812,22 @@
       textSizeLabel: "حجم النص", textSizeSmall: "صغير", textSizeMedium: "عادي", textSizeLarge: "كبير", languageLabel: "اللغة",
       changeUsernameLabel: "تغيير اسم المستخدم", changePasswordLabel: "تغيير كلمة المرور",
       newUsernamePlaceholder: "اسم مستخدم جديد", newPasswordPlaceholder: "كلمة مرور جديدة", updateBtn: "تحديث",
-      usernameUpdated: "تم تحديث اسم المستخدم", passwordUpdated: "تم تحديث كلمة المرور"
+      usernameUpdated: "تم تحديث اسم المستخدم", passwordUpdated: "تم تحديث كلمة المرور",
+      notificationsLabel: "الإشعارات", searchUsersLabel: "بحث عن مستخدمين",
+      followersLabel: "المتابعون", followingLabel: "يتابع",
+      followBtn: "متابعة", requestedBtn: "بانتظار الموافقة", followingBtn: "متابَع",
+      approveBtn: "قبول", denyBtn: "رفض", removeFollowerBtn: "إزالة",
+      privateProfileLabel: "حساب خاص",
+      privateOn: "خاص", privateOff: "عام",
+      privateProfileHint: "عندما يكون الحساب خاصًا، على من يريد متابعتك إرسال طلب توافقين/توافق عليه. الحساب العام يمكن لأي شخص متابعته فورًا.",
+      lockedProfileMsg: "هذا الحساب خاص. يجب المتابعة والحصول على الموافقة لرؤية المفضلة الخاصة به.",
+      userSearchPlaceholder: "بحث باسم المستخدم…",
+      noUsersFoundMsg: "لم يتم العثور على مستخدمين.",
+      noRequestsMsg: "لا توجد طلبات متابعة جديدة.",
+      noFollowersMsg: "لا يوجد متابعون بعد.",
+      noFollowingMsg: "لا تتابع أحدًا بعد.",
+      noFavoritesForUserMsg: "لم يتم اختيار أي مفضلة بعد.",
+      favoritesOfUser: n => `مفضلة ${n}`
     },
     en: {
       appTitle: "Mah Ba\"im", appTagline: "Activities, clubs & events for teens",
@@ -2272,7 +2878,22 @@
       textSizeLabel: "Text size", textSizeSmall: "Small", textSizeMedium: "Medium", textSizeLarge: "Large", languageLabel: "Language",
       changeUsernameLabel: "Change username", changePasswordLabel: "Change password",
       newUsernamePlaceholder: "New username", newPasswordPlaceholder: "New password", updateBtn: "Update",
-      usernameUpdated: "Username updated", passwordUpdated: "Password updated"
+      usernameUpdated: "Username updated", passwordUpdated: "Password updated",
+      notificationsLabel: "Notifications", searchUsersLabel: "Search users",
+      followersLabel: "Followers", followingLabel: "Following",
+      followBtn: "Follow", requestedBtn: "Requested", followingBtn: "Following",
+      approveBtn: "Approve", denyBtn: "Deny", removeFollowerBtn: "Remove",
+      privateProfileLabel: "Private account",
+      privateOn: "Private", privateOff: "Public",
+      privateProfileHint: "When your account is private, anyone who wants to follow you needs to send a request you approve or deny. A public account can be followed instantly by anyone.",
+      lockedProfileMsg: "This account is private. Follow and get approved to see their favorites.",
+      userSearchPlaceholder: "Search by username…",
+      noUsersFoundMsg: "No users found.",
+      noRequestsMsg: "No new follow requests.",
+      noFollowersMsg: "No followers yet.",
+      noFollowingMsg: "Not following anyone yet.",
+      noFavoritesForUserMsg: "No favorites chosen yet.",
+      favoritesOfUser: n => `${n}'s favorites`
     },
     ru: {
       appTitle: "Ма Баим", appTagline: "Кружки, занятия и мероприятия для подростков",
@@ -2323,7 +2944,22 @@
       textSizeLabel: "Размер текста", textSizeSmall: "Маленький", textSizeMedium: "Обычный", textSizeLarge: "Крупный", languageLabel: "Язык",
       changeUsernameLabel: "Изменить имя пользователя", changePasswordLabel: "Изменить пароль",
       newUsernamePlaceholder: "Новое имя пользователя", newPasswordPlaceholder: "Новый пароль", updateBtn: "Обновить",
-      usernameUpdated: "Имя пользователя обновлено", passwordUpdated: "Пароль обновлён"
+      usernameUpdated: "Имя пользователя обновлено", passwordUpdated: "Пароль обновлён",
+      notificationsLabel: "Уведомления", searchUsersLabel: "Поиск пользователей",
+      followersLabel: "Подписчики", followingLabel: "Подписки",
+      followBtn: "Подписаться", requestedBtn: "Ожидает подтверждения", followingBtn: "Вы подписаны",
+      approveBtn: "Принять", denyBtn: "Отклонить", removeFollowerBtn: "Удалить",
+      privateProfileLabel: "Закрытый профиль",
+      privateOn: "Закрытый", privateOff: "Открытый",
+      privateProfileHint: "Если профиль закрытый, желающий подписаться должен отправить запрос, который вы подтвердите или отклоните. На открытый профиль можно подписаться сразу.",
+      lockedProfileMsg: "Этот профиль закрытый. Подпишитесь и дождитесь подтверждения, чтобы увидеть избранное.",
+      userSearchPlaceholder: "Поиск по имени пользователя…",
+      noUsersFoundMsg: "Пользователи не найдены.",
+      noRequestsMsg: "Нет новых запросов на подписку.",
+      noFollowersMsg: "Пока нет подписчиков.",
+      noFollowingMsg: "Вы пока ни на кого не подписаны.",
+      noFavoritesForUserMsg: "Избранное пока не выбрано.",
+      favoritesOfUser: n => `Избранное пользователя ${n}`
     }
   };
 
@@ -2380,7 +3016,7 @@
   async function loadAndApplyProfile(userId) {
     currentUserId = userId;
     const { data } = await sb.from("users")
-      .select("username, avatar_url, theme_pref, text_size, language")
+      .select("username, avatar_url, theme_pref, text_size, language, is_private")
       .eq("id", userId).maybeSingle();
     userProfile = data || null;
     if (userProfile) {
@@ -2402,6 +3038,10 @@
     if (profileState && !profileScreenEl.hidden) renderProfile();
     if (!settingsScreenEl.hidden) renderSettings();
     if (!accessibilityScreenEl.hidden) renderAccessibility();
+    if (!notificationsScreenEl.hidden) renderNotifications();
+    if (!userSearchScreenEl.hidden) renderUserSearch();
+    if (!otherProfileScreenEl.hidden) renderOtherProfile();
+    if (!followListScreenEl.hidden) renderFollowList();
   }
 
   applyDocLang();
@@ -2467,12 +3107,20 @@
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
     appRootEl.hidden = false;
     userGreetingEl.textContent = greetingName ? L().greeting(greetingName) : L().guestGreeting;
     const guest = isGuestMode();
     bottomNavEl.hidden = false;
     navFavoritesEl.hidden = guest;
     navProfileEl.hidden = guest;
+    // Settings moved off the bottom nav for logged-in users — it's reached via the
+    // gear icon on the Profile screen instead. Guests have no Profile screen, so
+    // they keep Settings as their own tab (their only way to reach it).
+    navSettingsEl.hidden = !guest;
     guestExitBtnEl.hidden = !guest;
     document.body.classList.add("has-bottom-nav");
     setActiveTab("home");
@@ -2486,6 +3134,10 @@
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
     bottomNavEl.hidden = true;
     document.body.classList.remove("has-bottom-nav");
     authScreenEl.hidden = false;
@@ -2573,6 +3225,9 @@
     currentUserId = null;
     favoriteIds = new Set();
     favoritedAt = new Map();
+    socialCounts = { followers: 0, following: 0, pending: 0 };
+    otherProfileUserId = null;
+    followListUserId = null;
     loadGuestSettings();
     showApp(null);
   });
@@ -2585,6 +3240,9 @@
     userProfile = null;
     favoriteIds = new Set();
     favoritedAt = new Map();
+    socialCounts = { followers: 0, following: 0, pending: 0 };
+    otherProfileUserId = null;
+    followListUserId = null;
     closeFavDetail();
     const { data: { session } } = await sb.auth.getSession();
     if (session) await sb.auth.signOut();
@@ -2600,6 +3258,10 @@
     favoritesScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
     profileScreenEl.hidden = false;
     bottomNavEl.hidden = false;
     setActiveTab("profile");
@@ -2613,6 +3275,7 @@
       area: prefs?.area || "",
       activityTypes: prefs?.activity_types || [], interestTopics: prefs?.interest_topics || []
     };
+    socialCounts = await loadSocialCounts(currentUserId);
     renderProfile();
   }
 
@@ -2627,9 +3290,18 @@
 
     if (profileMode === "view") {
       profileContentEl.innerHTML = `
+        <div class="profile-header-row">
+          <button type="button" class="profile-icon-btn" id="pNotifBtn" aria-label="${t.notificationsLabel}">🔔${socialCounts.pending > 0 ? `<span class="profile-icon-badge">${socialCounts.pending}</span>` : ""}</button>
+          <button type="button" class="profile-icon-btn" id="pSearchBtn" aria-label="${t.searchUsersLabel}">🔍</button>
+          <button type="button" class="profile-icon-btn" id="pSettingsBtn" aria-label="${t.settingsBtn}">⚙️</button>
+        </div>
         <div class="profile-avatar-row">
           <div class="profile-avatar" style="${avatarStyle}"></div>
           <div class="profile-username">${userProfile?.username || ""}</div>
+          <div class="profile-stats-row">
+            <button type="button" class="profile-stat" id="pFollowersBtn"><b>${socialCounts.followers}</b><span>${t.followersLabel}</span></button>
+            <button type="button" class="profile-stat" id="pFollowingBtn"><b>${socialCounts.following}</b><span>${t.followingLabel}</span></button>
+          </div>
         </div>
         <div class="profile-view-list">
           <div class="profile-view-item"><span>${t.firstNameLabel}</span><b>${profileState.firstName || t.noneYet}</b></div>
@@ -2649,10 +3321,20 @@
         <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="pEditBtn">${t.editProfileBtn}</button></div>
       `;
       document.getElementById("pEditBtn").addEventListener("click", () => { profileMode = "edit"; renderProfile(); });
+      document.getElementById("pNotifBtn").addEventListener("click", showNotifications);
+      document.getElementById("pSearchBtn").addEventListener("click", showUserSearch);
+      document.getElementById("pSettingsBtn").addEventListener("click", showSettings);
+      document.getElementById("pFollowersBtn").addEventListener("click", () => showFollowList("followers", currentUserId));
+      document.getElementById("pFollowingBtn").addEventListener("click", () => showFollowList("following", currentUserId));
       return;
     }
 
     profileContentEl.innerHTML = `
+      <div class="profile-header-row">
+        <button type="button" class="profile-icon-btn" id="pNotifBtn" aria-label="${t.notificationsLabel}">🔔${socialCounts.pending > 0 ? `<span class="profile-icon-badge">${socialCounts.pending}</span>` : ""}</button>
+        <button type="button" class="profile-icon-btn" id="pSearchBtn" aria-label="${t.searchUsersLabel}">🔍</button>
+        <button type="button" class="profile-icon-btn" id="pSettingsBtn" aria-label="${t.settingsBtn}">⚙️</button>
+      </div>
       <div class="profile-avatar-row">
         <div class="profile-avatar" style="${avatarStyle}"></div>
         <button type="button" class="quiz-btn secondary" id="avatarBtn">${t.avatarChange}</button>
@@ -2710,6 +3392,9 @@
 
   function wireProfileEdit() {
     const t = L();
+    document.getElementById("pNotifBtn").addEventListener("click", showNotifications);
+    document.getElementById("pSearchBtn").addEventListener("click", showUserSearch);
+    document.getElementById("pSettingsBtn").addEventListener("click", showSettings);
     document.getElementById("pCancel").addEventListener("click", () => { profileMode = "view"; showProfile(); });
     document.getElementById("avatarBtn").addEventListener("click", () => document.getElementById("avatarInput").click());
     document.getElementById("avatarInput").addEventListener("change", handleAvatarUpload);
@@ -2809,6 +3494,10 @@
     favoritesScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
+    notificationsScreenEl.hidden = true;
+    userSearchScreenEl.hidden = true;
+    otherProfileScreenEl.hidden = true;
+    followListScreenEl.hidden = true;
     settingsScreenEl.hidden = false;
     bottomNavEl.hidden = false;
     setActiveTab("settings");
@@ -2818,9 +3507,20 @@
   function renderSettings() {
     const t = L();
     const theme = userProfile?.theme_pref || "system";
+    const isPrivate = userProfile?.is_private !== false;
+    const loggedIn = !!currentUserId;
     settingsContentEl.innerHTML = `
+      ${loggedIn ? `<button type="button" class="settings-back" id="sBackToProfile">${LANG_DIR[currentLang] === "rtl" ? "› " + t.profileTitle : "‹ " + t.profileTitle}</button>` : ""}
       <h1 class="quiz-title">${t.settingsTitle}</h1>
       <div class="settings-list">
+        ${loggedIn ? `
+        <div class="settings-row settings-row--stack">
+          <span>${t.privateProfileLabel}</span>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option compact" aria-pressed="${isPrivate}" data-privacy-opt="true">${t.privateOn}</button>
+            <button type="button" class="quiz-option compact" aria-pressed="${!isPrivate}" data-privacy-opt="false">${t.privateOff}</button>
+          </div>
+        </div>` : ""}
         <button type="button" class="settings-row settings-row--nav" id="goAccessibility">
           <span>${t.accessibilityLabel}</span><span class="settings-chevron">${LANG_DIR[currentLang] === "rtl" ? "‹" : "›"}</span>
         </button>
@@ -2839,6 +3539,7 @@
           </div>
         </div>
       </div>
+      ${loggedIn ? `<p class="quiz-subtitle">${t.privateProfileHint}</p>` : ""}
       <button type="button" class="signout-row" id="sSignOut">${t.signOut}</button>
     `;
     wireSettings();
@@ -2847,6 +3548,8 @@
   function wireSettings() {
     document.getElementById("goAccessibility").addEventListener("click", showAccessibility);
     document.getElementById("sSignOut").addEventListener("click", doSignOut);
+    const backBtn = document.getElementById("sBackToProfile");
+    if (backBtn) backBtn.addEventListener("click", showProfile);
 
     document.getElementById("sLangSelect").addEventListener("change", async (e) => {
       const v = e.target.value;
@@ -2859,6 +3562,12 @@
       const v = btn.dataset.themeOpt;
       applyTheme(v);
       await saveProfileField("theme_pref", v);
+      renderSettings();
+    }));
+
+    settingsContentEl.querySelectorAll("[data-privacy-opt]").forEach(btn => btn.addEventListener("click", async () => {
+      const v = btn.dataset.privacyOpt === "true";
+      await saveProfileField("is_private", v);
       renderSettings();
     }));
   }
