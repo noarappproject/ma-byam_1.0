@@ -830,6 +830,28 @@
     margin-bottom: 12px;
   }
 
+  .kind-row-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fav-star-btn {
+    flex: none;
+    border: none;
+    background: none;
+    padding: 4px;
+    font-size: calc(20px * var(--text-scale));
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .fav-star-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
   .kind-badge {
     display: inline-flex;
     align-items: center;
@@ -984,6 +1006,164 @@
     margin-top: 4px;
     line-height: 1.6;
   }
+
+  #favFiltersWrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 18px;
+  }
+
+  .fav-sort-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    font-size: calc(13px * var(--text-scale));
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .fav-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .fav-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+
+  .fav-row:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .fav-row-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .fav-row-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .fav-row-title {
+    font-family: "Suez One", "Heebo", serif;
+    font-weight: 400;
+    font-size: calc(16px * var(--text-scale));
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 2px 0 0;
+  }
+
+  .fav-row-meta {
+    font-size: calc(12.5px * var(--text-scale));
+    color: var(--ink-faint);
+    margin: 0;
+  }
+
+  .fav-status-badge {
+    font-size: calc(11.5px * var(--text-scale));
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    color: var(--ink-soft);
+  }
+
+  .fav-status-open { background: color-mix(in srgb, #3E9B5C 18%, var(--chip-bg)); color: #3E9B5C; }
+  .fav-status-full { background: color-mix(in srgb, var(--danger) 18%, var(--chip-bg)); color: var(--danger); }
+  .fav-status-cancelled { background: color-mix(in srgb, var(--danger) 18%, var(--chip-bg)); color: var(--danger); }
+  .fav-status-postponed { background: color-mix(in srgb, #E08A2C 18%, var(--chip-bg)); color: #E08A2C; }
+  .fav-status-ended { background: var(--chip-bg); color: var(--ink-faint); }
+
+  .fav-empty {
+    width: 100%;
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--ink-soft);
+    font-size: calc(14.5px * var(--text-scale));
+  }
+
+  .fav-empty .clear-btn {
+    margin-top: 14px;
+    border: none;
+    background: var(--chip-bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: calc(13.5px * var(--text-scale));
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+
+  .overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: hsl(var(--shadow) / 0.45);
+  }
+
+  .overlay-panel {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 22px;
+  }
+
+  .overlay-card {
+    padding-top: 46px;
+  }
+
+  .overlay-close {
+    position: absolute;
+    top: 12px;
+    inset-inline-end: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: none;
+    background: var(--chip-bg);
+    color: var(--ink);
+    font-size: calc(15px * var(--text-scale));
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .overlay-close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
   </style>
 </head>
 <body>
@@ -1065,10 +1245,30 @@
     <div class="quiz-screen" id="accessibilityContent"></div>
   </div>
 
+  <div class="frame" id="favoritesScreen" hidden>
+    <h1 class="quiz-title" id="favoritesTitleText"></h1>
+    <div id="favFiltersWrap">
+      <div class="search-bar">
+        <svg class="search-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="favSearchInput" aria-label="Search favorites">
+      </div>
+      <div class="chip-row" id="favCategoryChips" aria-label="Filter by category"></div>
+      <div class="chip-row chip-row--topics" id="favTopicChips" aria-label="Filter by topic" hidden></div>
+      <div class="fav-sort-row" id="favSortRow">
+        <label for="favSortSelect" id="favSortLabel"></label>
+        <select id="favSortSelect" class="settings-select"></select>
+      </div>
+    </div>
+    <div class="fav-list" id="favListEl"></div>
+  </div>
+
   <nav class="bottom-nav" id="bottomNav" hidden>
     <div class="bottom-nav-inner">
       <button type="button" class="bottom-nav-btn" id="navHome" data-tab="home">
         <span class="nav-icon">🏠</span><span id="navHomeLabel"></span>
+      </button>
+      <button type="button" class="bottom-nav-btn" id="navFavorites" data-tab="favorites">
+        <span class="nav-icon">⭐</span><span id="navFavoritesLabel"></span>
       </button>
       <button type="button" class="bottom-nav-btn" id="navProfile" data-tab="profile">
         <span class="nav-icon">👤</span><span id="navProfileLabel"></span>
@@ -1079,9 +1279,18 @@
     </div>
   </nav>
 
+  <div class="overlay" id="favDetailOverlay" hidden>
+    <div class="overlay-backdrop" id="favDetailBackdrop"></div>
+    <div class="overlay-panel">
+      <button type="button" class="overlay-close" id="favDetailCloseBtn">✕</button>
+      <div class="card overlay-card" id="favDetailCard"></div>
+    </div>
+  </div>
+
   <script>
   const activities = [
     {
+      id: "39670c6b-7960-4e67-a384-7160076ca3a2",
       item_kind: "activity", schedule_type: "recurring", category: "tech",
       topics: ["רובוטיקה", "תכנות"],
       title: "חוג רובוטיקה לנוער",
@@ -1098,6 +1307,7 @@
       source_url: null, source_name: 'מתנ"ס ירושלים'
     },
     {
+      id: "fdf5d90e-8f3f-4aaa-8242-305f6bb5f6ed",
       item_kind: "activity", schedule_type: "series", category: "tech",
       topics: ["תכנות", "מחשבים"],
       title: "קורס תכנות פייתון לבני נוער",
@@ -1114,6 +1324,7 @@
       source_url: null, source_name: 'מתנ"ס ירושלים'
     },
     {
+      id: "796ab5b8-b996-4bd2-a53c-6991c6b4604d",
       item_kind: "activity", schedule_type: "recurring", category: "tech",
       topics: ["בינה מלאכותית", "רובוטיקה"],
       title: "חוג בינה מלאכותית ורובוטיקה מתקדם",
@@ -1130,6 +1341,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "e51c49ce-6d76-4358-9d5b-c2577c9c1f0d",
       item_kind: "activity", schedule_type: "one_time", category: "art",
       topics: ["צילום"],
       title: "סדנת צילום חד־פעמית לנוער",
@@ -1146,6 +1358,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "b4c4fc9f-b931-4369-b7ad-8ef09dac594f",
       item_kind: "activity", schedule_type: "one_time", category: "art",
       topics: ["אנימציה", "עיצוב"],
       title: "סדנת אנימציה דיגיטלית",
@@ -1162,6 +1375,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "d767898b-d883-4c89-9e97-a5ff9d47c829",
       item_kind: "activity", schedule_type: "recurring", category: "art",
       topics: ["קרמיקה", "עיצוב"],
       title: "חוג קרמיקה ועיצוב",
@@ -1178,6 +1392,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "81d75c4b-1022-4e4f-862a-1a443f55c33f",
       item_kind: "event", schedule_type: "one_time", category: "stage",
       topics: ["הופעות"],
       title: "הופעת מוזיקה בפארק המסילה",
@@ -1194,6 +1409,7 @@
       source_url: "https://www.jerusalem.muni.il/events/park-mesila-concert", source_name: null
     },
     {
+      id: "73478ebb-7424-424b-9145-118a4fd29120",
       item_kind: "event", schedule_type: "one_time", category: "stage",
       topics: ["הופעות"],
       title: "פסטיבל תיאטרון נוער ירושלים",
@@ -1210,6 +1426,7 @@
       source_url: "https://www.jerusalem-theatre.co.il/youth-festival", source_name: null
     },
     {
+      id: "ff80a2c7-62d7-478d-9f12-e3faa089e1b7",
       item_kind: "event", schedule_type: "one_time", category: "stage",
       topics: ["הופעות"],
       title: "הצגת סטנד־אפ לנוער: צחוק זה בריאות",
@@ -1226,6 +1443,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "c57861da-8bc8-4568-a711-56237d4fe8fd",
       item_kind: "activity", schedule_type: "recurring", category: "sport",
       topics: ["כדורסל"],
       title: "חוג כדורסל לנערים",
@@ -1242,6 +1460,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "783251e3-998f-4215-a27e-eccb112ac7a5",
       item_kind: "activity", schedule_type: "series", category: "sport",
       topics: ["כדורגל"],
       title: "קייטנת כדורגל לחופש הגדול",
@@ -1258,6 +1477,7 @@
       source_url: null, source_name: null, status: "full"
     },
     {
+      id: "3f4cd4c2-2163-4f52-ace0-c4bdb7975ad7",
       item_kind: "activity", schedule_type: "recurring", category: "sport",
       topics: ["שחייה"],
       title: "חוג שחייה לנוער",
@@ -1274,6 +1494,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "6096152e-a9d8-4dd6-b8d9-6d8afdca4f7f",
       item_kind: "activity", schedule_type: "recurring", category: "music",
       topics: ["גיטרה"],
       title: "חוג גיטרה למתחילים",
@@ -1290,6 +1511,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "c958424f-eda9-43aa-821e-0e3bd3e07837",
       item_kind: "activity", schedule_type: "one_time", category: "music",
       topics: ["הפקה מוזיקלית", "די־ג׳יי"],
       title: "סדנת הפקה מוזיקלית ודי־ג׳יי",
@@ -1306,6 +1528,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "9bda92e7-c92a-40ef-82ae-1f556c78c2c7",
       item_kind: "event", schedule_type: "one_time", category: "nature",
       topics: ["טבע", "אקולוגיה"],
       title: "טיול טבע וסיור אקולוגי בעמק הצבאים",
@@ -1322,6 +1545,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "6cef0d3a-fd55-43d7-b609-d09f856d96b6",
       item_kind: "activity", schedule_type: "recurring", category: "leadership",
       topics: ["מנהיגות", "דיבייט"],
       title: "חוג מנהיגות ודיבייט",
@@ -1338,6 +1562,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "d4cd870c-c3b5-49b9-8df8-df43f4bb2e7e",
       item_kind: "activity", schedule_type: "recurring", category: "volunteer",
       topics: ["חונכות", "עזרה לזולת"],
       title: "תוכנית חונכות והתנדבות קהילתית",
@@ -1354,6 +1579,7 @@
       source_url: null, source_name: null
     },
     {
+      id: "9cef3850-3364-4d66-a5fb-aed472bdd627",
       item_kind: "event", schedule_type: "one_time", category: "gaming",
       topics: ["גיימינג תחרותי"],
       title: "טורניר גיימינג לנוער",
@@ -1433,6 +1659,23 @@
   const topicChipsEl = document.getElementById("topicChips");
   const searchInput = document.getElementById("searchInput");
 
+  const favoritesScreenEl = document.getElementById("favoritesScreen");
+  const favSearchInputEl = document.getElementById("favSearchInput");
+  const favCategoryChipsEl = document.getElementById("favCategoryChips");
+  const favTopicChipsEl = document.getElementById("favTopicChips");
+  const favSortRowEl = document.getElementById("favSortRow");
+  const favSortSelectEl = document.getElementById("favSortSelect");
+  const favListEl = document.getElementById("favListEl");
+  const favDetailOverlayEl = document.getElementById("favDetailOverlay");
+  const favDetailBackdropEl = document.getElementById("favDetailBackdrop");
+  const favDetailCloseBtnEl = document.getElementById("favDetailCloseBtn");
+  const favDetailCardEl = document.getElementById("favDetailCard");
+
+  let favoriteIds = new Set();
+  let favoritedAt = new Map();
+  const favState = { q: "", category: null, topic: null, sort: "soonest" };
+  let favDetailOpenId = null;
+
   const CATEGORY_ORDER = [...new Set(activities.map(a => a.category))];
 
   const state = { q: "", category: null, topic: null };
@@ -1452,9 +1695,9 @@
     );
   }
 
-  function topicsForCategory(cat) {
+  function topicsForCategory(list, cat) {
     const set = new Set();
-    activities.filter(a => a.category === cat).forEach(a => (a.topics || []).forEach(t => set.add(t)));
+    list.filter(a => a.category === cat).forEach(a => (a.topics || []).forEach(t => set.add(t)));
     return [...set];
   }
 
@@ -1466,7 +1709,7 @@
   }
 
   function renderTopicChips() {
-    const topics = state.category ? topicsForCategory(state.category) : [];
+    const topics = state.category ? topicsForCategory(activities, state.category) : [];
     if (!topics.length) {
       topicChipsEl.hidden = true;
       topicChipsEl.innerHTML = "";
@@ -1488,38 +1731,18 @@
     render();
   }
 
-  function render() {
-    const list = visibleActivities();
-    stageEl.classList.toggle("is-empty", list.length === 0);
-
-    if (!list.length) {
-      cardEl.classList.add("is-empty");
-      cardEl.innerHTML = `
-        <p>${L().emptyStateMsg}</p>
-        <button type="button" class="clear-btn" id="clearFiltersBtn">${L().clearFiltersBtn}</button>
-      `;
-      document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
-      dotsEl.innerHTML = "";
-      counterEl.textContent = "";
-      return;
-    }
-
-    if (index >= list.length) index = 0;
-    const a = list[index];
+  function activityDetailHtml(a) {
     const when = whenText(a);
     const cta = ctaInfo(a);
-    const color = CATEGORY_COLOR[a.category] || "var(--accent)";
-
-    cardEl.classList.remove("is-empty");
-    cardEl.style.setProperty("--cat-color", color);
-    cardEl.classList.remove("fade-in");
-    void cardEl.offsetWidth;
-    cardEl.classList.add("fade-in");
-
-    cardEl.innerHTML = `
+    const canFavorite = !isGuestMode() && a.id;
+    const isFav = a.id && favoriteIds.has(a.id);
+    return `
       <div class="kind-row">
-        <span class="kind-badge">${kindLabel(a)}</span>
-        <span class="category-label">${L().categories[a.category] || a.category}</span>
+        <div class="kind-row-left">
+          <span class="kind-badge">${kindLabel(a)}</span>
+          <span class="category-label">${L().categories[a.category] || a.category}</span>
+        </div>
+        ${canFavorite ? `<button type="button" class="fav-star-btn" data-fav-id="${a.id}" aria-pressed="${isFav}" aria-label="${isFav ? L().unfavoriteLabel : L().favoriteLabel}">${isFav ? "⭐" : "☆"}</button>` : ""}
       </div>
       <h1>${a.title}</h1>
       <p class="short-desc">${a.short_description || ""}</p>
@@ -1548,6 +1771,37 @@
           : `<span class="cta disabled">${cta.label}</span>`}
       </div>
     `;
+  }
+
+  function render() {
+    const list = visibleActivities();
+    stageEl.classList.toggle("is-empty", list.length === 0);
+
+    if (!list.length) {
+      cardEl.classList.add("is-empty");
+      cardEl.innerHTML = `
+        <p>${L().emptyStateMsg}</p>
+        <button type="button" class="clear-btn" id="clearFiltersBtn">${L().clearFiltersBtn}</button>
+      `;
+      document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
+      dotsEl.innerHTML = "";
+      counterEl.textContent = "";
+      return;
+    }
+
+    if (index >= list.length) index = 0;
+    const a = list[index];
+    const color = CATEGORY_COLOR[a.category] || "var(--accent)";
+
+    cardEl.classList.remove("is-empty");
+    cardEl.style.setProperty("--cat-color", color);
+    cardEl.classList.remove("fade-in");
+    void cardEl.offsetWidth;
+    cardEl.classList.add("fade-in");
+
+    cardEl.innerHTML = activityDetailHtml(a);
+    const favBtn = cardEl.querySelector(".fav-star-btn");
+    if (favBtn) favBtn.addEventListener("click", () => toggleFavorite(favBtn.dataset.favId));
 
     dotsEl.innerHTML = list.map((_, i) =>
       `<button aria-current="${i === index}" aria-label="עבור לפעילות ${i + 1}" data-i="${i}"></button>`
@@ -1619,6 +1873,244 @@
     render();
   }
 
+  // ---- Favorites ----
+  async function loadFavorites() {
+    favoriteIds = new Set();
+    favoritedAt = new Map();
+    if (isGuestMode() || !currentUserId) return;
+    const { data } = await sb.from("favorites").select("activity_id, created_at").eq("user_id", currentUserId);
+    (data || []).forEach(row => {
+      favoriteIds.add(row.activity_id);
+      favoritedAt.set(row.activity_id, row.created_at);
+    });
+  }
+
+  async function toggleFavorite(activityId) {
+    if (!currentUserId) return;
+    const wasFav = favoriteIds.has(activityId);
+    if (wasFav) { favoriteIds.delete(activityId); favoritedAt.delete(activityId); }
+    else { favoriteIds.add(activityId); favoritedAt.set(activityId, new Date().toISOString()); }
+    refreshFavoriteAffectedUI();
+    try {
+      const { error } = wasFav
+        ? await sb.from("favorites").delete().eq("user_id", currentUserId).eq("activity_id", activityId)
+        : await sb.from("favorites").insert({ user_id: currentUserId, activity_id: activityId });
+      if (error) throw error;
+    } catch (err) {
+      if (wasFav) { favoriteIds.add(activityId); favoritedAt.set(activityId, new Date().toISOString()); }
+      else { favoriteIds.delete(activityId); favoritedAt.delete(activityId); }
+      refreshFavoriteAffectedUI();
+      console.error(err);
+    }
+  }
+
+  function refreshFavoriteAffectedUI() {
+    if (appStarted && !appRootEl.hidden) render();
+    if (!favoritesScreenEl.hidden) renderFavorites();
+    if (!favDetailOverlayEl.hidden) renderFavDetailOverlay();
+  }
+
+  function baseFavorites() {
+    return activities.filter(a => a.id && favoriteIds.has(a.id));
+  }
+
+  function visibleFavorites() {
+    return baseFavorites().filter(a =>
+      matchesQuery(a, favState.q) &&
+      (!favState.category || a.category === favState.category) &&
+      (!favState.topic || (a.topics || []).includes(favState.topic))
+    );
+  }
+
+  function activityTimestamp(a) {
+    const t = new Date(`${a.start_date}T${a.start_time || "00:00:00"}`).getTime();
+    return Number.isNaN(t) ? Infinity : t;
+  }
+
+  function activityStatusInfo(a) {
+    const status = a.status || "open";
+    return { status, label: L().activityStatus[status] || status };
+  }
+
+  function sortFavorites(list, sortKey) {
+    const collator = new Intl.Collator(LOCALE_TAG[currentLang] || "he-IL");
+    const sorted = [...list];
+    if (sortKey === "recent") sorted.sort((a, b) => new Date(favoritedAt.get(b.id) || 0) - new Date(favoritedAt.get(a.id) || 0));
+    else if (sortKey === "category") sorted.sort((a, b) => CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category) || collator.compare(a.title, b.title));
+    else if (sortKey === "name") sorted.sort((a, b) => collator.compare(a.title, b.title));
+    else sorted.sort((a, b) => activityTimestamp(a) - activityTimestamp(b));
+    return sorted;
+  }
+
+  function favRowHtml(a) {
+    const when = whenText(a);
+    const statusInfo = activityStatusInfo(a);
+    return `
+      <div class="fav-row" role="button" tabindex="0" data-open-id="${a.id}">
+        <div class="fav-row-main">
+          <div class="fav-row-top">
+            <span class="category-label">${L().categories[a.category] || a.category}</span>
+            <span class="fav-status-badge fav-status-${statusInfo.status}">${statusInfo.label}</span>
+          </div>
+          <h3 class="fav-row-title">${a.title}</h3>
+          <p class="fav-row-meta">${when.main} · ${when.sub}</p>
+          <p class="fav-row-meta">${a.location_name}${a.neighborhood ? " · " + a.neighborhood : ""}</p>
+          ${a.capacity != null ? `<p class="fav-row-meta">${L().spotsLeftText(a.spots_left ?? 0, a.capacity)}</p>` : ""}
+        </div>
+        <button type="button" class="fav-star-btn" data-fav-id="${a.id}" aria-pressed="true" aria-label="${L().unfavoriteLabel}">⭐</button>
+      </div>
+    `;
+  }
+
+  function clearFavFilters() {
+    favState.q = ""; favState.category = null; favState.topic = null;
+    favSearchInputEl.value = "";
+    renderFavorites();
+  }
+
+  function renderFavorites() {
+    const all = baseFavorites();
+
+    if (!all.length) {
+      document.getElementById("favFiltersWrap").hidden = true;
+      favListEl.innerHTML = `
+        <div class="fav-empty">
+          <p>${L().favEmptyNoFavoritesMsg}</p>
+          <button type="button" class="clear-btn" id="favGoHomeBtn">${L().favEmptyNoFavoritesCta}</button>
+        </div>
+      `;
+      document.getElementById("favGoHomeBtn").addEventListener("click", () => showApp(userProfile?.username || null));
+      return;
+    }
+
+    document.getElementById("favFiltersWrap").hidden = false;
+
+    const categoriesPresent = new Set(all.map(a => a.category));
+    if (favState.category && !categoriesPresent.has(favState.category)) {
+      favState.category = null;
+      favState.topic = null;
+    }
+
+    const favCategoryOrder = CATEGORY_ORDER.filter(c => categoriesPresent.has(c));
+    const catChips = [{ key: null, label: L().chipAll }, ...favCategoryOrder.map(c => ({ key: c, label: L().categories[c] || c, color: CATEGORY_COLOR[c] }))];
+    favCategoryChipsEl.innerHTML = catChips.map(c => `
+      <button type="button" class="chip" aria-pressed="${favState.category === c.key}" data-cat="${c.key ?? ""}"${c.color ? ` style="--chip-color:${c.color}"` : ""}>${c.label}</button>
+    `).join("");
+
+    const topics = favState.category ? topicsForCategory(all, favState.category) : [];
+    if (!topics.length) {
+      favTopicChipsEl.hidden = true;
+      favTopicChipsEl.innerHTML = "";
+    } else {
+      favTopicChipsEl.hidden = false;
+      const topicChips = [{ key: null, label: L().topicsAllChip }, ...topics.map(t => ({ key: t, label: t }))];
+      favTopicChipsEl.innerHTML = topicChips.map(c => `
+        <button type="button" class="chip" aria-pressed="${favState.topic === c.key}" data-topic="${c.key ?? ""}">${c.label}</button>
+      `).join("");
+    }
+
+    favSortSelectEl.innerHTML = [
+      ["soonest", L().favSortSoonest], ["recent", L().favSortRecent],
+      ["category", L().favSortCategory], ["name", L().favSortName]
+    ].map(([v, label]) => `<option value="${v}" ${favState.sort === v ? "selected" : ""}>${label}</option>`).join("");
+
+    const list = sortFavorites(visibleFavorites(), favState.sort);
+    if (!list.length) {
+      favListEl.innerHTML = `
+        <div class="fav-empty">
+          <p>${L().emptyStateMsg}</p>
+          <button type="button" class="clear-btn" id="favClearFiltersBtn">${L().clearFiltersBtn}</button>
+        </div>
+      `;
+      document.getElementById("favClearFiltersBtn").addEventListener("click", clearFavFilters);
+      return;
+    }
+
+    favListEl.innerHTML = list.map(favRowHtml).join("");
+  }
+
+  favSearchInputEl.addEventListener("input", (e) => {
+    favState.q = e.target.value.trim();
+    renderFavorites();
+  });
+
+  favCategoryChipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-cat]");
+    if (!btn) return;
+    const val = btn.dataset.cat || null;
+    favState.category = favState.category === val ? null : val;
+    favState.topic = null;
+    renderFavorites();
+  });
+
+  favTopicChipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-topic]");
+    if (!btn) return;
+    const val = btn.dataset.topic || null;
+    favState.topic = favState.topic === val ? null : val;
+    renderFavorites();
+  });
+
+  favSortRowEl.addEventListener("change", (e) => {
+    if (e.target.id !== "favSortSelect") return;
+    favState.sort = e.target.value;
+    renderFavorites();
+  });
+
+  favListEl.addEventListener("click", (e) => {
+    const starBtn = e.target.closest(".fav-star-btn");
+    if (starBtn) { toggleFavorite(starBtn.dataset.favId); return; }
+    const row = e.target.closest(".fav-row[data-open-id]");
+    if (row) openFavDetail(row.dataset.openId);
+  });
+
+  favListEl.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const row = e.target.closest(".fav-row[data-open-id]");
+    if (!row) return;
+    e.preventDefault();
+    openFavDetail(row.dataset.openId);
+  });
+
+  function openFavDetail(id) {
+    favDetailOpenId = id;
+    renderFavDetailOverlay();
+    favDetailOverlayEl.hidden = false;
+  }
+
+  function closeFavDetail() {
+    favDetailOpenId = null;
+    favDetailOverlayEl.hidden = true;
+    favDetailCardEl.innerHTML = "";
+  }
+
+  function renderFavDetailOverlay() {
+    if (!favDetailOpenId) return;
+    const a = activities.find(x => x.id === favDetailOpenId);
+    if (!a) { closeFavDetail(); return; }
+    favDetailCardEl.style.setProperty("--cat-color", CATEGORY_COLOR[a.category] || "var(--accent)");
+    favDetailCardEl.innerHTML = activityDetailHtml(a);
+    const favBtn = favDetailCardEl.querySelector(".fav-star-btn");
+    if (favBtn) favBtn.addEventListener("click", () => toggleFavorite(favBtn.dataset.favId));
+  }
+
+  favDetailCloseBtnEl.addEventListener("click", closeFavDetail);
+  favDetailBackdropEl.addEventListener("click", closeFavDetail);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !favDetailOverlayEl.hidden) closeFavDetail();
+  });
+
+  function showFavorites() {
+    appRootEl.hidden = true;
+    profileScreenEl.hidden = true;
+    settingsScreenEl.hidden = true;
+    accessibilityScreenEl.hidden = true;
+    favoritesScreenEl.hidden = false;
+    bottomNavEl.hidden = false;
+    setActiveTab("favorites");
+    renderFavorites();
+  }
+
   // ---- Auth ----
   const SUPABASE_URL = "https://soncpzmasqcjxcawhqqw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_Js1OgoSr1x7INhSfR_hfwQ_0aTH1vIW";
@@ -1640,10 +2132,16 @@
       errLoginFailed: "שם משתמש או סיסמה שגויים.", errSignupFailed: "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה אחרת.",
       eyebrowSub: "תצוגת נתונים מהדאטהבייס", searchPlaceholder: "חיפוש לפי שם, תיאור או ארגון…",
       chipAll: "הכל", topicsAllChip: "כל הנושאים", signOut: "התנתקות", profileBtn: "פרופיל", settingsBtn: "הגדרות",
+      favoritesBtn: "מועדפים", favoritesTitle: "המועדפים שלי",
+      favEmptyNoFavoritesMsg: "עדיין לא סימנת אף פעילות כמועדפת.", favEmptyNoFavoritesCta: "לעמוד הפעילויות",
+      favSortLabel: "מיון", favSortSoonest: "הפעילות הקרובה ביותר", favSortRecent: "לפי סדר הוספה למועדפים",
+      favSortCategory: "לפי קטגוריה", favSortName: "לפי שם",
+      favoriteLabel: "הוספה למועדפים", unfavoriteLabel: "הסרה מהמועדפים", favDetailCloseLabel: "סגירה",
       guestGreeting: "היי, אורח 👋", greeting: n => `היי, ${n} 👋`,
       noteText: "דמו סטטי לבדיקת עיצוב — הנתונים הם צילום מצב נוכחי של טבלת activities בסופאבייס, לא חיבור חי.",
       emptyStateMsg: "לא נמצאו פעילויות התואמות לחיפוש.", clearFiltersBtn: "איפוס סינון",
       categories: { sport: "ספורט", tech: "טכנולוגיה ומדע", art: "אומנות ויצירה", music: "מוזיקה", stage: "תיאטרון ומופעים", nature: "טבע וטיולים", volunteer: "התנדבות וקהילה", leadership: "מנהיגות ונוער", learning: "לימודים והעשרה", gaming: "משחקים וגיימינג", wellbeing: "רווחה ותמיכה" },
+      activityStatus: { open: "פתוח להרשמה", full: "מלא", cancelled: "בוטל", postponed: "נדחה", ended: "הסתיים" },
       kindClub: "חוג", kindEvent: "אירוע", kindActivity: "פעילות",
       days: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"],
       allAges: "כל הגילאים", ageFrom: n => `מגיל ${n}`, ageTo: n => `עד גיל ${n}`, ageRangeText: (a, b) => `גילאי ${a}–${b}`,
@@ -1685,10 +2183,16 @@
       errLoginFailed: "اسم المستخدم أو كلمة المرور غير صحيحة.", errSignupFailed: "فشل التسجيل. جرّب اسم مستخدم أو كلمة مرور مختلفة.",
       eyebrowSub: "عرض بيانات من قاعدة البيانات", searchPlaceholder: "بحث بالاسم أو الوصف أو الجهة…",
       chipAll: "الكل", topicsAllChip: "كل المواضيع", signOut: "تسجيل خروج", profileBtn: "الملف الشخصي", settingsBtn: "الإعدادات",
+      favoritesBtn: "المفضلة", favoritesTitle: "مفضلتي",
+      favEmptyNoFavoritesMsg: "لم تقم بإضافة أي نشاط إلى المفضلة بعد.", favEmptyNoFavoritesCta: "إلى صفحة الأنشطة",
+      favSortLabel: "الترتيب", favSortSoonest: "الأقرب موعدًا", favSortRecent: "حسب ترتيب الإضافة للمفضلة",
+      favSortCategory: "حسب الفئة", favSortName: "حسب الاسم",
+      favoriteLabel: "إضافة إلى المفضلة", unfavoriteLabel: "إزالة من المفضلة", favDetailCloseLabel: "إغلاق",
       guestGreeting: "أهلًا، زائر 👋", greeting: n => `أهلًا، ${n} 👋`,
       noteText: "عرض توضيحي ثابت — البيانات هي لقطة من حالة جدول activities في Supabase، وليست اتصالًا مباشرًا.",
       emptyStateMsg: "لم يتم العثور على أنشطة مطابقة للبحث.", clearFiltersBtn: "إعادة ضبط الفلتر",
       categories: { sport: "رياضة", tech: "تكنولوجيا وعلوم", art: "فنون وإبداع", music: "موسيقى", stage: "مسرح وعروض", nature: "طبيعة ورحلات", volunteer: "تطوع ومجتمع", leadership: "قيادة وشباب", learning: "تعلّم وإثراء", gaming: "ألعاب وجيمنج", wellbeing: "رفاهية ودعم" },
+      activityStatus: { open: "مفتوح للتسجيل", full: "مكتمل", cancelled: "أُلغي", postponed: "تأجّل", ended: "انتهى" },
       kindClub: "نادٍ", kindEvent: "فعالية", kindActivity: "نشاط",
       days: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],
       allAges: "لكل الأعمار", ageFrom: n => `من عمر ${n}`, ageTo: n => `حتى عمر ${n}`, ageRangeText: (a, b) => `أعمار ${a}–${b}`,
@@ -1730,10 +2234,16 @@
       errLoginFailed: "Incorrect username or password.", errSignupFailed: "Sign-up failed. Try a different username or password.",
       eyebrowSub: "Live database preview", searchPlaceholder: "Search by name, description, or organization…",
       chipAll: "All", topicsAllChip: "All topics", signOut: "Sign out", profileBtn: "Profile", settingsBtn: "Settings",
+      favoritesBtn: "Favorites", favoritesTitle: "My favorites",
+      favEmptyNoFavoritesMsg: "You haven't favorited any activities yet.", favEmptyNoFavoritesCta: "Browse activities",
+      favSortLabel: "Sort by", favSortSoonest: "Soonest activity", favSortRecent: "Recently favorited",
+      favSortCategory: "Category", favSortName: "Name",
+      favoriteLabel: "Add to favorites", unfavoriteLabel: "Remove from favorites", favDetailCloseLabel: "Close",
       guestGreeting: "Hi, guest 👋", greeting: n => `Hi, ${n} 👋`,
       noteText: "Static demo — this data is a snapshot of the activities table in Supabase, not a live connection.",
       emptyStateMsg: "No activities match your search.", clearFiltersBtn: "Clear filters",
       categories: { sport: "Sport", tech: "Tech & science", art: "Art & design", music: "Music", stage: "Theatre & shows", nature: "Nature & hikes", volunteer: "Volunteering & community", leadership: "Leadership & youth", learning: "Learning & enrichment", gaming: "Gaming", wellbeing: "Wellbeing & support" },
+      activityStatus: { open: "Open for registration", full: "Full", cancelled: "Cancelled", postponed: "Postponed", ended: "Ended" },
       kindClub: "Club", kindEvent: "Event", kindActivity: "Activity",
       days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       allAges: "All ages", ageFrom: n => `From age ${n}`, ageTo: n => `Up to age ${n}`, ageRangeText: (a, b) => `Ages ${a}–${b}`,
@@ -1775,10 +2285,16 @@
       errLoginFailed: "Неверное имя пользователя или пароль.", errSignupFailed: "Регистрация не удалась. Попробуйте другое имя пользователя или пароль.",
       eyebrowSub: "Просмотр данных из базы данных", searchPlaceholder: "Поиск по названию, описанию или организации…",
       chipAll: "Все", topicsAllChip: "Все темы", signOut: "Выйти", profileBtn: "Профиль", settingsBtn: "Настройки",
+      favoritesBtn: "Избранное", favoritesTitle: "Моё избранное",
+      favEmptyNoFavoritesMsg: "Вы пока не добавили ни одного занятия в избранное.", favEmptyNoFavoritesCta: "К странице занятий",
+      favSortLabel: "Сортировка", favSortSoonest: "Ближайшее занятие", favSortRecent: "По порядку добавления в избранное",
+      favSortCategory: "По категории", favSortName: "По названию",
+      favoriteLabel: "Добавить в избранное", unfavoriteLabel: "Убрать из избранного", favDetailCloseLabel: "Закрыть",
       guestGreeting: "Привет, гость 👋", greeting: n => `Привет, ${n} 👋`,
       noteText: "Статичная демонстрация — эти данные являются снимком таблицы activities в Supabase, а не живым подключением.",
       emptyStateMsg: "Не найдено занятий, соответствующих поиску.", clearFiltersBtn: "Сбросить фильтры",
       categories: { sport: "Спорт", tech: "Технологии и наука", art: "Искусство и дизайн", music: "Музыка", stage: "Театр и шоу", nature: "Природа и походы", volunteer: "Волонтёрство и община", leadership: "Лидерство и молодёжь", learning: "Учёба и развитие", gaming: "Игры", wellbeing: "Благополучие и поддержка" },
+      activityStatus: { open: "Открыта регистрация", full: "Мест нет", cancelled: "Отменено", postponed: "Отложено", ended: "Завершено" },
       kindClub: "Кружок", kindEvent: "Мероприятие", kindActivity: "Занятие",
       days: ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"],
       allAges: "Для всех возрастов", ageFrom: n => `С ${n} лет`, ageTo: n => `До ${n} лет`, ageRangeText: (a, b) => `Возраст ${a}–${b}`,
@@ -1834,12 +2350,17 @@
     document.getElementById("guestBtn").textContent = t.guestBtn;
     document.getElementById("guestExitBtn").textContent = t.guestExitBtn;
     document.getElementById("navHomeLabel").textContent = t.homeTab;
+    document.getElementById("navFavoritesLabel").textContent = t.favoritesBtn;
     document.getElementById("navProfileLabel").textContent = t.profileBtn;
     document.getElementById("navSettingsLabel").textContent = t.settingsBtn;
     document.getElementById("eyebrowTitle").textContent = t.appTitle;
     document.getElementById("eyebrowSubText").textContent = t.eyebrowSub;
     document.getElementById("searchInput").placeholder = t.searchPlaceholder;
     document.getElementById("noteTextEl").textContent = t.noteText;
+    document.getElementById("favoritesTitleText").textContent = t.favoritesTitle;
+    document.getElementById("favSearchInput").placeholder = t.searchPlaceholder;
+    document.getElementById("favSortLabel").textContent = t.favSortLabel;
+    document.getElementById("favDetailCloseBtn").setAttribute("aria-label", t.favDetailCloseLabel);
   }
 
   function applyTheme(pref) {
@@ -1877,6 +2398,7 @@
     if (categoryChipsEl) { renderCategoryChips(); renderTopicChips(); }
     if (cardEl && appStarted) render();
     if (quiz && !quizScreenEl.hidden) renderQuiz();
+    if (favoritesScreenEl && !favoritesScreenEl.hidden) renderFavorites();
     if (profileState && !profileScreenEl.hidden) renderProfile();
     if (!settingsScreenEl.hidden) renderSettings();
     if (!accessibilityScreenEl.hidden) renderAccessibility();
@@ -1904,6 +2426,7 @@
   const accessibilityContentEl = document.getElementById("accessibilityContent");
   const bottomNavEl = document.getElementById("bottomNav");
   const navHomeEl = document.getElementById("navHome");
+  const navFavoritesEl = document.getElementById("navFavorites");
   const navProfileEl = document.getElementById("navProfile");
   const navSettingsEl = document.getElementById("navSettings");
 
@@ -1932,6 +2455,7 @@
 
   function setActiveTab(tab) {
     navHomeEl.setAttribute("aria-current", tab === "home");
+    navFavoritesEl.setAttribute("aria-current", tab === "favorites");
     navProfileEl.setAttribute("aria-current", tab === "profile");
     navSettingsEl.setAttribute("aria-current", tab === "settings");
   }
@@ -1939,6 +2463,7 @@
   function showApp(greetingName) {
     quizScreenEl.hidden = true;
     authScreenEl.hidden = true;
+    favoritesScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
@@ -1946,6 +2471,7 @@
     userGreetingEl.textContent = greetingName ? L().greeting(greetingName) : L().guestGreeting;
     const guest = isGuestMode();
     bottomNavEl.hidden = false;
+    navFavoritesEl.hidden = guest;
     navProfileEl.hidden = guest;
     guestExitBtnEl.hidden = !guest;
     document.body.classList.add("has-bottom-nav");
@@ -1956,6 +2482,7 @@
   function showAuth() {
     appRootEl.hidden = true;
     quizScreenEl.hidden = true;
+    favoritesScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
@@ -1967,6 +2494,7 @@
   }
 
   navHomeEl.addEventListener("click", () => showApp(userProfile?.username || null));
+  navFavoritesEl.addEventListener("click", showFavorites);
   navProfileEl.addEventListener("click", showProfile);
   navSettingsEl.addEventListener("click", showSettings);
 
@@ -1974,6 +2502,12 @@
   // exactly once; guests skip it entirely, since guest data is never collected.
   async function proceedAfterAuth(userId, greetingName) {
     await loadAndApplyProfile(userId);
+    await loadFavorites();
+    // On a fresh page load, showApp()'s first-run initAppUI() renders the card after this
+    // point anyway. On a re-login within the same session (sign out -> sign back in without
+    // a reload), appStarted is already true and nothing would otherwise refresh stale
+    // favorite state onto the Home card / Favorites list, so do it explicitly here.
+    if (appStarted) { render(); renderFavorites(); }
     const { data: prefs } = await sb.from("user_preferences").select("user_id").eq("user_id", userId).maybeSingle();
     if (prefs) {
       showApp(greetingName);
@@ -2037,6 +2571,8 @@
   guestBtnEl.addEventListener("click", () => {
     localStorage.setItem("mb_guest", "1");
     currentUserId = null;
+    favoriteIds = new Set();
+    favoritedAt = new Map();
     loadGuestSettings();
     showApp(null);
   });
@@ -2047,6 +2583,9 @@
     localStorage.removeItem("mb_guest");
     currentUserId = null;
     userProfile = null;
+    favoriteIds = new Set();
+    favoritedAt = new Map();
+    closeFavDetail();
     const { data: { session } } = await sb.auth.getSession();
     if (session) await sb.auth.signOut();
     showAuth();
@@ -2058,6 +2597,7 @@
 
   async function showProfile() {
     appRootEl.hidden = true;
+    favoritesScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
     profileScreenEl.hidden = false;
@@ -2266,6 +2806,7 @@
 
   function showSettings() {
     appRootEl.hidden = true;
+    favoritesScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     accessibilityScreenEl.hidden = true;
     settingsScreenEl.hidden = false;

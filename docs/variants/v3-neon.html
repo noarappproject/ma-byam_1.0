@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מה בי״ם — Neon Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --scale:1;
+  --bg:#0D0D12; --surf:#16161E; --card:#1C1C26; --card2:#23232F;
+  --lime:#C4F82A; --limeD:#A8DC12; --violet:#9B8AFB;
+  --ink:#F4F4F7; --ink2:#A8AEBD; --ink3:#7C8296;
+  --line:#2A2B38;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#050508;color:var(--ink);
+  font-family:"Heebo",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;min-height:100vh}
+::selection{background:var(--lime);color:#0D0D12}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#33344A;border-radius:99px;border:2px solid var(--bg)}
+:focus-visible{outline:2.5px solid var(--lime);outline-offset:2px;border-radius:8px}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--bg);position:relative;overflow-x:hidden;padding-bottom:112px}
+.scr{display:none}.scr.on{display:block;animation:in .34s cubic-bezier(.16,1,.3,1)}
+@keyframes in{from{opacity:.35;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.pad{padding-inline:20px}
+h1{font-size:calc(32px*var(--scale));font-weight:900;letter-spacing:-.038em;line-height:1.1;margin:0}
+h2{font-size:calc(21px*var(--scale));font-weight:800;letter-spacing:-.03em;margin:0}
+h3{font-size:calc(17px*var(--scale));font-weight:800;letter-spacing:-.025em;margin:0;line-height:1.3}
+p{margin:0;line-height:1.6}
+.mut{color:var(--ink2);font-size:calc(14.5px*var(--scale))}
+.sml{color:var(--ink3);font-size:calc(12.5px*var(--scale));font-weight:600}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border-radius:99px;
+  background:var(--lime);color:#0D0D12;font-weight:800;font-size:calc(16px*var(--scale));letter-spacing:-.02em;
+  transition:transform .18s cubic-bezier(.16,1,.3,1),filter .18s}
+.btn:active{transform:scale(.975)}.btn:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.34;pointer-events:none}
+.btn.v{background:color-mix(in srgb,var(--violet) 22%,var(--card));color:var(--ink)}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.sm{min-height:44px;width:auto;padding-inline:22px;font-size:calc(14px*var(--scale))}
+.lnk{color:var(--lime);font-weight:700;font-size:calc(14.5px*var(--scale));text-decoration:underline;text-underline-offset:3px}
+
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:calc(13px*var(--scale));font-weight:700;color:var(--ink2);margin-bottom:7px}
+.inp{width:100%;min-height:54px;border-radius:15px;border:1px solid var(--line);background:var(--card);
+  padding-inline:17px;font-size:calc(15.5px*var(--scale));font-weight:500;transition:border-color .18s}
+.inp:focus{outline:none;border-color:var(--lime)}
+.inp::placeholder{color:var(--ink3)}
+.err{color:#FF7A6E;font-size:calc(13px*var(--scale));font-weight:600;min-height:1.2em;margin-top:6px}
+
+.srch{position:relative;margin-bottom:15px}
+.srch svg{position:absolute;inset-inline-start:17px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--ink3);fill:none;stroke-width:2.3;stroke-linecap:round}
+.srch input{width:100%;min-height:50px;border-radius:99px;border:1px solid var(--line);background:var(--card);
+  padding-inline-start:47px;padding-inline-end:18px;font-size:calc(15px*var(--scale));font-weight:500}
+.srch input:focus{outline:none;border-color:var(--lime)}
+.srch input::placeholder{color:var(--ink3)}
+
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-20px;padding-inline:20px;padding-bottom:3px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:9px 16px;border-radius:99px;background:var(--card);border:1px solid var(--line);
+  font-size:calc(13.5px*var(--scale));font-weight:700;color:var(--ink2);white-space:nowrap;transition:background .16s,color .16s,border-color .16s}
+.chip[aria-pressed="true"]{background:var(--lime);color:#0D0D12;border-color:var(--lime)}
+.chips.t .chip{font-weight:600;font-size:calc(12.5px*var(--scale));padding:7px 13px}
+
+.card{display:block;width:100%;text-align:start;border-radius:20px;overflow:hidden;position:relative;
+  margin-bottom:15px;background:var(--card);
+  box-shadow:0 10px 26px -12px rgba(0,0,0,.85);transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.card:active{transform:scale(.985)}
+.cmedia{height:196px;position:relative}
+.cmedia svg{position:absolute;inset:0;width:100%;height:100%}
+.cscrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,14,.94) 8%,rgba(10,10,14,.5) 42%,rgba(10,10,14,.08) 78%)}
+.cover{position:absolute;inset-block-end:0;inset-inline:0;padding:16px 17px}
+.crow{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+.tag{font-size:calc(11.5px*var(--scale));font-weight:800;padding:4px 11px;border-radius:99px;color:#0D0D12}
+.kind{font-size:calc(11.5px*var(--scale));font-weight:700;padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.14);color:var(--ink)}
+.cmeta{color:var(--ink2);font-size:calc(12.5px*var(--scale));font-weight:600;margin-top:6px}
+.join{position:absolute;inset-block-start:13px;inset-inline-start:13px;background:var(--lime);color:#0D0D12;
+  font-size:calc(12.5px*var(--scale));font-weight:800;padding:8px 15px;border-radius:99px}
+.fav{position:absolute;inset-block-start:13px;inset-inline-end:13px;width:40px;height:40px;border-radius:50%;
+  background:rgba(13,13,18,.72);backdrop-filter:blur(8px);display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);
+  transition:transform .18s cubic-bezier(.16,1,.3,1)}
+.fav:active{transform:scale(.88)}
+.fav svg{width:19px;height:19px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linejoin:round}
+.fav[aria-pressed="true"] svg{fill:var(--lime);stroke:var(--lime)}
+
+.rail{display:flex;gap:13px;overflow-x:auto;scrollbar-width:none;margin-inline:-20px;padding:0 20px 6px}
+.rail::-webkit-scrollbar{display:none}
+.rc{flex:none;width:210px;border-radius:18px;overflow:hidden;position:relative;background:var(--card);text-align:start}
+.rc .cmedia{height:132px}
+.rc h3{font-size:calc(14.5px*var(--scale))}
+
+.nav{position:fixed;bottom:20px;inset-inline:0;margin:0 auto;width:min(370px,calc(100% - 44px));z-index:40;
+  background:rgba(22,22,30,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--line);border-radius:99px;padding:8px;display:flex;
+  box-shadow:0 14px 40px -12px rgba(0,0,0,.9)}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;color:var(--ink3);font-size:calc(10px*var(--scale));font-weight:700;border-radius:99px}
+.nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav button[aria-current="true"]{color:var(--ink)}
+.nav button[aria-current="true"] .np{background:var(--lime);color:#0D0D12}
+.np{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;transition:background .2s}
+
+.sheet{position:fixed;inset:0;z-index:60;display:none}.sheet.on{display:block}
+.scrim{position:absolute;inset:0;background:rgba(3,3,6,.72);animation:fade .26s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.panel{position:absolute;inset-inline:0;bottom:0;max-width:430px;margin:0 auto;height:95vh;overflow-y:auto;
+  background:var(--bg);border-radius:24px 24px 0 0;animation:up .4s cubic-bezier(.16,1,.3,1)}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.close{position:absolute;inset-block-start:16px;inset-inline-end:18px;width:40px;height:40px;border-radius:50%;
+  background:rgba(13,13,18,.74);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;z-index:3}
+.close svg{width:16px;height:16px;stroke:var(--ink);stroke-width:2.4;fill:none;stroke-linecap:round}
+.stick{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 62%,transparent);padding:16px 20px 22px;display:flex;gap:12px;align-items:center}
+
+.facts{background:var(--card);border-radius:18px;padding:4px 16px;margin:20px 0}
+.fact{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.fact:last-child{border-bottom:0}
+.fact>svg{width:19px;height:19px;stroke:var(--lime);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-top:1px}
+.fact b{display:block;font-weight:700;font-size:calc(14.5px*var(--scale))}
+.fact span{display:block;color:var(--ink2);font-size:calc(12.5px*var(--scale));margin-top:2px}
+
+.rows{background:var(--card);border-radius:18px;overflow:hidden}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid var(--line);width:100%;text-align:start;font-size:calc(15px*var(--scale));font-weight:600}
+.row:last-child{border-bottom:0}
+.rv{color:var(--ink2);font-weight:600;font-size:calc(14px*var(--scale))}
+.seg{display:flex;gap:5px;background:var(--surf);padding:4px;border-radius:13px}
+.seg button{flex:1;padding:8px 6px;border-radius:10px;font-size:calc(12.5px*var(--scale));font-weight:700;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--lime);color:#0D0D12}
+.opts{display:flex;flex-wrap:wrap;gap:9px}
+.opt{padding:11px 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:calc(14.5px*var(--scale));font-weight:600;color:var(--ink)}
+.opt[aria-pressed="true"]{background:var(--lime);color:#0D0D12;border-color:var(--lime);font-weight:800}
+.steps{display:flex;gap:5px;margin-bottom:22px}
+.steps i{flex:1;height:4px;border-radius:99px;background:var(--line)}
+.steps i.on{background:var(--lime)}
+.empty{text-align:center;padding:56px 26px}
+.ava{width:84px;height:84px;border-radius:50%;background:var(--lime);color:#0D0D12;display:grid;place-items:center;font-size:calc(32px*var(--scale));font-weight:900;margin:0 auto 12px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:24px 20px 14px;gap:12px}
+/* timeline */
+.tl{border-inline-start:2px solid var(--line);margin-inline-start:52px;padding-inline-start:18px}
+.tlday{margin-bottom:6px;position:relative}
+.tlh{display:flex;align-items:baseline;gap:10px;margin:22px 0 10px;margin-inline-start:-70px}
+.tlh b{width:52px;text-align:center;font-size:calc(20px*var(--scale));font-weight:900;line-height:1}
+.tlh span{color:var(--ink3);font-size:calc(12px*var(--scale));font-weight:700}
+.tli{background:var(--card);border-radius:14px;padding:13px 15px;margin-bottom:9px;display:flex;gap:12px;align-items:center;width:100%;text-align:start}
+.tli .tt{font-size:calc(11.5px*var(--scale));font-weight:800;color:var(--lime);min-width:42px}
+</style>
+</head>
+<body>
+<!--
+THESIS: Jerusalem's youth listings staged like a night bill — full-bleed artwork, one electric signal, a nav that floats over the show; refuses the pale utility list.
+OWN-WORLD: Near-black #0D0D12 with an electric lime signal and violet second voice. Media-forward cards with scrim-set titles, a floating pill nav whose active tab is a lime disc, and generated stage-light artwork per category. Heebo 900 display.
+STORY: A teen scans tonight's bill, opens a poster-scale detail, saves it, and leaves through the organizer's own link.
+FIRST VIEWPORT: Greeting and location, search, lime category chips, a near-you rail, then the stacked bill.
+FORM: Neon Night, direction 3 of 5, client-pinned reference.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
+<div class="app" id="app">
+
+<section class="scr on" id="sAuth">
+  <div class="pad" style="padding-top:70px">
+    <h1 style="font-size:calc(46px*var(--scale));line-height:.98">מה<br>בי״ם</h1>
+    <p class="mut" style="margin-top:18px;max-width:30ch">כל החוגים, הסדנאות והאירועים לנוער בירושלים. תמצא, תשמור, תגיע.</p>
+    <div id="authIntro" style="margin-top:44px">
+      <button class="btn" id="goSignup">בואו נתחיל</button>
+      <p class="mut" style="text-align:center;margin-top:16px">כבר יש לך חשבון? <button class="lnk" id="goLogin">התחברות</button></p>
+      <div style="height:1px;background:var(--line);margin:26px 0"></div>
+      <button class="btn ghost" id="goGuest">המשך כאורח</button>
+      <p class="sml" style="text-align:center;margin-top:10px">אפשר לעיין בלי חשבון. שמירה דורשת חשבון.</p>
+    </div>
+    <div id="authForm" style="margin-top:38px" hidden>
+      <div class="fld"><label for="au">שם משתמש</label><input class="inp" id="au" autocomplete="username"></div>
+      <div class="fld"><label for="ap">סיסמה</label><input class="inp" id="ap" type="password"></div>
+      <p class="err" id="aerr"></p>
+      <button class="btn" id="aSubmit">המשך</button>
+      <p class="mut" style="text-align:center;margin-top:16px"><button class="lnk" id="aSwap"></button></p>
+    </div>
+  </div>
+</section>
+
+<section class="scr" id="sQuiz">
+  <div class="pad" style="padding-top:34px">
+    <div class="steps" id="qSteps"></div>
+    <h2 id="qTtl"></h2><p class="mut" id="qSub" style="margin-top:8px"></p>
+    <div id="qBody" style="margin-top:24px"></div>
+    <div style="display:flex;gap:10px;margin-top:28px">
+      <button class="btn ghost sm" id="qBack" style="flex:0 0 88px">הקודם</button>
+      <button class="btn" id="qNext" style="flex:1">הבא</button></div>
+    <p style="text-align:center;margin-top:14px"><button class="lnk" id="qSkip">דילוג על השאלון</button></p>
+  </div>
+</section>
+
+<section class="scr" id="sHome">
+  <div class="top">
+    <div><p class="sml">ירושלים</p><h2 id="greet" style="margin-top:3px"></h2></div>
+    <button class="btn ghost sm" id="guestOut" hidden>יציאה</button>
+  </div>
+  <div class="pad">
+    <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg><input id="q" type="search" placeholder="חיפוש חוג, ארגון או שכונה…"></div>
+    <div class="chips" id="cats"></div>
+    <div class="chips t" id="tops" style="margin-top:9px" hidden></div>
+    <div id="railWrap" style="margin-top:24px"><h3 style="margin-bottom:12px">הכי קרוב</h3><div class="rail" id="rail"></div></div>
+    <h3 id="feedH" style="margin:26px 0 13px">כל הפעילויות</h3>
+  </div>
+  <div class="pad" id="feed"></div>
+</section>
+
+<section class="scr" id="sCal">
+  <div class="top"><div><p class="sml">לוח זמנים</p><h2 style="margin-top:3px">מה מתקרב</h2></div></div>
+  <div class="pad" id="calBody"></div>
+</section>
+
+<section class="scr" id="sFav">
+  <div class="top"><div><p class="sml" id="favCount"></p><h2 style="margin-top:3px">שמורים</h2></div></div>
+  <div class="pad">
+    <div id="favTools">
+      <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg><input id="fq" type="search" placeholder="חיפוש במועדפים…"></div>
+      <div class="seg" id="fsortSeg"></div>
+      <div class="chips" id="fcats" style="margin-top:13px"></div>
+    </div>
+  </div>
+  <div class="pad" id="favFeed" style="margin-top:18px"></div>
+</section>
+
+<section class="scr" id="sProf">
+  <div class="pad" style="padding-top:32px">
+    <div class="ava" id="pAva"></div>
+    <h2 style="text-align:center" id="pName"></h2>
+    <p class="sml" style="text-align:center;margin-top:4px" id="pSub"></p>
+    <div id="pBody" style="margin-top:26px"></div>
+  </div>
+</section>
+
+<section class="scr" id="sSet">
+  <div class="pad" style="padding-top:32px"><h2>הגדרות</h2><div id="setBody" style="margin-top:22px"></div></div>
+</section>
+
+<nav class="nav" id="nav" hidden></nav>
+<div class="sheet" id="sheet"><div class="scrim" data-close></div><div class="panel" id="panel"></div></div>
+</div>
+
+<script src="activities.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const CAT={sport:{n:"ספורט",c:"#C4F82A"},tech:{n:"טכנולוגיה",c:"#5CC8FF"},art:{n:"אמנות",c:"#FF6FB5"},music:{n:"מוזיקה",c:"#9B8AFB"},stage:{n:"במה",c:"#FF8A4C"},nature:{n:"טבע",c:"#4BE0A8"},volunteer:{n:"התנדבות",c:"#3FD8D8"},leadership:{n:"מנהיגות",c:"#FFD84C"},gaming:{n:"גיימינג",c:"#C77DFF"}};
+const MON=["ינו","פבר","מרץ","אפר","מאי","יוני","יולי","אוג","ספט","אוק","נוב","דצמ"];
+const DAY=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+const AREAS=["מרכז","צפון","דרום","מזרח","מערב"],GRADES=["ז׳","ח׳","ט׳","י׳","י״א","י״ב","לא לומד/ת"];
+const TOPICS=["ספורט","אמנות ועיצוב","טכנולוגיה","מוזיקה","בישול","מדעים","קולנוע וצילום","יזמות","חברה וקהילה"];
+const TYPES=["קורסים","הרצאות","חוגים","הופעות","התנדבות","תעסוקה"];
+const A=window.ACTIVITIES||[];
+const LS="mb_neon_";
+const store={get(k,d){try{const v=localStorage.getItem(LS+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(LS+k,JSON.stringify(v))}catch(e){}}};
+let S={screen:"sAuth",mode:"signup",guest:false,user:store.get("user",null),
+  favs:new Set(store.get("favs",[])),favAt:store.get("favAt",{}),
+  quiz:store.get("quiz",{name:"",age:"",grade:"",area:"",topics:[],types:[]}),
+  set:store.get("set",{size:"medium"}),
+  q:"",cat:null,top:null,fq:"",fcat:null,fsort:"soon",qStep:0,detail:null,pEdit:false};
+
+const hash=s=>{let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)};
+const cat=a=>CAT[a.category]||{n:a.category,c:"#9B8AFB"};
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const fmtD=iso=>{const d=new Date(iso+"T00:00:00");return d.getDate()+" ב"+MON[d.getMonth()]+" "+d.getFullYear()};
+const tRange=a=>{const s=(a.start_time||"").slice(0,5);return a.end_time?s+"–"+a.end_time.slice(0,5):"מ־"+s};
+function whenT(a){
+  if(a.schedule_type==="recurring"){const d=(a.recurrence_days||[]).map(x=>DAY[x]).join(", ");
+    return{m:d?"כל יום "+d:"שבועי",s:tRange(a)+" · ללא תאריך סיום"}}
+  const r=a.end_date&&a.end_date!==a.start_date?fmtD(a.start_date)+" – "+fmtD(a.end_date):fmtD(a.start_date);
+  return{m:r,s:tRange(a)};
+}
+const ageT=a=>a.age_min==null&&a.age_max==null?"כל הגילאים":(a.age_min!=null&&a.age_max!=null?"גילאי "+a.age_min+"–"+a.age_max:(a.age_min!=null?"מגיל "+a.age_min:"עד גיל "+a.age_max));
+function priceT(a){if(a.price==null)return"המחיר לא פורסם";if(a.price===0)return"חינם";
+  const p={total:"לכל התקופה",per_session:"למפגש",monthly:"לחודש"}[a.price_period]||"";return a.price+" ₪"+(p?" · "+p:"")}
+const cta=a=>a.registration_url?{h:a.registration_url,l:"להרשמה אצל המארגן"}:(a.source_url?{h:a.source_url,l:"לפרטים ולמקור"}:{h:null,l:"פרטי הרשמה יתפרסמו בקרוב"});
+const ts=a=>{const t=new Date(a.start_date+"T"+(a.start_time||"00:00:00")).getTime();return isNaN(t)?Infinity:t};
+const KIND=a=>a.item_kind==="event"?"אירוע":(a.schedule_type==="recurring"?"חוג":"פעילות");
+
+function media(a){
+  const h=hash(a.id),c=cat(a).c,g=[];
+  for(let i=0;i<3;i++){
+    const x=14+((h>>(i*3))&15)*7,w=20+((h>>i)&7)*7;
+    g.push(`<polygon points="${x},-6 ${x+w},-6 ${x+w*1.9},104 ${x-w*.5},104" fill="${c}" opacity="${.3-i*.07}"/>`);
+  }
+  const pools=[];
+  for(let i=0;i<2;i++){
+    const cx=22+((h>>(i*4))&15)*6, cy=24+((h>>(i*5))&7)*8;
+    pools.push(`<ellipse cx="${cx}" cy="${cy}" rx="${28+i*14}" ry="${20+i*10}" fill="${c}" opacity="${.34-i*.14}"/>`);
+  }
+  const bands=[];
+  for(let i=0;i<5;i++)bands.push(`<rect x="0" y="${((h>>(i*2))&15)*6.4}" width="130" height="1.3" fill="${c}" opacity=".2"/>`);
+  return `<svg viewBox="0 0 130 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="130" height="100" fill="#111119"/>${pools.join("")}${g.join("")}${bands.join("")}</svg>`;
+}
+const IC={home:'<path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
+ star:'<path d="m12 3.6 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.8l5.9-.9z"/>',
+ user:'<circle cx="12" cy="8.2" r="3.6"/><path d="M4.8 20c0-3.7 3.2-6.2 7.2-6.2s7.2 2.5 7.2 6.2"/>',
+ gear:'<circle cx="12" cy="12" r="3.1"/><path d="M12 3.2v2.4M12 18.4v2.4M20.8 12h-2.4M5.6 12H3.2M18.2 5.8l-1.7 1.7M7.5 16.5l-1.7 1.7M18.2 18.2l-1.7-1.7M7.5 7.5 5.8 5.8"/>',
+ cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.4"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+ pin:'<path d="M12 21s-6.6-5.8-6.6-10.4A6.6 6.6 0 0 1 12 4a6.6 6.6 0 0 1 6.6 6.6C18.6 15.2 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/>',
+ ppl:'<circle cx="9" cy="8" r="3"/><path d="M2.8 19.4c0-3.4 2.8-5.6 6.2-5.6s6.2 2.2 6.2 5.6"/><circle cx="17.4" cy="9" r="2.4"/><path d="M15.4 14c2.7.4 4.4 2.2 4.4 5.4"/>',
+ coin:'<path d="M12 2.5v19M16.8 6.6c0-1.8-2.1-3.3-4.8-3.3s-4.8 1.5-4.8 3.3S9.3 10 12 10s4.8 1.5 4.8 3.3-2.1 3.3-4.8 3.3-4.8-1.5-4.8-3.3"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>'};
+const ic=k=>`<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
+
+function save(){store.set("favs",[...S.favs]);store.set("favAt",S.favAt);store.set("quiz",S.quiz);store.set("set",S.set);store.set("user",S.user)}
+function applySet(){document.documentElement.style.setProperty("--scale",{small:".92",medium:"1",large:"1.14"}[S.set.size]||"1")}
+function show(id){
+  S.screen=id;document.querySelectorAll(".scr").forEach(s=>s.classList.toggle("on",s.id===id));
+  window.scrollTo(0,0);
+  $("nav").hidden=!["sHome","sCal","sFav","sProf","sSet"].includes(id);
+  if(id==="sHome")renderHome();if(id==="sCal")renderCal();if(id==="sFav")renderFav();
+  if(id==="sProf")renderProf();if(id==="sSet")renderSet();
+  paintNav();
+}
+function paintNav(){
+  const t=[["sHome","home","בית"],["sCal","cal","לוח"]];
+  if(!S.guest){t.push(["sFav","star","שמורים"],["sProf","user","פרופיל"])}
+  t.push(["sSet","gear","הגדרות"]);
+  $("nav").innerHTML=t.map(([i,k,l])=>
+    `<button data-go="${i}" aria-current="${S.screen===i}"><span class="np">${ic(k)}</span><span>${l}</span></button>`).join("");
+}
+function authMode(m){S.mode=m;$("authIntro").hidden=true;$("authForm").hidden=false;$("aerr").textContent="";
+  $("aSubmit").textContent=m==="login"?"התחברות":"יצירת חשבון";
+  $("aSwap").textContent=m==="login"?"אין לי חשבון":"כבר יש לי חשבון"}
+$("goSignup").onclick=()=>authMode("signup");
+$("goLogin").onclick=()=>authMode("login");
+$("aSwap").onclick=()=>authMode(S.mode==="login"?"signup":"login");
+$("goGuest").onclick=()=>{S.guest=true;S.user=null;show("sHome")};
+$("guestOut").onclick=()=>{S.guest=false;show("sAuth");$("authIntro").hidden=false;$("authForm").hidden=true};
+$("aSubmit").onclick=()=>{
+  const u=$("au").value.trim(),p=$("ap").value;
+  if(!/^[A-Za-zא-ת][A-Za-zא-ת0-9_]*$/.test(u)){$("aerr").textContent="השם צריך להתחיל באות; מותר אותיות, ספרות וקו תחתון.";return}
+  if(p.length<6||p.length>10){$("aerr").textContent="הסיסמה צריכה להיות בין 6 ל־10 תווים.";return}
+  S.user=u;S.guest=false;save();
+  if(S.mode==="signup"&&!S.quiz.name){S.qStep=0;show("sQuiz");renderQuiz()}else show("sHome");
+};
+const QS=[
+ {t:"איך קוראים לך?",s:"רק כדי שנדע איך לפנות. אפשר לדלג.",f:()=>`<div class="fld"><input class="inp" id="qn" value="${esc(S.quiz.name)}" placeholder="השם שלך"></div>`,save:()=>{const e=$("qn");if(e)S.quiz.name=e.value.trim()}},
+ {t:"בן/בת כמה?",s:"נשתמש בזה להתאמת פעילויות.",f:()=>`<div class="opts">${[12,13,14,15,16,17,18].map(n=>`<button class="opt" data-age="${n}" aria-pressed="${S.quiz.age==n}">${n}</button>`).join("")}</div>`},
+ {t:"באיזו כיתה?",s:"אפשר לדלג.",f:()=>`<div class="opts">${GRADES.map(g=>`<button class="opt" data-grade="${g}" aria-pressed="${S.quiz.grade===g}">${g}</button>`).join("")}</div>`},
+ {t:"באיזה אזור?",s:"כדי להציג קודם מה שקרוב.",f:()=>`<div class="opts">${AREAS.map(a=>`<button class="opt" data-area="${a}" aria-pressed="${S.quiz.area===a}">${a}</button>`).join("")}</div>`},
+ {t:"מה מעניין אותך?",s:"אפשר לבחור כמה.",f:()=>`<div class="opts">${TOPICS.map(t=>`<button class="opt" data-topic="${t}" aria-pressed="${S.quiz.topics.includes(t)}">${t}</button>`).join("")}</div>`},
+ {t:"איזה סוג פעילות?",s:"השלב האחרון.",f:()=>`<div class="opts">${TYPES.map(t=>`<button class="opt" data-type="${t}" aria-pressed="${S.quiz.types.includes(t)}">${t}</button>`).join("")}</div>`}
+];
+function renderQuiz(){const q=QS[S.qStep];
+  $("qSteps").innerHTML=QS.map((_,i)=>`<i class="${i<=S.qStep?"on":""}"></i>`).join("");
+  $("qTtl").textContent=q.t;$("qSub").textContent=q.s;$("qBody").innerHTML=q.f();
+  $("qBack").style.visibility=S.qStep?"visible":"hidden";
+  $("qNext").textContent=S.qStep===QS.length-1?"סיימתי":"הבא"}
+$("qBody").onclick=e=>{
+  const b=e.target.closest("button[data-age],button[data-grade],button[data-area],button[data-topic],button[data-type]");
+  if(!b)return;const d=b.dataset;
+  if(d.age)S.quiz.age=d.age;
+  if(d.grade)S.quiz.grade=S.quiz.grade===d.grade?"":d.grade;
+  if(d.area)S.quiz.area=S.quiz.area===d.area?"":d.area;
+  if(d.topic){const i=S.quiz.topics.indexOf(d.topic);i<0?S.quiz.topics.push(d.topic):S.quiz.topics.splice(i,1)}
+  if(d.type){const i=S.quiz.types.indexOf(d.type);i<0?S.quiz.types.push(d.type):S.quiz.types.splice(i,1)}
+  save();renderQuiz()};
+$("qNext").onclick=()=>{const q=QS[S.qStep];if(q.save)q.save();save();
+  if(S.qStep===QS.length-1)show("sHome");else{S.qStep++;renderQuiz()}};
+$("qBack").onclick=()=>{if(S.qStep){S.qStep--;renderQuiz()}};
+$("qSkip").onclick=()=>show("sHome");
+
+const match=(a,q)=>!q||[a.title,a.short_description,a.description,a.organization_name,a.neighborhood,a.location_name].join(" ").includes(q);
+function card(a,rail){
+  const c=cat(a),w=whenT(a),f=S.favs.has(a.id);
+  return `<button class="${rail?"rc":"card"}" data-open="${a.id}">
+    <div class="cmedia">${media(a)}<div class="cscrim"></div>
+      ${rail?"":`<span class="join">הצטרפו</span>`}
+      ${S.guest?"":`<span class="fav" role="button" tabindex="0" data-fav="${a.id}" aria-pressed="${f}" aria-label="${f?"הסרה משמורים":"שמירה"}">${ic("star")}</span>`}
+      <div class="cover">
+        <div class="crow"><span class="tag" style="background:${c.c}">${c.n}</span>${rail?"":`<span class="kind">${KIND(a)}</span>`}</div>
+        <h3>${esc(a.title)}</h3>
+        <p class="cmeta">${w.m} · ${esc(a.neighborhood||a.location_name)}</p>
+      </div></div></button>`;
+}
+function renderHome(){
+  $("greet").textContent=S.user?"היי, "+S.user:"מה קורה";
+  $("guestOut").hidden=!S.guest;
+  const cs=[...new Set(A.map(a=>a.category))];
+  $("cats").innerHTML=`<button class="chip" data-cat="" aria-pressed="${!S.cat}">הכול</button>`+
+    cs.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="${S.cat===c}">${CAT[c]?CAT[c].n:c}</button>`).join("");
+  const tops=S.cat?[...new Set(A.filter(a=>a.category===S.cat).flatMap(a=>a.topics||[]))]:[];
+  $("tops").hidden=!tops.length;
+  if(tops.length)$("tops").innerHTML=`<button class="chip" data-top="" aria-pressed="${!S.top}">כל הנושאים</button>`+
+    tops.map(t=>`<button class="chip" data-top="${esc(t)}" aria-pressed="${S.top===t}">${esc(t)}</button>`).join("");
+  const filtered=S.q||S.cat||S.top;
+  $("railWrap").hidden=!!filtered;
+  if(!filtered)$("rail").innerHTML=[...A].sort((a,b)=>ts(a)-ts(b)).slice(0,6).map(a=>card(a,true)).join("");
+  const list=A.filter(a=>match(a,S.q)&&(!S.cat||a.category===S.cat)&&(!S.top||(a.topics||[]).includes(S.top)));
+  $("feedH").textContent=filtered?list.length+" תוצאות":"כל הפעילויות";
+  $("feed").innerHTML=list.length?list.map(a=>card(a)).join(""):
+    `<div class="empty"><h3>אין תוצאות</h3><p class="mut" style="margin:8px 0 18px">נסה מילה אחרת או בטל סינון.</p><button class="btn sm" id="clr" style="margin:0 auto">איפוס</button></div>`;
+}
+function renderCal(){
+  const list=[...A].sort((a,b)=>ts(a)-ts(b));
+  const by={};list.forEach(a=>{(by[a.start_date]=by[a.start_date]||[]).push(a)});
+  $("calBody").innerHTML=`<div class="tl">`+Object.keys(by).sort().map(d=>{
+    const dt=new Date(d+"T00:00:00");
+    return `<div class="tlday"><div class="tlh"><b>${dt.getDate()}</b><span>${MON[dt.getMonth()]} · יום ${DAY[dt.getDay()]}</span></div>`
+      +by[d].map(a=>{const c=cat(a);
+        return `<button class="tli" data-open="${a.id}"><span class="tt" style="color:${c.c}">${(a.start_time||"").slice(0,5)}</span>
+          <span style="flex:1"><b style="display:block;font-size:calc(14px*var(--scale));font-weight:700">${esc(a.title)}</b>
+          <span class="sml" style="font-weight:500">${esc(a.location_name)}</span></span></button>`}).join("")+`</div>`;
+  }).join("")+`</div>`;
+}
+function renderFav(){
+  const all=A.filter(a=>S.favs.has(a.id));
+  $("favCount").textContent=all.length?all.length+" פעילויות":"מועדפים";
+  $("favTools").hidden=!all.length;
+  if(!all.length){$("favFeed").innerHTML=`<div class="empty"><h3>עדיין ריק</h3>
+    <p class="mut" style="margin:8px 0 18px">לחץ על הכוכב בכל פעילות כדי לשמור אותה לכאן.</p>
+    <button class="btn sm" data-go="sHome" style="margin:0 auto">לעמוד הפעילויות</button></div>`;return}
+  $("fsortSeg").innerHTML=[["soon","קרוב"],["added","נוסף"],["cat","קטגוריה"],["name","שם"]]
+    .map(([v,l])=>`<button data-fsort="${v}" aria-pressed="${S.fsort===v}">${l}</button>`).join("");
+  if(S.fcat&&!all.some(a=>a.category===S.fcat))S.fcat=null;
+  const cs=[...new Set(all.map(a=>a.category))];
+  $("fcats").innerHTML=`<button class="chip" data-fcat="" aria-pressed="${!S.fcat}">הכול</button>`+
+    cs.map(c=>`<button class="chip" data-fcat="${c}" aria-pressed="${S.fcat===c}">${CAT[c]?CAT[c].n:c}</button>`).join("");
+  let list=all.filter(a=>match(a,S.fq)&&(!S.fcat||a.category===S.fcat));
+  const col=new Intl.Collator("he"),ORD=Object.keys(CAT);
+  if(S.fsort==="added")list.sort((a,b)=>(S.favAt[b.id]||0)-(S.favAt[a.id]||0));
+  else if(S.fsort==="name")list.sort((a,b)=>col.compare(a.title,b.title));
+  else if(S.fsort==="cat")list.sort((a,b)=>ORD.indexOf(a.category)-ORD.indexOf(b.category)||col.compare(a.title,b.title));
+  else list.sort((a,b)=>ts(a)-ts(b));
+  $("favFeed").innerHTML=list.length?list.map(a=>card(a)).join(""):`<div class="empty"><p class="mut">אין תוצאות לסינון הזה.</p></div>`;
+}
+function renderProf(){
+  const n=S.user||"אורח",q=S.quiz;
+  $("pAva").textContent=(q.name||n)[0]||"?";
+  $("pName").textContent=q.name||n;$("pSub").textContent="@"+n;
+  const row=(l,v)=>`<div class="row"><span>${l}</span><span class="rv">${esc(v||"לא מולא")}</span></div>`;
+  if(!S.pEdit){
+    $("pBody").innerHTML=`<div class="rows">${row("שם",q.name)}${row("גיל",q.age)}${row("כיתה",q.grade)}${row("אזור",q.area)}</div>
+      <p class="sml" style="margin:22px 0 9px">תחומי עניין</p>
+      <div class="opts">${q.topics.length?q.topics.map(t=>`<span class="opt" aria-pressed="true">${esc(t)}</span>`).join(""):'<p class="mut">עדיין לא נבחרו</p>'}</div>
+      <p class="sml" style="margin:22px 0 9px">סוגי פעילות</p>
+      <div class="opts">${q.types.length?q.types.map(t=>`<span class="opt" aria-pressed="true">${esc(t)}</span>`).join(""):'<p class="mut">עדיין לא נבחרו</p>'}</div>
+      <button class="btn" id="pGo" style="margin-top:28px">עריכת פרופיל</button>`;
+  }else{
+    $("pBody").innerHTML=`<div class="fld"><label for="en">שם</label><input class="inp" id="en" value="${esc(q.name)}"></div>
+      <div class="fld"><label for="ea">גיל</label><select class="inp" id="ea">${["",12,13,14,15,16,17,18].map(v=>`<option value="${v}" ${String(q.age)===String(v)?"selected":""}>${v||"בחר…"}</option>`).join("")}</select></div>
+      <div class="fld"><label for="eg">כיתה</label><select class="inp" id="eg"><option value="">בחר…</option>${GRADES.map(g=>`<option ${q.grade===g?"selected":""}>${g}</option>`).join("")}</select></div>
+      <div class="fld"><label for="er">אזור</label><select class="inp" id="er"><option value="">בחר…</option>${AREAS.map(a=>`<option ${q.area===a?"selected":""}>${a}</option>`).join("")}</select></div>
+      <p class="sml" style="margin:20px 0 9px">תחומי עניין</p>
+      <div class="opts">${TOPICS.map(t=>`<button class="opt" data-etopic="${t}" aria-pressed="${q.topics.includes(t)}">${t}</button>`).join("")}</div>
+      <div style="display:flex;gap:10px;margin-top:28px">
+        <button class="btn ghost sm" id="pCancel" style="flex:0 0 92px">ביטול</button>
+        <button class="btn" id="pSave" style="flex:1">שמירה</button></div>`;
+  }
+}
+function renderSet(){
+  const s=S.set;
+  $("setBody").innerHTML=`<p class="sml" style="margin-bottom:9px">תצוגה</p>
+    <div class="rows"><div class="row"><span>מצב תצוגה</span><span class="rv">כהה בלבד</span></div>
+    <div class="row" style="flex-direction:column;align-items:stretch;gap:11px"><span>גודל טקסט</span>
+      <div class="seg">${[["small","קטן"],["medium","רגיל"],["large","גדול"]].map(([v,l])=>`<button data-size="${v}" aria-pressed="${s.size===v}">${l}</button>`).join("")}</div></div></div>
+    <p class="sml" style="margin:10px 0 0">העולם הזה מעוצב ללילה. אין מצב בהיר, וזה מכוון.</p>
+    <p class="sml" style="margin:24px 0 9px">שפה</p>
+    <div class="rows"><div class="row"><span>שפת האפליקציה</span><span class="rv">עברית</span></div></div>
+    <p class="sml" style="margin-top:9px">בדמו זה התוכן בעברית בלבד.</p>
+    <button class="btn ghost" id="out" style="margin-top:28px;color:#FF7A6E;border-color:#4A2A2A">${S.guest?"יציאה ממצב אורח":"התנתקות"}</button>`;
+}
+function openDetail(id){
+  const a=A.find(x=>x.id===id);if(!a)return;S.detail=id;
+  const c=cat(a),w=whenT(a),k=cta(a),f=S.favs.has(a.id),st=a.status||"open";
+  const stx={open:"פתוח להרשמה",full:"מלא",cancelled:"בוטל",postponed:"נדחה",ended:"הסתיים"}[st];
+  $("panel").innerHTML=`
+    <button class="close" data-close aria-label="סגירה">${ic("x")}</button>
+    <div style="height:264px;position:relative">${media(a)}<div class="cscrim"></div>
+      ${S.guest?"":`<span class="fav" style="inset-block-start:16px;inset-inline-start:18px;inset-inline-end:auto" role="button" tabindex="0" data-fav="${a.id}" aria-pressed="${f}">${ic("star")}</span>`}
+      <div class="cover"><div class="crow"><span class="tag" style="background:${c.c}">${c.n}</span>
+        <span class="kind">${KIND(a)}</span>
+        <span class="kind" style="background:${st==="open"?"rgba(196,248,42,.2)":"rgba(255,122,110,.2)"};color:${st==="open"?"var(--lime)":"#FF7A6E"}">${stx}</span></div>
+        <h1 style="font-size:calc(27px*var(--scale))">${esc(a.title)}</h1></div></div>
+    <div class="pad" style="padding-top:18px">
+      <p class="mut">${esc(a.short_description||"")}</p>
+      <div class="facts">
+        <div class="fact">${ic("cal")}<div><b>${w.m}</b><span>${w.s}</span></div></div>
+        <div class="fact">${ic("pin")}<div><b>${esc(a.location_name)}</b><span>${esc(a.neighborhood||"")}</span></div></div>
+        <div class="fact">${ic("ppl")}<div><b>${ageT(a)}</b>${a.capacity!=null?`<span>נותרו ${a.spots_left??0} מתוך ${a.capacity} מקומות</span>`:""}</div></div>
+        <div class="fact">${ic("coin")}<div><b>${priceT(a)}</b><span>${esc(a.organization_name||"")}</span></div></div>
+      </div>
+      <p style="font-size:calc(14.5px*var(--scale));line-height:1.74;padding-bottom:20px">${esc(a.description||"")}</p>
+    </div>
+    <div class="stick">
+      <div style="flex:1"><p class="sml">מחיר</p><b style="font-size:calc(16px*var(--scale));font-weight:800">${priceT(a)}</b></div>
+      ${k.h?`<a class="btn" href="${esc(k.h)}" target="_blank" rel="noopener" style="width:auto;padding-inline:26px;text-decoration:none">${k.l}</a>`
+           :`<button class="btn" disabled style="width:auto;padding-inline:22px">${k.l}</button>`}
+    </div>`;
+  $("sheet").classList.add("on");
+}
+function closeDetail(){$("sheet").classList.remove("on");S.detail=null}
+function toggleFav(id){
+  if(S.guest)return;
+  if(S.favs.has(id)){S.favs.delete(id);delete S.favAt[id]}else{S.favs.add(id);S.favAt[id]=Date.now()}
+  save();
+  if(S.screen==="sHome")renderHome();if(S.screen==="sFav")renderFav();
+  if(S.detail)openDetail(S.detail);
+}
+document.addEventListener("click",e=>{
+  const t=e.target;
+  const fav=t.closest("[data-fav]");if(fav){e.preventDefault();e.stopPropagation();toggleFav(fav.dataset.fav);return}
+  if(t.closest("[data-close]")){closeDetail();return}
+  const card=t.closest("[data-open]");if(card){openDetail(card.dataset.open);return}
+  const go=t.closest("[data-go]");if(go){show(go.dataset.go);return}
+  const c=t.closest("[data-cat]");if(c){S.cat=c.dataset.cat||null;S.top=null;renderHome();return}
+  const tp=t.closest("[data-top]");if(tp){S.top=tp.dataset.top||null;renderHome();return}
+  const fc=t.closest("[data-fcat]");if(fc){S.fcat=fc.dataset.fcat||null;renderFav();return}
+  const fs=t.closest("[data-fsort]");if(fs){S.fsort=fs.dataset.fsort;renderFav();return}
+  const sz=t.closest("button[data-size]");if(sz){S.set.size=sz.dataset.size;save();applySet();renderSet();return}
+  const et=t.closest("[data-etopic]");if(et){const v=et.dataset.etopic,i=S.quiz.topics.indexOf(v);i<0?S.quiz.topics.push(v):S.quiz.topics.splice(i,1);save();renderProf();return}
+  if(t.id==="clr"){S.q="";S.cat=null;S.top=null;$("q").value="";renderHome();return}
+  if(t.id==="pGo"){S.pEdit=true;renderProf();return}
+  if(t.id==="pCancel"){S.pEdit=false;renderProf();return}
+  if(t.id==="pSave"){S.quiz.name=$("en").value.trim();S.quiz.age=$("ea").value;S.quiz.grade=$("eg").value;S.quiz.area=$("er").value;save();S.pEdit=false;renderProf();return}
+  if(t.id==="out"){S.guest=false;S.user=null;save();show("sAuth");$("authIntro").hidden=false;$("authForm").hidden=true;return}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.detail)closeDetail()});
+$("q").addEventListener("input",e=>{S.q=e.target.value.trim();renderHome()});
+$("fq").addEventListener("input",e=>{S.fq=e.target.value.trim();renderFav()});
+applySet();
+show(S.user||S.guest?"sHome":"sAuth");
+</script>
+</body>
+</html>

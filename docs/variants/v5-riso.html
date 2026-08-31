@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מה בי״ם — Riso Bulletin</title>
+<meta name="theme-color" content="#FF48A0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<!--
+THESIS: A teen finds out what's happening from the bulletin board at the מתנ"ס — layered, over-inked, pasted flyers. So the app is that wall, printed.
+OWN-WORLD: Risograph spot-ink. Five unmixed inks on warm newsprint, halftone dot fields, 2–3px ink rules, misregistered display type, zero radius, pasted rotation.
+STORY: Poster masthead → bulletin feed of unequal clippings → one activity blown up to a full printed poster → your own wall of pinned clippings.
+FIRST VIEWPORT: A drenched pink field, מה / בי״ם stacked at 56px in Heebo 900 with a blue registration shadow, halftone bleeding off the bottom edge.
+FORM: Ink panels, hard offset registration shadow, drawn SVG icons in one stroke, per-category two-ink overprint compositions generated from the activity id.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
+<script src="activities.js"></script>
+<style>
+/* ============ INK & STOCK ============ */
+:root{
+  --pink:#FF48A0; --blue:#0B63CE; --yellow:#FFD400; --green:#00A95C; --orange:#FF6B2C;
+  --paper:#F5F0E4; --black:#141210;
+
+  --stock:#F5F0E4;      /* the sheet */
+  --on-stock:#141210;   /* type on the sheet */
+  --muted:#5A544A;      /* secondary type on the sheet — 6.4:1 on newsprint */
+  --rule:#141210;       /* every printed rule */
+  --rev:#141210;        /* reversed block */
+  --on-rev:#F5F0E4;
+  --desk:#3A3632;       /* the table the sheet sits on */
+  --ts:1;               /* text scale */
+  --regx:-4px;          /* registration offset, follows writing direction */
+  --regsx:-8px;
+}
+html[dir="ltr"]{ --regx:4px; --regsx:8px; }
+html[data-theme="dark"]{
+  --stock:#141210; --on-stock:#F5F0E4; --muted:#A79E8C; --rule:#F5F0E4;
+  --rev:#F5F0E4; --on-rev:#141210; --desk:#0A0908;
+}
+
+html{ font-size: calc(16px * var(--ts)); -webkit-text-size-adjust:100%; }
+*,*::before,*::after{ box-sizing:border-box; }
+body{
+  margin:0; background:var(--desk); color:var(--on-stock);
+  font-family:"Alef","Heebo",system-ui,sans-serif; font-size:1rem; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{ background:var(--pink); color:#141210; }
+:focus-visible{ outline:3px solid var(--focus,#141210); outline-offset:2px; }
+*{ scrollbar-width:thin; scrollbar-color:var(--rule) var(--stock); }
+*::-webkit-scrollbar{ width:10px; height:10px; }
+*::-webkit-scrollbar-track{ background:var(--stock); }
+*::-webkit-scrollbar-thumb{ background:var(--rule); border:2px solid var(--stock); }
+input,textarea,select{ caret-color:var(--pink); font:inherit; color:inherit; }
+button{ font:inherit; color:inherit; }
+img,svg{ display:block; max-width:100%; }
+
+/* paper grain — material, on every sheet */
+body::after{
+  content:""; position:fixed; inset:0; z-index:90; pointer-events:none;
+  opacity:.085; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  background-size:180px 180px;
+}
+html[data-theme="dark"] body::after{ mix-blend-mode:screen; opacity:.13; }
+
+/* ============ INK SURFACES ============ */
+.ink-pink   { --bg:var(--pink);   --fg:#141210; --focus:#141210; }
+.ink-blue   { --bg:var(--blue);   --fg:#F5F0E4; --focus:#FFD400; }
+.ink-yellow { --bg:var(--yellow); --fg:#141210; --focus:#141210; }
+.ink-green  { --bg:var(--green);  --fg:#141210; --focus:#141210; }
+.ink-orange { --bg:var(--orange); --fg:#141210; --focus:#141210; }
+.ink-black  { --bg:var(--rev);    --fg:var(--on-rev); --focus:#FFD400; }
+.ink-paper  { --bg:var(--stock);  --fg:var(--on-stock); --focus:var(--rule); }
+.ink-pink,.ink-blue,.ink-yellow,.ink-green,.ink-orange,.ink-black,.ink-paper{
+  background:var(--bg); color:var(--fg);
+}
+
+/* halftone dot field, fading — a printed gradient */
+.halftone{ position:relative; isolation:isolate; }
+.halftone::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:1;
+  background-image:radial-gradient(var(--dot,rgba(20,18,16,.55)) 1.15px, transparent 1.25px);
+  background-size:6px 6px;
+  -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.95), transparent 82%);
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.95), transparent 82%);
+}
+.halftone > *{ position:relative; z-index:2; }
+.halftone-up::after{
+  -webkit-mask-image:linear-gradient(to top, rgba(0,0,0,.95), transparent 80%);
+  mask-image:linear-gradient(to top, rgba(0,0,0,.95), transparent 80%);
+}
+.ink-blue{ --dot:rgba(245,240,228,.5); }
+.ink-black{ --dot:color-mix(in srgb, var(--on-rev) 45%, transparent); }
+
+/* ============ LAYOUT ============ */
+.sheet{
+  max-width:430px; margin-inline:auto; min-height:100dvh;
+  background:var(--stock); position:relative; overflow-x:clip;
+  border-inline:3px solid var(--rule);
+}
+#view{ display:block; }
+.pad{ padding-inline:16px; }
+.screen{ padding-block-end:104px; }
+.screen.no-nav{ padding-block-end:0; }
+
+/* ============ TYPE ============ */
+.display{
+  font-family:"Heebo",sans-serif; font-weight:900; letter-spacing:-.045em;
+  line-height:.88; margin:0; text-wrap:balance;
+}
+.display .ln{ display:block; }
+.reg{ text-shadow: 2px 2px 0 var(--regink, var(--blue)); }
+.reg-2{ text-shadow: 2px 2px 0 var(--regink, var(--pink)); }
+h1.poster{ font-size:3.5rem; }
+h2.sect{
+  font-family:"Heebo",sans-serif; font-weight:900; letter-spacing:-.045em;
+  font-size:1.75rem; line-height:.95; margin:0;
+}
+.sect-wrap{ margin-block-start:36px; margin-block-end:12px; }
+.lede{ font-size:1.0625rem; line-height:1.45; margin:0; font-weight:700; }
+.small{ font-size:.8125rem; line-height:1.4; }
+.muted{ color:var(--muted); }
+
+/* ============ CONTROLS ============ */
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  inline-size:100%; min-block-size:54px; padding-inline:18px;
+  border:3px solid var(--rule); border-radius:0; cursor:pointer;
+  font-family:"Heebo",sans-serif; font-weight:900; font-size:1.0625rem; letter-spacing:-.04em;
+  box-shadow: var(--regx) 4px 0 var(--reg, var(--rule));
+  transition: transform .12s cubic-bezier(.16,1,.3,1), box-shadow .12s cubic-bezier(.16,1,.3,1);
+  text-decoration:none; text-align:center;
+}
+.btn:hover{ transform:translate(calc(var(--regx) * .35), 1.4px); box-shadow: calc(var(--regx) * .55) 2px 0 var(--reg, var(--rule)); }
+.btn:active{ transform:translate(var(--regx), 4px); box-shadow: 0 0 0 var(--reg, var(--rule)); }
+.btn[disabled]{ cursor:not-allowed; opacity:1; background:var(--stock); color:var(--muted);
+  border-style:dashed; box-shadow:none; transform:none; }
+.btn-quiet{
+  background:transparent; color:var(--on-stock); border:3px solid var(--rule);
+  box-shadow:none; min-block-size:48px; font-size:.9375rem;
+}
+.btn-quiet:hover{ background:var(--rev); color:var(--on-rev); transform:none; box-shadow:none; }
+.btn-bare{
+  background:none; border:0; padding:6px 2px; cursor:pointer;
+  font-weight:700; font-size:.9375rem; text-decoration:underline;
+  text-decoration-thickness:2px; text-underline-offset:4px;
+}
+.btn-bare:hover{ background:var(--yellow); color:#141210; }
+
+.field{ display:block; margin-block-start:14px; }
+.field > .lab{
+  display:block; font-family:"Heebo",sans-serif; font-weight:900; font-size:.8125rem;
+  letter-spacing:.02em; margin-block-end:6px;
+}
+.inp{
+  inline-size:100%; min-block-size:52px; padding:10px 14px;
+  background:var(--stock); color:var(--on-stock);
+  border:3px solid var(--rule); border-radius:0;
+  font-family:"Alef",sans-serif; font-size:1rem;
+}
+.inp::placeholder{ color:var(--muted); opacity:1; }
+select.inp{ appearance:none; background-image:none; font-weight:700; padding-inline-end:38px; }
+.selwrap{ position:relative; }
+.selwrap .caret{ position:absolute; inset-inline-end:12px; inset-block-start:50%; transform:translateY(-50%); pointer-events:none; }
+
+/* chips — ink blocks */
+.chiprow{
+  display:flex; gap:8px; overflow-x:auto; padding-block:4px 10px;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+.chiprow::-webkit-scrollbar{ display:none; }
+.chip{
+  flex:0 0 auto; cursor:pointer; border:3px solid var(--rule); border-radius:0;
+  background:var(--stock); color:var(--on-stock);
+  font-family:"Heebo",sans-serif; font-weight:900; font-size:.875rem; letter-spacing:-.03em;
+  padding:9px 14px; min-block-size:42px; white-space:nowrap;
+  transition:transform .12s cubic-bezier(.16,1,.3,1);
+}
+.chip:hover{ transform:translateY(-2px); }
+.chip[aria-pressed="true"]{ background:var(--bg,var(--rev)); color:var(--fg,var(--on-rev));
+  box-shadow: var(--regx) 3px 0 var(--rule); }
+.chipwrap{ display:flex; flex-wrap:wrap; gap:8px; }
+.chipwrap .chip{ flex:0 1 auto; }
+
+/* ============ STAMPS ============ */
+.stamps{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.stamp{
+  font-family:"Heebo",sans-serif; font-weight:900; font-size:.6875rem; letter-spacing:.04em;
+  padding:4px 8px; border:2.5px solid currentColor; text-transform:none; line-height:1.1;
+}
+.stamp-solid{ border-color:var(--rule); background:var(--rule); color:var(--stock); }
+.stamp-full{
+  color:#141210; background:var(--yellow); border-color:#141210;
+  transform:rotate(-6deg); font-size:.9375rem; padding:5px 12px;
+}
+.datestamp{
+  font-family:"Heebo",sans-serif; font-weight:900; line-height:.92; text-align:center;
+  border:3px solid #141210; background:var(--yellow); color:#141210;
+  padding:7px 9px 6px; transform:rotate(-4deg); min-inline-size:56px;
+}
+.datestamp .d{ display:block; font-size:1.5rem; letter-spacing:-.05em; }
+.datestamp .m{ display:block; font-size:.6875rem; letter-spacing:.03em; }
+
+/* ============ FEED ============ */
+.feed{ display:grid; grid-template-columns:1fr 1fr; gap:16px 12px; padding-block-start:6px; }
+.card{
+  position:relative; border:3px solid var(--rule); border-radius:0;
+  transform:rotate(var(--rot,0deg));
+  box-shadow: var(--regx) 4px 0 var(--reg,var(--rule));
+}
+.card.span{ grid-column:1 / -1; }
+.card-open{
+  display:block; inline-size:100%; text-align:start; background:none; border:0;
+  padding:0; cursor:pointer; color:inherit;
+}
+.card-open:focus-visible{ outline:3px solid var(--focus,#141210); outline-offset:-6px; }
+.art{ position:relative; overflow:hidden; border-block-end:3px solid var(--rule); }
+.art svg{ inline-size:100%; block-size:100%; }
+.art.a43{ aspect-ratio:4/3; }
+.art.a11{ aspect-ratio:1/1; }
+.card-body{ padding:12px 13px 13px; }
+.card-t{
+  font-family:"Heebo",sans-serif; font-weight:900; letter-spacing:-.045em; line-height:.98;
+  margin:8px 0 0; font-size:1.375rem; text-wrap:balance;
+}
+.card.duo .card-t{ font-size:1rem; line-height:1.02; }
+.card.flat .card-t{ font-size:1.875rem; }
+.card-s{ margin:8px 0 0; font-size:.875rem; line-height:1.4; }
+.card-meta{
+  margin-block-start:10px; padding-block-start:8px; border-block-start:2.5px solid currentColor;
+  font-size:.75rem; font-weight:700; display:flex; gap:8px; flex-wrap:wrap;
+}
+.card.wide .row{ display:flex; align-items:stretch; }
+.card.wide .art{ flex:0 0 38%; border-block-end:0; border-inline-end:3px solid var(--rule); }
+.card.wide .card-body{ flex:1 1 auto; min-inline-size:0; }
+.card .pin{
+  position:absolute; z-index:4; inset-block-start:-10px; inset-inline-end:-10px;
+  inline-size:44px; block-size:44px; display:grid; place-items:center; cursor:pointer;
+  border:3px solid var(--rule); border-radius:50%; background:var(--stock); color:var(--on-stock);
+  transition:transform .14s cubic-bezier(.16,1,.3,1);
+}
+.card .pin:hover{ transform:rotate(-14deg) scale(1.06); }
+.card .pin[aria-pressed="true"]{ background:var(--pink); color:#141210; }
+
+/* ============ DETAIL ============ */
+.topbar{
+  position:sticky; inset-block-start:0; z-index:20;
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  background:var(--stock); border-block-end:3px solid var(--rule);
+}
+.iconbtn{
+  inline-size:44px; block-size:44px; display:grid; place-items:center; cursor:pointer;
+  border:3px solid var(--rule); background:var(--stock); color:var(--on-stock); border-radius:0;
+}
+.iconbtn:hover{ background:var(--rev); color:var(--on-rev); }
+.iconbtn[aria-pressed="true"]{ background:var(--pink); color:#141210; }
+.topbar .tb-t{ font-family:"Heebo",sans-serif; font-weight:900; font-size:1rem; letter-spacing:-.04em;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1 1 auto; }
+
+.poster-head{ padding:20px 16px 24px; border-block-end:3px solid var(--rule); }
+.spec{ border-block-start:3px solid var(--rule); }
+.spec-row{ display:flex; gap:14px; padding:13px 16px; border-block-end:2.5px solid var(--rule); }
+.spec-row .k{
+  flex:0 0 92px; font-family:"Heebo",sans-serif; font-weight:900; font-size:.8125rem;
+  letter-spacing:.01em; padding-block-start:2px;
+}
+.spec-row .v{ flex:1 1 auto; font-size:.9375rem; font-weight:700; line-height:1.4; }
+.ctabar{
+  position:fixed; inset-inline:0; inset-block-end:0; z-index:30;
+  max-width:430px; margin-inline:auto; padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:var(--stock); border-block-start:3px solid var(--rule);
+}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed; inset-inline:0; inset-block-end:0; z-index:40;
+  max-width:430px; margin-inline:auto;
+  display:grid; background:var(--stock);
+  border-block-start:3px solid var(--rule);
+  border-inline:3px solid var(--rule);
+  padding-block-end:env(safe-area-inset-bottom);
+}
+.nav-btn{
+  display:grid; justify-items:center; gap:3px; padding:9px 4px 10px;
+  background:none; border:0; cursor:pointer; color:var(--on-stock);
+  font-family:"Heebo",sans-serif; font-weight:900; font-size:.6875rem; letter-spacing:-.02em;
+  border-inline-start:3px solid var(--rule);
+}
+.nav-btn:first-child{ border-inline-start:0; }
+.nav-btn[aria-current="page"]{ background:var(--blue); color:#F5F0E4; --focus:#FFD400; }
+.nav-btn:not([aria-current="page"]):hover{ background:var(--yellow); color:#141210; }
+
+/* ============ MISC ============ */
+.rule{ block-size:3px; background:var(--rule); border:0; margin:0; }
+.steprule{ display:flex; gap:4px; margin-block-start:14px; }
+.steprule i{ flex:1 1 0; block-size:8px; border:2.5px solid var(--rule); background:transparent; }
+.steprule i.on{ background:var(--rule); }
+.notice{
+  border:3px dashed var(--rule); padding:12px 14px; font-size:.875rem; font-weight:700; line-height:1.45;
+}
+.err{
+  border:3px solid #141210; background:var(--yellow); color:#141210;
+  padding:11px 13px; font-size:.875rem; font-weight:700; line-height:1.4; margin-block-start:14px;
+}
+.empty{ padding:40px 16px 24px; text-align:center; }
+.mono-none{ font-weight:700; }
+.avatar{
+  inline-size:96px; block-size:96px; border:3px solid var(--rule); flex:0 0 auto;
+  box-shadow: var(--regx) 4px 0 var(--pink); overflow:hidden;
+}
+.langgrid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.seg{ display:flex; gap:8px; }
+.seg .chip{ flex:1 1 0; text-align:center; justify-content:center; }
+.stack-gap > * + *{ margin-block-start:10px; }
+
+/* ============ THE ONE MOMENT: press registration settles ============ */
+@keyframes settle{
+  from{ transform:translate3d(var(--regsx), 10px, 0) rotate(calc(var(--rot,0deg) * 2.6)); }
+  to  { transform:translate3d(0,0,0) rotate(var(--rot,0deg)); }
+}
+@keyframes settleReg{
+  from{ box-shadow: calc(var(--regx) * 2.6) 11px 0 var(--reg,var(--rule)); }
+  to  { box-shadow: var(--regx) 4px 0 var(--reg,var(--rule)); }
+}
+.settling{
+  animation: settle .62s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i,0) * 42ms);
+}
+.settling.has-reg{
+  animation: settle .62s cubic-bezier(.16,1,.3,1) both,
+             settleReg .62s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i,0) * 42ms);
+}
+@media (prefers-reduced-motion: reduce){
+  .settling, .settling.has-reg{ animation:none !important; }
+  .btn, .chip, .card .pin{ transition:none !important; }
+}
+@media (min-width:900px){
+  .sheet{ box-shadow: 14px 14px 0 rgba(0,0,0,.35); }
+}
+</style>
+
+<div class="sheet">
+  <main id="view"></main>
+  <nav class="nav" id="nav" hidden aria-label="ניווט ראשי"></nav>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+/* ------------------------------------------------------------------ */
+/* inks, categories, icons                                             */
+/* ------------------------------------------------------------------ */
+var INK = { pink:"#FF48A0", blue:"#0B63CE", yellow:"#FFD400", green:"#00A95C", orange:"#FF6B2C",
+            black:"#141210", paper:"#F5F0E4" };
+
+var CAT = {
+  sport:      { ink:"orange", ink2:"blue",   motif:"rings" },
+  tech:       { ink:"blue",   ink2:"pink",   motif:"grid" },
+  art:        { ink:"pink",   ink2:"yellow", motif:"shards" },
+  music:      { ink:"yellow", ink2:"pink",   motif:"waves" },
+  stage:      { ink:"pink",   ink2:"blue",   motif:"burst" },
+  nature:     { ink:"green",  ink2:"yellow", motif:"peaks" },
+  volunteer:  { ink:"green",  ink2:"blue",   motif:"links" },
+  leadership: { ink:"blue",   ink2:"yellow", motif:"chevrons" },
+  gaming:     { ink:"orange", ink2:"green",  motif:"pixels" }
+};
+var CAT_ORDER = ["sport","tech","art","music","stage","nature","volunteer","leadership","gaming"];
+
+function ic(paths, extra){
+  return '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" ' +
+         'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"' +
+         (extra || "") + '>' + paths + '</svg>';
+}
+var ICON = {
+  home:    ic('<path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.8 9.6V20h12.4V9.6"/><path d="M9.8 20v-5.4h4.4V20"/>'),
+  pin:     ic('<path d="M9 3.2h6"/><path d="M10 3.2v5.1L6.6 12.2h10.8L14 8.3V3.2"/><path d="M12 12.2V21"/>'),
+  pinfill: '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.2v5.1L6.6 12.2h10.8L14 8.3V3.2z"/><path d="M9 3.2h6" fill="none" stroke-linecap="round"/><path d="M12 12.2V21" fill="none" stroke-linecap="round"/></svg>',
+  user:    ic('<circle cx="12" cy="8" r="4"/><path d="M4.5 20.2c1.3-3.7 4-5.6 7.5-5.6s6.2 1.9 7.5 5.6"/>'),
+  sliders: ic('<path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2.2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="10" cy="17" r="2.2"/>'),
+  search:  ic('<circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4 4"/>'),
+  back:    ic('<path d="M20 12H4.6"/><path d="m10.8 5.6-6.2 6.4 6.2 6.4"/>', ' class="ic-back"'),
+  caret:   ic('<path d="m6 9.5 6 5.5 6-5.5"/>'),
+  ext:     ic('<path d="M14 4.5h5.5V10"/><path d="M19.5 4.5 11 13"/><path d="M18.4 14.6v4.9H4.5V5.6h5"/>'),
+  check:   ic('<path d="m4.8 12.4 4.7 4.8 9.7-10"/>'),
+  x:       ic('<path d="M6 6 18 18"/><path d="M18 6 6 18"/>'),
+  clock:   ic('<circle cx="12" cy="12" r="8.4"/><path d="M12 6.8V12l3.4 2.2"/>'),
+  edit:    ic('<path d="M4.5 19.5h4l10-10-4-4-10 10z"/><path d="m14.5 5.5 4 4"/>')
+};
+var css = document.createElement("style");
+css.textContent = 'html[dir="rtl"] .ic-back{ transform:scaleX(-1); }';
+document.head.appendChild(css);
+
+/* ------------------------------------------------------------------ */
+/* strings — UI chrome only; activity content stays Hebrew             */
+/* ------------------------------------------------------------------ */
+var STRINGS = {
+he:{ dir:"rtl",
+ nav_home:"בית", nav_wall:"הקיר שלי", nav_profile:"פרופיל", nav_set:"הגדרות",
+ hero_sub:"כל החוגים, הסדנאות והאירועים לנוער בירושלים — על קיר אחד.",
+ cta_start:"יאללה, נתחיל", cta_login:"כבר יש לי חשבון", cta_guest:"המשך כאורח",
+ guest_note:"אפשר לעיין בלי חשבון. כדי לשמור פעילויות צריך חשבון.",
+ login_t:"כניסה", signup_t:"הרשמה", f_user:"שם משתמש", f_pass:"סיסמה",
+ ph_user:"למשל: noa2011", ph_pass:"לפחות 6 תווים",
+ do_login:"כניסה לחשבון", do_signup:"פתיחת חשבון", back:"חזרה",
+ to_signup:"אין לי חשבון — הרשמה", to_login:"יש לי כבר חשבון — כניסה",
+ e_user_empty:"חסר שם משתמש. הקלידו את השם שבחרתם בהרשמה.",
+ e_pass_short:"הסיסמה קצרה מדי. בחרו סיסמה של 6 תווים לפחות.",
+ e_nouser:"לא מצאנו חשבון בשם הזה. אפשר לפתוח חשבון חדש דרך ״הרשמה״.",
+ e_taken:"שם המשתמש הזה כבר תפוס במכשיר הזה. בחרו שם אחר.",
+ e_wrongpass:"הסיסמה לא תואמת. נסו שוב, או פתחו חשבון חדש.",
+ ob_head:"כמה שאלות", ob_sub:"כדי שנדע מה להראות לכם קודם. אפשר לדלג על הכול.",
+ ob_skip:"דילוג", ob_next:"הבא", ob_prev:"אחורה", ob_done:"סיימנו", ob_step:"שלב {a} מתוך {b}",
+ q_name:"איך קוראים לכם?", h_name:"רק שם פרטי, בשביל הפרופיל.", ph_name:"השם שלכם",
+ q_age:"בני כמה אתם?", h_age:"מגיל 12 עד 18.",
+ q_grade:"באיזו כיתה?", h_grade:"עוזר לנו לסנן פעילויות לפי שכבה.",
+ q_area:"איפה נוח לכם?", h_area:"שכונה או אזור בירושלים.",
+ q_topics:"מה מעניין אתכם?", h_topics:"אפשר לבחור כמה שרוצים.",
+ q_kinds:"מה מחפשים?", h_kinds:"חוג קבוע, אירוע חד־פעמי, או שניהם.",
+ k_activity:"חוגים ופעילויות קבועות", k_event:"אירועים חד־פעמיים",
+ any_area:"כל העיר", pick:"בחרו",
+ search_ph:"חיפוש חוג, אירוע או שכונה", cat_all:"הכול",
+ results:"{n} על הקיר", no_res:"לא נמצא כלום", no_res_hint:"נסו מילה אחרת, או נקו את הסינון.",
+ clear:"ניקוי סינון", topics_lbl:"נושאים",
+ d_about:"על הפעילות", d_when:"מתי", d_where:"איפה", d_ages:"גילאים",
+ d_price:"מחיר", d_spots:"מקומות", d_org:"מי מפעיל", d_access:"נגישות",
+ d_reg:"להרשמה באתר המפעיל", d_details:"לפרטים באתר המפעיל",
+ d_reg_soon:"פרטי הרשמה יתפרסמו בקרוב",
+ d_reg_note:"ההרשמה מתבצעת באתר של הגוף המארגן, בלשונית חדשה.",
+ free:"חינם", price_na:"לא צוין", ages_any:"לכל הגילאים", age_from:"מגיל {n}",
+ access_yes:"מונגש", access_no:"לא מונגש", access_na:"לא צוין",
+ spots_of:"{a} מקומות פנויים מתוך {b}", spots_left:"{a} מקומות פנויים",
+ full:"מלא", save:"שמירה לקיר", saved:"שמור על הקיר",
+ w_title:"הקיר שלי", w_search_ph:"חיפוש בקיר", w_sort:"סדר",
+ sort_soon:"הכי קרוב בזמן", sort_added:"נשמר לאחרונה", sort_cat:"לפי קטגוריה", sort_name:"לפי שם",
+ w_empty:"הקיר עוד ריק", w_empty_sub:"כל פעילות שתנעצו תופיע כאן.", w_empty_cta:"לגלישה בפעילויות",
+ w_none_filter:"אין התאמה בקיר", w_none_filter_sub:"נסו חיפוש אחר או קטגוריה אחרת.",
+ p_title:"פרופיל", p_edit:"עריכה", p_save:"שמירה", p_cancel:"ביטול",
+ p_name:"שם", p_age:"גיל", p_grade:"כיתה", p_area:"אזור", p_topics:"נושאים", p_kinds:"מחפש",
+ p_none:"לא מולא", p_answers:"התשובות שלכם",
+ s_title:"הגדרות", s_theme:"נייר", s_light:"נייר יום", s_dark:"לילה בדפוס",
+ s_text:"גודל טקסט", s_small:"קטן", s_med:"בינוני", s_large:"גדול",
+ s_lang:"שפת הממשק", s_lang_note:"תוכן הפעילויות נשאר בעברית, כפי שפורסם.",
+ s_signout:"יציאה מהחשבון", s_guest:"מצב אורח", s_exitguest:"יציאה ממצב אורח",
+ s_guest_note:"במצב אורח לא נשמר עליכם שום מידע. הקיר והפרופיל דורשים חשבון.",
+ s_acct:"חשבון", signed_as:"מחוברים כ־{n}",
+ cat_sport:"ספורט", cat_tech:"טכנולוגיה", cat_art:"אמנות", cat_music:"מוזיקה",
+ cat_stage:"במה", cat_nature:"טבע", cat_volunteer:"התנדבות", cat_leadership:"מנהיגות", cat_gaming:"גיימינג",
+ kind_activity:"חוג", kind_event:"אירוע",
+ per_total:"סה״כ", per_session:"למפגש", per_monthly:"לחודש",
+ when_weekly:"כל יום {d}", when_daily:"כל יום", sessions:"{n} מפגשים",
+ date_range:"{a} – {b}", from_date:"מתחיל ב־{a}", grade_lbl:"כיתה {g}"
+},
+ar:{ dir:"rtl",
+ nav_home:"الرئيسية", nav_wall:"حائطي", nav_profile:"الملف", nav_set:"الإعدادات",
+ hero_sub:"كل الدورات والورشات والفعاليات للشباب في القدس — على حائط واحد.",
+ cta_start:"يلا، نبدأ", cta_login:"لديّ حساب", cta_guest:"المتابعة كضيف",
+ guest_note:"يمكن التصفّح بدون حساب. لحفظ الفعاليات يلزم حساب.",
+ login_t:"دخول", signup_t:"تسجيل", f_user:"اسم المستخدم", f_pass:"كلمة السر",
+ ph_user:"مثال: noa2011", ph_pass:"6 رموز على الأقل",
+ do_login:"الدخول إلى الحساب", do_signup:"إنشاء حساب", back:"رجوع",
+ to_signup:"لا حساب لديّ — تسجيل", to_login:"لديّ حساب — دخول",
+ e_user_empty:"اسم المستخدم ناقص. اكتبوا الاسم الذي اخترتموه.",
+ e_pass_short:"كلمة السر قصيرة. اختاروا 6 رموز على الأقل.",
+ e_nouser:"لم نجد حسابًا بهذا الاسم. أنشئوا حسابًا عبر ״تسجيل״.",
+ e_taken:"هذا الاسم مستخدم على هذا الجهاز. اختاروا اسمًا آخر.",
+ e_wrongpass:"كلمة السر غير مطابقة. حاولوا ثانية أو أنشئوا حسابًا.",
+ ob_head:"بضعة أسئلة", ob_sub:"لنعرف ماذا نعرض أولًا. يمكن تخطّي كل شيء.",
+ ob_skip:"تخطّي", ob_next:"التالي", ob_prev:"رجوع", ob_done:"انتهينا", ob_step:"خطوة {a} من {b}",
+ q_name:"ما اسمكم؟", h_name:"الاسم الأول فقط، للملف الشخصي.", ph_name:"اسمكم",
+ q_age:"كم عمركم؟", h_age:"من 12 حتى 18.",
+ q_grade:"أي صف؟", h_grade:"يساعدنا على التصفية حسب الصف.",
+ q_area:"أين يناسبكم؟", h_area:"حي أو منطقة في القدس.",
+ q_topics:"ما الذي يهمّكم؟", h_topics:"اختاروا ما شئتم.",
+ q_kinds:"عمّ تبحثون؟", h_kinds:"دورة ثابتة، فعالية لمرة واحدة، أو الاثنان.",
+ k_activity:"دورات ونشاطات ثابتة", k_event:"فعاليات لمرة واحدة",
+ any_area:"كل المدينة", pick:"اختاروا",
+ search_ph:"ابحثوا عن دورة أو فعالية أو حي", cat_all:"الكل",
+ results:"{n} على الحائط", no_res:"لا نتائج", no_res_hint:"جرّبوا كلمة أخرى أو امسحوا التصفية.",
+ clear:"مسح التصفية", topics_lbl:"مواضيع",
+ d_about:"عن الفعالية", d_when:"متى", d_where:"أين", d_ages:"الأعمار",
+ d_price:"السعر", d_spots:"أماكن", d_org:"الجهة المنظّمة", d_access:"إتاحة",
+ d_reg:"التسجيل في موقع الجهة", d_details:"التفاصيل في موقع الجهة",
+ d_reg_soon:"تفاصيل التسجيل ستُنشر قريبًا",
+ d_reg_note:"التسجيل يتم في موقع الجهة المنظّمة، في تبويب جديد.",
+ free:"مجانًا", price_na:"غير مذكور", ages_any:"لكل الأعمار", age_from:"من عمر {n}",
+ access_yes:"مُتاح", access_no:"غير مُتاح", access_na:"غير مذكور",
+ spots_of:"{a} أماكن شاغرة من {b}", spots_left:"{a} أماكن شاغرة",
+ full:"ممتلئ", save:"حفظ على الحائط", saved:"محفوظ على الحائط",
+ w_title:"حائطي", w_search_ph:"بحث في الحائط", w_sort:"ترتيب",
+ sort_soon:"الأقرب زمنًا", sort_added:"الأحدث حفظًا", sort_cat:"حسب الفئة", sort_name:"حسب الاسم",
+ w_empty:"الحائط فارغ", w_empty_sub:"كل فعالية تثبّتونها تظهر هنا.", w_empty_cta:"تصفّح الفعاليات",
+ w_none_filter:"لا تطابق في الحائط", w_none_filter_sub:"جرّبوا بحثًا أو فئة أخرى.",
+ p_title:"الملف الشخصي", p_edit:"تحرير", p_save:"حفظ", p_cancel:"إلغاء",
+ p_name:"الاسم", p_age:"العمر", p_grade:"الصف", p_area:"المنطقة", p_topics:"مواضيع", p_kinds:"يبحث عن",
+ p_none:"غير مملوء", p_answers:"إجاباتكم",
+ s_title:"الإعدادات", s_theme:"الورق", s_light:"ورق نهاري", s_dark:"ليل المطبعة",
+ s_text:"حجم النص", s_small:"صغير", s_med:"متوسط", s_large:"كبير",
+ s_lang:"لغة الواجهة", s_lang_note:"محتوى الفعاليات يبقى بالعبرية كما نُشر.",
+ s_signout:"خروج من الحساب", s_guest:"وضع الضيف", s_exitguest:"الخروج من وضع الضيف",
+ s_guest_note:"في وضع الضيف لا نحفظ عنكم أي معلومة. الحائط والملف يتطلبان حسابًا.",
+ s_acct:"الحساب", signed_as:"داخلون باسم {n}",
+ cat_sport:"رياضة", cat_tech:"تكنولوجيا", cat_art:"فنون", cat_music:"موسيقى",
+ cat_stage:"مسرح", cat_nature:"طبيعة", cat_volunteer:"تطوّع", cat_leadership:"قيادة", cat_gaming:"ألعاب",
+ kind_activity:"دورة", kind_event:"فعالية",
+ per_total:"إجمالًا", per_session:"للقاء", per_monthly:"شهريًا",
+ when_weekly:"كل يوم {d}", when_daily:"كل يوم", sessions:"{n} لقاءات",
+ date_range:"{a} – {b}", from_date:"يبدأ في {a}", grade_lbl:"صف {g}"
+},
+en:{ dir:"ltr",
+ nav_home:"Home", nav_wall:"My wall", nav_profile:"Profile", nav_set:"Settings",
+ hero_sub:"Every club, workshop and event for teens in Jerusalem — on one wall.",
+ cta_start:"Let's go", cta_login:"I already have an account", cta_guest:"Continue as guest",
+ guest_note:"You can browse without an account. Saving activities needs one.",
+ login_t:"Log in", signup_t:"Sign up", f_user:"Username", f_pass:"Password",
+ ph_user:"e.g. noa2011", ph_pass:"At least 6 characters",
+ do_login:"Log in", do_signup:"Create account", back:"Back",
+ to_signup:"No account yet — sign up", to_login:"Already registered — log in",
+ e_user_empty:"Username is missing. Type the name you signed up with.",
+ e_pass_short:"Password is too short. Pick at least 6 characters.",
+ e_nouser:"No account with that name. Create one via Sign up.",
+ e_taken:"That username is taken on this device. Pick another one.",
+ e_wrongpass:"Password doesn't match. Try again, or create a new account.",
+ ob_head:"A few questions", ob_sub:"So we know what to show first. Everything is skippable.",
+ ob_skip:"Skip", ob_next:"Next", ob_prev:"Back", ob_done:"Done", ob_step:"Step {a} of {b}",
+ q_name:"What's your name?", h_name:"First name only, for your profile.", ph_name:"Your name",
+ q_age:"How old are you?", h_age:"From 12 to 18.",
+ q_grade:"Which grade?", h_grade:"Helps us filter by year group.",
+ q_area:"Where suits you?", h_area:"A neighbourhood or area of Jerusalem.",
+ q_topics:"What are you into?", h_topics:"Pick as many as you like.",
+ q_kinds:"What are you after?", h_kinds:"A regular club, a one-off event, or both.",
+ k_activity:"Regular clubs and activities", k_event:"One-off events",
+ any_area:"Anywhere in the city", pick:"Choose",
+ search_ph:"Search a club, event or neighbourhood", cat_all:"All",
+ results:"{n} on the wall", no_res:"Nothing found", no_res_hint:"Try another word, or clear the filters.",
+ clear:"Clear filters", topics_lbl:"Topics",
+ d_about:"About", d_when:"When", d_where:"Where", d_ages:"Ages",
+ d_price:"Price", d_spots:"Spots", d_org:"Run by", d_access:"Accessibility",
+ d_reg:"Register on the organiser's site", d_details:"Details on the organiser's site",
+ d_reg_soon:"Registration details coming soon",
+ d_reg_note:"Registration happens on the organiser's own site, in a new tab.",
+ free:"Free", price_na:"Not stated", ages_any:"All ages", age_from:"Ages {n}+",
+ access_yes:"Accessible", access_no:"Not accessible", access_na:"Not stated",
+ spots_of:"{a} spots left of {b}", spots_left:"{a} spots left",
+ full:"FULL", save:"Pin to wall", saved:"Pinned",
+ w_title:"My wall", w_search_ph:"Search your wall", w_sort:"Sort",
+ sort_soon:"Soonest date", sort_added:"Recently pinned", sort_cat:"By category", sort_name:"By name",
+ w_empty:"Your wall is empty", w_empty_sub:"Anything you pin shows up here.", w_empty_cta:"Browse activities",
+ w_none_filter:"No match on your wall", w_none_filter_sub:"Try another search or category.",
+ p_title:"Profile", p_edit:"Edit", p_save:"Save", p_cancel:"Cancel",
+ p_name:"Name", p_age:"Age", p_grade:"Grade", p_area:"Area", p_topics:"Topics", p_kinds:"Looking for",
+ p_none:"Not filled in", p_answers:"Your answers",
+ s_title:"Settings", s_theme:"Stock", s_light:"Day paper", s_dark:"Night press",
+ s_text:"Text size", s_small:"Small", s_med:"Medium", s_large:"Large",
+ s_lang:"Interface language", s_lang_note:"Activity content stays in Hebrew, as published.",
+ s_signout:"Sign out", s_guest:"Guest mode", s_exitguest:"Leave guest mode",
+ s_guest_note:"In guest mode nothing about you is stored. Wall and profile need an account.",
+ s_acct:"Account", signed_as:"Signed in as {n}",
+ cat_sport:"Sport", cat_tech:"Tech", cat_art:"Art", cat_music:"Music",
+ cat_stage:"Stage", cat_nature:"Nature", cat_volunteer:"Volunteering", cat_leadership:"Leadership", cat_gaming:"Gaming",
+ kind_activity:"Club", kind_event:"Event",
+ per_total:"total", per_session:"per session", per_monthly:"per month",
+ when_weekly:"Every {d}", when_daily:"Daily", sessions:"{n} sessions",
+ date_range:"{a} – {b}", from_date:"Starts {a}", grade_lbl:"Grade {g}"
+},
+ru:{ dir:"ltr",
+ nav_home:"Главная", nav_wall:"Моя стена", nav_profile:"Профиль", nav_set:"Настройки",
+ hero_sub:"Все кружки, мастер-классы и события для подростков Иерусалима — на одной стене.",
+ cta_start:"Поехали", cta_login:"У меня есть аккаунт", cta_guest:"Продолжить как гость",
+ guest_note:"Смотреть можно без аккаунта. Чтобы сохранять — нужен аккаунт.",
+ login_t:"Вход", signup_t:"Регистрация", f_user:"Имя пользователя", f_pass:"Пароль",
+ ph_user:"например, noa2011", ph_pass:"Минимум 6 символов",
+ do_login:"Войти", do_signup:"Создать аккаунт", back:"Назад",
+ to_signup:"Нет аккаунта — регистрация", to_login:"Уже есть аккаунт — вход",
+ e_user_empty:"Не хватает имени пользователя. Введите его.",
+ e_pass_short:"Пароль слишком короткий. Нужно минимум 6 символов.",
+ e_nouser:"Аккаунт с таким именем не найден. Создайте его через «Регистрацию».",
+ e_taken:"Это имя уже занято на этом устройстве. Выберите другое.",
+ e_wrongpass:"Пароль не совпадает. Попробуйте снова или создайте аккаунт.",
+ ob_head:"Несколько вопросов", ob_sub:"Чтобы знать, что показать первым. Всё можно пропустить.",
+ ob_skip:"Пропустить", ob_next:"Далее", ob_prev:"Назад", ob_done:"Готово", ob_step:"Шаг {a} из {b}",
+ q_name:"Как вас зовут?", h_name:"Только имя, для профиля.", ph_name:"Ваше имя",
+ q_age:"Сколько вам лет?", h_age:"От 12 до 18.",
+ q_grade:"Какой класс?", h_grade:"Поможет отфильтровать по классу.",
+ q_area:"Где вам удобно?", h_area:"Район Иерусалима.",
+ q_topics:"Что вам интересно?", h_topics:"Можно выбрать сколько угодно.",
+ q_kinds:"Что ищете?", h_kinds:"Постоянный кружок, разовое событие или и то и другое.",
+ k_activity:"Постоянные кружки", k_event:"Разовые события",
+ any_area:"Весь город", pick:"Выберите",
+ search_ph:"Кружок, событие или район", cat_all:"Все",
+ results:"{n} на стене", no_res:"Ничего не найдено", no_res_hint:"Попробуйте другое слово или снимите фильтры.",
+ clear:"Сбросить фильтры", topics_lbl:"Темы",
+ d_about:"Об активности", d_when:"Когда", d_where:"Где", d_ages:"Возраст",
+ d_price:"Цена", d_spots:"Места", d_org:"Организатор", d_access:"Доступность",
+ d_reg:"Записаться на сайте организатора", d_details:"Подробности у организатора",
+ d_reg_soon:"Подробности записи появятся скоро",
+ d_reg_note:"Запись происходит на сайте организатора, в новой вкладке.",
+ free:"Бесплатно", price_na:"Не указана", ages_any:"Для всех возрастов", age_from:"От {n} лет",
+ access_yes:"Доступно", access_no:"Не доступно", access_na:"Не указано",
+ spots_of:"Свободно {a} из {b}", spots_left:"Свободно мест: {a}",
+ full:"НЕТ МЕСТ", save:"Прикрепить", saved:"Прикреплено",
+ w_title:"Моя стена", w_search_ph:"Поиск по стене", w_sort:"Сортировка",
+ sort_soon:"Ближайшие", sort_added:"Недавно добавленные", sort_cat:"По категории", sort_name:"По названию",
+ w_empty:"Стена пока пуста", w_empty_sub:"Всё прикреплённое появится здесь.", w_empty_cta:"К активностям",
+ w_none_filter:"Совпадений нет", w_none_filter_sub:"Другой запрос или категория.",
+ p_title:"Профиль", p_edit:"Редактировать", p_save:"Сохранить", p_cancel:"Отмена",
+ p_name:"Имя", p_age:"Возраст", p_grade:"Класс", p_area:"Район", p_topics:"Темы", p_kinds:"Ищу",
+ p_none:"Не заполнено", p_answers:"Ваши ответы",
+ s_title:"Настройки", s_theme:"Бумага", s_light:"Дневная бумага", s_dark:"Ночная печать",
+ s_text:"Размер текста", s_small:"Мелкий", s_med:"Средний", s_large:"Крупный",
+ s_lang:"Язык интерфейса", s_lang_note:"Содержание активностей остаётся на иврите.",
+ s_signout:"Выйти", s_guest:"Гостевой режим", s_exitguest:"Выйти из гостевого режима",
+ s_guest_note:"В гостевом режиме о вас ничего не сохраняется. Стена и профиль требуют аккаунт.",
+ s_acct:"Аккаунт", signed_as:"Вы вошли как {n}",
+ cat_sport:"Спорт", cat_tech:"Технологии", cat_art:"Искусство", cat_music:"Музыка",
+ cat_stage:"Сцена", cat_nature:"Природа", cat_volunteer:"Волонтёрство", cat_leadership:"Лидерство", cat_gaming:"Гейминг",
+ kind_activity:"Кружок", kind_event:"Событие",
+ per_total:"всего", per_session:"за встречу", per_monthly:"в месяц",
+ when_weekly:"Каждый {d}", when_daily:"Каждый день", sessions:"{n} встреч",
+ date_range:"{a} – {b}", from_date:"Старт {a}", grade_lbl:"{g} класс"
+}
+};
+
+var LANGS = [["he","עברית"],["ar","العربية"],["en","English"],["ru","Русский"]];
+
+/* ------------------------------------------------------------------ */
+/* state                                                               */
+/* ------------------------------------------------------------------ */
+var ACTS = (window.ACTIVITIES || []).slice();
+var LS = "mb5_";
+var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function load(k, d){ try{ var v = localStorage.getItem(LS+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+function save(k, v){ try{ localStorage.setItem(LS+k, JSON.stringify(v)); }catch(e){} }
+
+var S = {
+  settings: load("settings", { lang:"he", theme:"light", ts:"med" }),
+  auth:     load("auth", null),                 /* {mode:'user',username} | {mode:'guest'} */
+  users:    load("users", {}),                  /* username -> {pass} */
+  profile:  load("profile", {}),                /* per username */
+  favs:     load("favs", []),                   /* [{id, at}] */
+  ui: { screen:"auth", authMode:"welcome", err:"", detailId:null,
+        q:"", cat:"all", topic:"all",
+        favQ:"", favCat:"all", favSort:"soon",
+        obStep:0, obDraft:null, profileEdit:false, profileDraft:null }
+};
+
+var TS_MAP = { small:.92, med:1, large:1.14 };
+
+function t(k){
+  var d = STRINGS[S.settings.lang] || STRINGS.he;
+  var v = d[k];
+  if (v === undefined) v = STRINGS.he[k];
+  return v === undefined ? "" : v;
+}
+function tf(k, map){
+  var s = t(k);
+  for (var p in map) s = s.split("{"+p+"}").join(map[p]);
+  return s;
+}
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+function isGuest(){ return !!S.auth && S.auth.mode === "guest"; }
+function userKey(){ return S.auth && S.auth.username ? S.auth.username : "_"; }
+function prof(){ return (S.profile[userKey()] || {}); }
+
+/* ------------------------------------------------------------------ */
+/* data helpers                                                        */
+/* ------------------------------------------------------------------ */
+var MONTHS_HE = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+var MONTHS_SHORT_HE = ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"];
+var DAYS_HE = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+var MONTHS_LAT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var DAYS_LAT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+function latin(){ var d = STRINGS[S.settings.lang]; return d && d.dir === "ltr"; }
+function monthName(i){ return latin() ? MONTHS_LAT[i] : MONTHS_HE[i]; }
+function monthShort(i){ return latin() ? MONTHS_LAT[i] : MONTHS_SHORT_HE[i]; }
+function dayName(i){ return latin() ? DAYS_LAT[i] : DAYS_HE[i]; }
+
+function parseDate(s){
+  if (!s) return null;
+  var p = String(s).slice(0,10).split("-");
+  if (p.length !== 3) return null;
+  var d = new Date(+p[0], +p[1]-1, +p[2]);
+  return isNaN(d.getTime()) ? null : d;
+}
+function fmtDate(s){
+  var d = parseDate(s); if (!d) return "";
+  return d.getDate() + (latin() ? " " : " ב") + monthName(d.getMonth()) + " " + d.getFullYear();
+}
+function fmtTimeRange(a, b){
+  if (!a) return "";
+  return b ? (a + "–" + b) : a;
+}
+function whenText(a){
+  var parts = [];
+  if (a.schedule_type === "recurring"){
+    if (a.recurrence_freq === "daily") parts.push(t("when_daily"));
+    else if (a.recurrence_days && a.recurrence_days.length){
+      parts.push(tf("when_weekly", { d: a.recurrence_days.map(function(n){ return dayName(n % 7); }).join(latin() ? " / " : " / ") }));
+    }
+    if (a.start_date) parts.push(tf("from_date", { a: fmtDate(a.start_date) }));
+  } else if (a.schedule_type === "series"){
+    if (a.sessions_count) parts.push(tf("sessions", { n: a.sessions_count }));
+    if (a.start_date && a.end_date && a.start_date !== a.end_date)
+      parts.push(tf("date_range", { a: fmtDate(a.start_date), b: fmtDate(a.end_date) }));
+    else if (a.start_date) parts.push(fmtDate(a.start_date));
+  } else {
+    if (a.start_date && a.end_date && a.start_date !== a.end_date)
+      parts.push(tf("date_range", { a: fmtDate(a.start_date), b: fmtDate(a.end_date) }));
+    else if (a.start_date) parts.push(fmtDate(a.start_date));
+  }
+  var tr = fmtTimeRange(a.start_time, a.end_time);
+  if (tr) parts.push(tr);
+  return parts.join(" · ");
+}
+function priceText(a){
+  if (a.price === 0) return t("free");
+  if (a.price == null) return t("price_na");
+  var per = a.price_period ? (" " + t("per_" + a.price_period)) : "";
+  return "₪" + a.price + per;
+}
+function ageText(a){
+  if (a.age_min == null && a.age_max == null) return t("ages_any");
+  if (a.age_min != null && a.age_max == null) return tf("age_from", { n: a.age_min });
+  if (a.age_min == null) return "–" + a.age_max;
+  return a.age_min + "–" + a.age_max;
+}
+function statusOf(a){
+  if (a.status) return a.status;
+  if (a.spots_left === 0) return "full";
+  return "open";
+}
+function spotsText(a){
+  if (a.spots_left == null) return null;
+  if (a.capacity != null) return tf("spots_of", { a: a.spots_left, b: a.capacity });
+  return tf("spots_left", { a: a.spots_left });
+}
+function isFav(id){ return S.favs.some(function(f){ return f.id === id; }); }
+function toggleFav(id){
+  if (isFav(id)) S.favs = S.favs.filter(function(f){ return f.id !== id; });
+  else S.favs = S.favs.concat([{ id:id, at: Date.now() }]);
+  save("favs", S.favs);
+}
+function byId(id){ for (var i=0;i<ACTS.length;i++) if (ACTS[i].id === id) return ACTS[i]; return null; }
+
+var ALL_TOPICS = (function(){
+  var seen = {}, out = [];
+  ACTS.forEach(function(a){ (a.topics||[]).forEach(function(x){ if (!seen[x]){ seen[x]=1; out.push(x); } }); });
+  return out;
+})();
+var ALL_AREAS = (function(){
+  var seen = {}, out = [];
+  ACTS.forEach(function(a){ if (a.neighborhood && !seen[a.neighborhood]){ seen[a.neighborhood]=1; out.push(a.neighborhood); } });
+  return out.sort();
+})();
+var GRADES = ["ז׳","ח׳","ט׳","י׳","י״א","י״ב"];
+
+/* ------------------------------------------------------------------ */
+/* the printed composition — deterministic per activity id             */
+/* ------------------------------------------------------------------ */
+function hashOf(str){
+  var h = 2166136261;
+  for (var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function makeRng(seed){
+  var s = seed >>> 0 || 1;
+  return function(){
+    s ^= s << 13; s >>>= 0;
+    s ^= s >> 17;
+    s ^= s << 5;  s >>>= 0;
+    return s / 4294967296;
+  };
+}
+function n2(v){ return Math.round(v * 100) / 100; }
+
+function motif(kind, R){
+  var s = "", i;
+  if (kind === "rings"){
+    for (i=0;i<4;i++) s += '<circle cx="'+n2(6+R()*88)+'" cy="'+n2(6+R()*88)+'" r="'+n2(13+R()*26)+
+      '" fill="none" stroke="__C__" stroke-width="'+n2(6+R()*7)+'"/>';
+  } else if (kind === "grid"){
+    for (i=0;i<9;i++){
+      var x = (i%3)*33 + 4 + R()*5, y = Math.floor(i/3)*33 + 4 + R()*5;
+      s += '<rect x="'+n2(x)+'" y="'+n2(y)+'" width="'+n2(14+R()*11)+'" height="'+n2(14+R()*11)+
+        '" fill="'+(R()>.45 ? '__C__' : 'none')+'" stroke="__C__" stroke-width="4.5"/>';
+    }
+  } else if (kind === "shards"){
+    for (i=0;i<5;i++){
+      var ax=R()*100, ay=R()*100;
+      s += '<path d="M'+n2(ax)+' '+n2(ay)+' L'+n2(ax+16+R()*34)+' '+n2(ay+6+R()*22)+' L'+n2(ax-8+R()*26)+' '+n2(ay+26+R()*36)+' Z" fill="__C__"/>';
+    }
+    s += '<circle cx="'+n2(20+R()*60)+'" cy="'+n2(20+R()*60)+'" r="'+n2(16+R()*14)+'" fill="none" stroke="__C__" stroke-width="6"/>';
+  } else if (kind === "waves"){
+    for (i=0;i<5;i++){
+      var y0 = 10 + i*19 + R()*6;
+      s += '<path d="M-6 '+n2(y0)+' q 14 -'+n2(8+R()*12)+' 28 0 t 28 0 t 28 0 t 28 0" fill="none" stroke="__C__" stroke-width="'+n2(4+R()*5)+'"/>';
+    }
+  } else if (kind === "burst"){
+    var cx = 30 + R()*40, cy = 30 + R()*40;
+    for (i=0;i<12;i++){
+      var a1 = (i/12)*Math.PI*2, a2 = a1 + 0.16;
+      s += '<path d="M'+n2(cx)+' '+n2(cy)+' L'+n2(cx+Math.cos(a1)*84)+' '+n2(cy+Math.sin(a1)*84)+
+        ' L'+n2(cx+Math.cos(a2)*84)+' '+n2(cy+Math.sin(a2)*84)+' Z" fill="__C__"/>';
+    }
+    s += '<circle cx="'+n2(cx)+'" cy="'+n2(cy)+'" r="'+n2(11+R()*8)+'" fill="none" stroke="__C__" stroke-width="6"/>';
+  } else if (kind === "peaks"){
+    for (i=0;i<3;i++){
+      var base = 104 - i*16, px = R()*40;
+      s += '<path d="M'+n2(px-30)+' '+n2(base)+' L'+n2(px+18+R()*14)+' '+n2(base-42-R()*20)+' L'+n2(px+62)+' '+n2(base)+
+        ' L'+n2(px+96)+' '+n2(base-30)+' L'+n2(px+130)+' '+n2(base)+' Z" fill="'+(i===1 ? 'none' : '__C__')+'" stroke="__C__" stroke-width="4.5"/>';
+    }
+    s += '<circle cx="'+n2(66+R()*22)+'" cy="'+n2(16+R()*12)+'" r="'+n2(9+R()*6)+'" fill="__C__"/>';
+  } else if (kind === "links"){
+    for (i=0;i<5;i++){
+      s += '<rect x="'+n2(4+R()*62)+'" y="'+n2(4+R()*62)+'" width="'+n2(26+R()*16)+'" height="'+n2(26+R()*16)+
+        '" rx="12" fill="none" stroke="__C__" stroke-width="'+n2(6+R()*4)+'"/>';
+    }
+  } else if (kind === "chevrons"){
+    for (i=0;i<6;i++){
+      var yy = 2 + i*17 + R()*4;
+      s += '<path d="M-4 '+n2(yy)+' L'+n2(48+R()*10)+' '+n2(yy+13)+' L104 '+n2(yy)+'" fill="none" stroke="__C__" stroke-width="'+n2(5+R()*5)+'"/>';
+    }
+  } else { /* pixels */
+    for (i=0;i<16;i++){
+      var gx = Math.floor(R()*6)*17 - 4, gy = Math.floor(R()*6)*17 - 4;
+      s += '<rect x="'+n2(gx)+'" y="'+n2(gy)+'" width="17" height="17" fill="__C__"/>';
+    }
+  }
+  return s;
+}
+
+var uid = 0;
+function posterSVG(act){
+  var c = CAT[act.category] || CAT.tech;
+  var seed = hashOf(act.id);
+  var R = makeRng(seed);
+  var tmpl = motif(c.motif, R);
+  var u = "p" + (++uid);
+  var c1 = INK[c.ink], c2 = INK[c.ink2];
+  var knockX = n2(R()*58), knockY = n2(R()*58), knockW = n2(22+R()*26), knockH = n2(16+R()*24);
+  var knockRound = R() > .5;
+
+  return '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">' +
+    '<defs>' +
+      '<pattern id="ht'+u+'" width="5" height="5" patternUnits="userSpaceOnUse">' +
+        '<circle cx="2.5" cy="2.5" r="1.55" fill="'+c2+'"/></pattern>' +
+      '<linearGradient id="gr'+u+'" x1="0" y1="1" x2="0.35" y2="0">' +
+        '<stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#000000"/></linearGradient>' +
+      '<mask id="mk'+u+'"><rect width="100" height="100" fill="url(#gr'+u+')"/></mask>' +
+    '</defs>' +
+    '<rect width="100" height="100" fill="'+c1+'"/>' +
+    '<rect width="100" height="100" fill="url(#ht'+u+')" mask="url(#mk'+u+')" style="mix-blend-mode:multiply"/>' +
+    (knockRound
+      ? '<circle cx="'+n2(knockX+knockW/2)+'" cy="'+n2(knockY+knockH/2)+'" r="'+n2(knockW/2)+'" fill="#F5F0E4"/>'
+      : '<rect x="'+knockX+'" y="'+knockY+'" width="'+knockW+'" height="'+knockH+'" fill="#F5F0E4"/>') +
+    '<g transform="translate(2.4,2.8)" style="mix-blend-mode:multiply">' + tmpl.split("__C__").join(c2) + '</g>' +
+    '<g style="mix-blend-mode:multiply">' + tmpl.split("__C__").join("#141210") + '</g>' +
+  '</svg>';
+}
+
+function monogramSVG(name){
+  var ch = (String(name||"?").trim()[0] || "?");
+  var seed = hashOf(String(name||"?"));
+  var R = makeRng(seed);
+  var keys = ["pink","blue","yellow","green","orange"];
+  var c1 = INK[keys[Math.floor(R()*keys.length)]];
+  var c2 = INK[keys[Math.floor(R()*keys.length)]];
+  if (c1 === c2) c2 = INK.blue === c1 ? INK.pink : INK.blue;
+  var u = "m" + (++uid);
+  var dark = (c1 === INK.blue);
+  return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">' +
+    '<defs><pattern id="hm'+u+'" width="5" height="5" patternUnits="userSpaceOnUse">' +
+    '<circle cx="2.5" cy="2.5" r="1.6" fill="'+c2+'"/></pattern></defs>' +
+    '<rect width="100" height="100" fill="'+c1+'"/>' +
+    '<rect y="52" width="100" height="48" fill="url(#hm'+u+')" style="mix-blend-mode:multiply"/>' +
+    '<text x="52" y="72" font-family="Heebo, sans-serif" font-weight="900" font-size="62" ' +
+      'text-anchor="middle" fill="'+c2+'">'+esc(ch)+'</text>' +
+    '<text x="50" y="70" font-family="Heebo, sans-serif" font-weight="900" font-size="62" ' +
+      'text-anchor="middle" fill="'+(dark ? "#F5F0E4" : "#141210")+'">'+esc(ch)+'</text>' +
+  '</svg>';
+}
+
+/* ------------------------------------------------------------------ */
+/* filtering                                                           */
+/* ------------------------------------------------------------------ */
+function matchQuery(a, q){
+  if (!q) return true;
+  q = q.trim().toLowerCase();
+  if (!q) return true;
+  var hay = [a.title, a.short_description, a.description, a.organization_name,
+             a.neighborhood, a.location_name].concat(a.topics || []).join(" ").toLowerCase();
+  return hay.indexOf(q) !== -1;
+}
+function homeList(){
+  return ACTS.filter(function(a){
+    if (S.ui.cat !== "all" && a.category !== S.ui.cat) return false;
+    if (S.ui.topic !== "all" && (a.topics || []).indexOf(S.ui.topic) === -1) return false;
+    return matchQuery(a, S.ui.q);
+  });
+}
+function topicsForCat(cat){
+  var seen = {}, out = [];
+  ACTS.forEach(function(a){
+    if (cat !== "all" && a.category !== cat) return;
+    (a.topics||[]).forEach(function(x){ if (!seen[x]){ seen[x]=1; out.push(x); } });
+  });
+  return out;
+}
+function favList(){
+  var order = {};
+  S.favs.forEach(function(f, i){ order[f.id] = f.at || i; });
+  var list = S.favs.map(function(f){ return byId(f.id); }).filter(Boolean);
+  list = list.filter(function(a){
+    if (S.ui.favCat !== "all" && a.category !== S.ui.favCat) return false;
+    return matchQuery(a, S.ui.favQ);
+  });
+  var s = S.ui.favSort;
+  list.sort(function(x, y){
+    if (s === "soon"){
+      var dx = parseDate(x.start_date), dy = parseDate(y.start_date);
+      var vx = dx ? dx.getTime() : Infinity, vy = dy ? dy.getTime() : Infinity;
+      return vx - vy;
+    }
+    if (s === "added") return (order[y.id]||0) - (order[x.id]||0);
+    if (s === "cat"){
+      var c = CAT_ORDER.indexOf(x.category) - CAT_ORDER.indexOf(y.category);
+      return c !== 0 ? c : x.title.localeCompare(y.title, "he");
+    }
+    return x.title.localeCompare(y.title, "he");
+  });
+  return list;
+}
+
+/* ------------------------------------------------------------------ */
+/* fragments                                                           */
+/* ------------------------------------------------------------------ */
+function inkClass(cat){ return "ink-" + (CAT[cat] ? CAT[cat].ink : "blue"); }
+function regInk(cat){ return "var(--" + (CAT[cat] ? CAT[cat].ink2 : "pink") + ")"; }
+
+function stampKind(a){
+  return '<span class="stamp">' + esc(t("kind_" + a.item_kind)) + '</span>';
+}
+function stampCat(a){
+  return '<span class="stamp stamp-solid">' + esc(t("cat_" + a.category)) + '</span>';
+}
+function stampFull(a){
+  return statusOf(a) === "full" ? '<span class="stamp stamp-full">' + esc(t("full")) + '</span>' : "";
+}
+function dateStamp(a){
+  var d = parseDate(a.start_date);
+  if (!d) return "";
+  return '<div class="datestamp"><span class="d">' + d.getDate() + '</span><span class="m">' +
+         esc(monthShort(d.getMonth())) + '</span></div>';
+}
+function pinBtn(a){
+  var on = isFav(a.id);
+  return '<button class="pin" type="button" data-act="fav" data-id="' + a.id + '" aria-pressed="' + on + '" ' +
+         'aria-label="' + esc(on ? t("saved") : t("save")) + '">' + (on ? ICON.pinfill : ICON.pin) + '</button>';
+}
+
+var CARD_CYCLE = ["hero","duo","duo","wide","flat","duo","duo","hero","wide","flat","duo","duo"];
+var ROTS = [".6deg","-.45deg","0deg",".35deg","-.6deg","0deg",".5deg","-.35deg"];
+
+function cardHTML(a, i, forceVariant){
+  var v = forceVariant || CARD_CYCLE[i % CARD_CYCLE.length];
+  var rot = (v === "hero" || v === "wide") ? ["0deg","-.3deg",".3deg"][i % 3] : ROTS[i % ROTS.length];
+  var cls = inkClass(a.category);
+  var span = (v === "duo") ? "" : " span";
+  var head = '<article class="card ' + v + span + ' ' + cls + ' has-reg" data-settle ' +
+             'style="--rot:' + rot + ';--reg:' + regInk(a.category) + '">';
+  var meta = '<div class="card-meta"><span>' + esc(a.organization_name) + '</span>' +
+             (a.neighborhood ? '<span>· ' + esc(a.neighborhood) + '</span>' : "") + '</div>';
+  var body, art = '<div class="art ' + (v === "duo" ? "a11" : "a43") + '">' + posterSVG(a) + '</div>';
+
+  if (v === "flat"){
+    body = '<div class="card-body halftone" style="padding-block:20px 18px">' +
+      '<div class="stamps">' + stampKind(a) + stampCat(a) + stampFull(a) + '</div>' +
+      '<h3 class="card-t">' + esc(a.title) + '</h3>' +
+      '<p class="card-s">' + esc(a.short_description) + '</p>' + meta + '</div>';
+    return head + '<button class="card-open" type="button" data-act="open" data-id="' + a.id + '">' +
+           body + '</button>' + pinBtn(a) + '</article>';
+  }
+  if (v === "wide"){
+    body = '<div class="card-body">' +
+      '<div class="stamps">' + stampKind(a) + stampFull(a) + '</div>' +
+      '<h3 class="card-t" style="font-size:1.1875rem">' + esc(a.title) + '</h3>' + meta + '</div>';
+    return head + '<button class="card-open" type="button" data-act="open" data-id="' + a.id + '">' +
+           '<div class="row">' + art + body + '</div></button>' + pinBtn(a) + '</article>';
+  }
+  if (v === "duo"){
+    body = '<div class="card-body" style="padding:10px 10px 11px">' +
+      '<div class="stamps">' + stampCat(a) + '</div>' +
+      '<h3 class="card-t">' + esc(a.title) + '</h3>' +
+      '<div class="card-meta" style="font-size:.6875rem">' + esc(a.neighborhood || a.organization_name) + '</div></div>';
+    return head + '<button class="card-open" type="button" data-act="open" data-id="' + a.id + '">' +
+           art + body + '</button>' + pinBtn(a) + '</article>';
+  }
+  /* hero */
+  body = '<div class="card-body" style="padding:14px 14px 15px">' +
+    '<div class="stamps">' + stampKind(a) + stampCat(a) + stampFull(a) + '</div>' +
+    '<h3 class="card-t">' + esc(a.title) + '</h3>' +
+    '<p class="card-s">' + esc(a.short_description) + '</p>' + meta + '</div>';
+  return head + '<button class="card-open" type="button" data-act="open" data-id="' + a.id + '">' +
+         '<div class="art a43" style="position:relative">' + posterSVG(a) +
+         '<div style="position:absolute;inset-block-start:10px;inset-inline-end:10px;z-index:3">' + dateStamp(a) + '</div></div>' +
+         body + '</button>' + pinBtn(a) + '</article>';
+}
+
+function catChips(active, actName){
+  var out = '<button class="chip ink-black" type="button" data-act="' + actName + '" data-cat="all" aria-pressed="' +
+            (active === "all") + '">' + esc(t("cat_all")) + '</button>';
+  CAT_ORDER.forEach(function(c){
+    out += '<button class="chip ' + inkClass(c) + '" type="button" data-act="' + actName + '" data-cat="' + c +
+           '" aria-pressed="' + (active === c) + '">' + esc(t("cat_" + c)) + '</button>';
+  });
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
+/* screens                                                             */
+/* ------------------------------------------------------------------ */
+function authScreen(){
+  var m = S.ui.authMode;
+  var head =
+    '<header class="ink-pink halftone" style="--regink:var(--blue);padding:44px 16px 30px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<h1 class="display poster reg" style="--regink:var(--blue)">' +
+        '<span class="ln">מה</span><span class="ln">בי״ם</span></h1>' +
+      '<p class="lede" style="margin-block-start:18px;max-inline-size:24ch">' + esc(t("hero_sub")) + '</p>' +
+    '</header>';
+
+  if (m === "welcome"){
+    return '<div class="screen no-nav">' + head +
+      '<div class="pad" style="padding-block:22px 26px">' +
+        '<div data-settle class="stack-gap">' +
+          '<button class="btn ink-yellow" type="button" data-act="auth-mode" data-mode="signup" style="--reg:var(--blue)">' + esc(t("cta_start")) + '</button>' +
+          '<button class="btn ink-paper" type="button" data-act="auth-mode" data-mode="login" style="--reg:var(--pink)">' + esc(t("cta_login")) + '</button>' +
+        '</div>' +
+        '<div style="margin-block-start:30px" data-settle>' +
+          '<div class="notice">' + esc(t("guest_note")) + '</div>' +
+          '<button class="btn btn-quiet" type="button" data-act="guest" style="margin-block-start:12px">' + esc(t("cta_guest")) + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ink-blue halftone halftone-up" style="block-size:64px;border-block-start:3px solid var(--rule)"></div>' +
+    '</div>';
+  }
+
+  var isLogin = m === "login";
+  return '<div class="screen no-nav">' + head +
+    '<div class="pad" style="padding-block:20px 30px">' +
+      '<div class="sect-wrap" style="margin-block-start:6px"><h2 class="sect reg-2" style="--regink:var(--pink)">' +
+        esc(isLogin ? t("login_t") : t("signup_t")) + '</h2></div>' +
+      '<form data-act="auth-submit" data-mode="' + m + '" novalidate data-settle>' +
+        '<label class="field"><span class="lab">' + esc(t("f_user")) + '</span>' +
+          '<input class="inp" name="username" type="text" autocomplete="username" placeholder="' + esc(t("ph_user")) + '" dir="ltr"></label>' +
+        '<label class="field"><span class="lab">' + esc(t("f_pass")) + '</span>' +
+          '<input class="inp" name="password" type="password" autocomplete="' + (isLogin ? "current-password" : "new-password") +
+          '" placeholder="' + esc(t("ph_pass")) + '" dir="ltr"></label>' +
+        (S.ui.err ? '<p class="err" role="alert">' + esc(S.ui.err) + '</p>' : "") +
+        '<button class="btn ink-blue" type="submit" style="margin-block-start:20px;--reg:var(--pink)">' +
+          esc(isLogin ? t("do_login") : t("do_signup")) + '</button>' +
+      '</form>' +
+      '<div style="margin-block-start:18px;display:flex;flex-direction:column;gap:6px;align-items:flex-start">' +
+        '<button class="btn-bare" type="button" data-act="auth-mode" data-mode="' + (isLogin ? "signup" : "login") + '">' +
+          esc(isLogin ? t("to_signup") : t("to_login")) + '</button>' +
+        '<button class="btn-bare" type="button" data-act="auth-mode" data-mode="welcome">' + esc(t("back")) + '</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+var OB_STEPS = ["name","age","grade","area","topics","kinds"];
+
+function obScreen(){
+  if (!S.ui.obDraft) S.ui.obDraft = { name:"", age:"", grade:"", area:"", topics:[], kinds:[] };
+  var i = S.ui.obStep, key = OB_STEPS[i], d = S.ui.obDraft;
+  var body = "";
+
+  if (key === "name"){
+    body = '<label class="field"><span class="lab">' + esc(t("p_name")) + '</span>' +
+      '<input class="inp" id="ob-name" type="text" value="' + esc(d.name || "") + '" placeholder="' + esc(t("ph_name")) + '"></label>';
+  } else if (key === "age"){
+    body = '<div class="chipwrap">' + [12,13,14,15,16,17,18].map(function(n){
+      return '<button class="chip ink-yellow" type="button" data-act="ob-age" data-v="' + n + '" aria-pressed="' + (d.age === n) + '">' + n + '</button>';
+    }).join("") + '</div>';
+  } else if (key === "grade"){
+    body = '<div class="chipwrap">' + GRADES.map(function(g){
+      return '<button class="chip ink-orange" type="button" data-act="ob-grade" data-v="' + esc(g) + '" aria-pressed="' + (d.grade === g) + '">' + esc(g) + '</button>';
+    }).join("") + '</div>';
+  } else if (key === "area"){
+    body = '<div class="chipwrap">' +
+      '<button class="chip ink-black" type="button" data-act="ob-area" data-v="" aria-pressed="' + (!d.area) + '">' + esc(t("any_area")) + '</button>' +
+      ALL_AREAS.map(function(a){
+        return '<button class="chip ink-green" type="button" data-act="ob-area" data-v="' + esc(a) + '" aria-pressed="' + (d.area === a) + '">' + esc(a) + '</button>';
+      }).join("") + '</div>';
+  } else if (key === "topics"){
+    var sel = d.topics || [];
+    body = '<div class="chipwrap">' + ALL_TOPICS.map(function(x, n){
+      var ink = ["ink-pink","ink-blue","ink-yellow","ink-green","ink-orange"][n % 5];
+      return '<button class="chip ' + ink + '" type="button" data-act="ob-topic" data-v="' + esc(x) + '" aria-pressed="' +
+             (sel.indexOf(x) !== -1) + '">' + esc(x) + '</button>';
+    }).join("") + '</div>';
+  } else {
+    var ks = d.kinds || [];
+    body = '<div class="stack-gap">' +
+      ['activity','event'].map(function(k, n){
+        var on = ks.indexOf(k) !== -1;
+        return '<button class="btn ' + (n === 0 ? "ink-blue" : "ink-pink") + '" type="button" data-act="ob-kind" data-v="' + k +
+          '" aria-pressed="' + on + '" style="--reg:var(--' + (n === 0 ? "yellow" : "blue") + ');justify-content:space-between">' +
+          '<span>' + esc(t("k_" + k)) + '</span>' + (on ? ICON.check : "") + '</button>';
+      }).join("") + '</div>';
+  }
+
+  var steps = "";
+  for (var z=0; z<OB_STEPS.length; z++) steps += '<i class="' + (z <= i ? "on" : "") + '"></i>';
+
+  return '<div class="screen no-nav">' +
+    '<header class="ink-blue halftone" style="padding:26px 16px 20px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<h1 class="display" style="font-size:2.25rem"><span class="ln">' + esc(t("ob_head")) + '</span></h1>' +
+      '<p class="small" style="margin:10px 0 0;font-weight:700">' + esc(t("ob_sub")) + '</p>' +
+      '<div class="steprule" style="--rule:#F5F0E4">' + steps + '</div>' +
+      '<p class="small" style="margin:8px 0 0;font-weight:700">' + esc(tf("ob_step", { a: i+1, b: OB_STEPS.length })) + '</p>' +
+    '</header>' +
+    '<div class="pad" style="padding-block:8px 30px" data-settle>' +
+      '<div class="sect-wrap"><h2 class="sect">' + esc(t("q_" + key)) + '</h2></div>' +
+      '<p class="small muted" style="margin:0 0 16px">' + esc(t("h_" + key)) + '</p>' +
+      body +
+      '<div style="margin-block-start:32px" class="stack-gap">' +
+        '<button class="btn ink-yellow" type="button" data-act="ob-next" style="--reg:var(--blue)">' +
+          esc(i === OB_STEPS.length - 1 ? t("ob_done") : t("ob_next")) + '</button>' +
+        '<div style="display:flex;gap:10px">' +
+          (i > 0 ? '<button class="btn btn-quiet" type="button" data-act="ob-prev">' + esc(t("ob_prev")) + '</button>' : "") +
+          '<button class="btn btn-quiet" type="button" data-act="ob-skip">' + esc(t("ob_skip")) + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function homeScreen(){
+  return '<div class="screen">' +
+    '<header class="ink-pink halftone" style="padding:26px 16px 22px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<h1 class="display reg" style="font-size:2.75rem;--regink:var(--blue)">' +
+        '<span class="ln">מה</span><span class="ln">בי״ם</span></h1>' +
+    '</header>' +
+    '<div class="pad" style="padding-block:14px 0" data-settle>' +
+      '<div style="position:relative">' +
+        '<input class="inp" id="home-q" type="search" value="' + esc(S.ui.q) + '" placeholder="' + esc(t("search_ph")) +
+          '" aria-label="' + esc(t("search_ph")) + '" style="padding-inline-end:48px">' +
+        '<span style="position:absolute;inset-inline-end:14px;inset-block-start:50%;transform:translateY(-50%);pointer-events:none">' + ICON.search + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pad" style="padding-block-start:12px"><div class="chiprow" id="home-cats">' + catChips(S.ui.cat, "home-cat") + '</div></div>' +
+    '<div class="pad" id="home-topics">' + homeTopicsHTML() + '</div>' +
+    '<div class="pad" id="feed-wrap">' + feedHTML() + '</div>' +
+  '</div>';
+}
+function homeTopicsHTML(){
+  if (S.ui.cat === "all") return "";
+  var list = topicsForCat(S.ui.cat);
+  if (!list.length) return "";
+  var out = '<div class="chiprow" style="border-block-start:3px solid var(--rule);padding-block-start:10px">' +
+    '<button class="chip ink-black" type="button" data-act="home-topic" data-v="all" aria-pressed="' +
+    (S.ui.topic === "all") + '">' + esc(t("topics_lbl")) + ' · ' + esc(t("cat_all")) + '</button>';
+  list.forEach(function(x){
+    out += '<button class="chip ' + inkClass(S.ui.cat) + '" type="button" data-act="home-topic" data-v="' + esc(x) +
+           '" aria-pressed="' + (S.ui.topic === x) + '">' + esc(x) + '</button>';
+  });
+  return out + '</div>';
+}
+function feedHTML(){
+  var list = homeList();
+  if (!list.length){
+    return '<div class="empty" data-settle>' +
+      '<h2 class="sect">' + esc(t("no_res")) + '</h2>' +
+      '<p class="small muted" style="margin:12px 0 18px">' + esc(t("no_res_hint")) + '</p>' +
+      '<button class="btn ink-yellow" type="button" data-act="home-clear" style="--reg:var(--blue)">' + esc(t("clear")) + '</button>' +
+    '</div>';
+  }
+  return '<p class="small" style="margin:16px 0 4px;font-weight:700">' + esc(tf("results", { n: list.length })) + '</p>' +
+    '<div class="feed">' + list.map(function(a, i){ return cardHTML(a, i); }).join("") + '</div>';
+}
+
+function detailScreen(){
+  var a = byId(S.ui.detailId);
+  if (!a) return '<div class="screen"><div class="empty"><h2 class="sect">' + esc(t("no_res")) + '</h2></div></div>';
+  var on = isFav(a.id);
+  var words = String(a.title).split(/\s+/).map(function(w){ return '<span class="ln">' + esc(w) + '</span>'; }).join("");
+  var spots = spotsText(a);
+  var url = a.registration_url || a.source_url || null;
+  var label = a.registration_url ? t("d_reg") : t("d_details");
+
+  var rows = [
+    [t("d_when"), whenText(a)],
+    [t("d_where"), esc(a.location_name) + (a.neighborhood ? " · " + esc(a.neighborhood) : ""), true],
+    [t("d_ages"), ageText(a)],
+    [t("d_price"), priceText(a)],
+    [t("d_org"), a.organization_name],
+    [t("d_access"), a.is_accessible === true ? t("access_yes") : (a.is_accessible === false ? t("access_no") : t("access_na"))]
+  ];
+  if (spots) rows.splice(4, 0, [t("d_spots"), spots]);
+
+  var specHTML = rows.map(function(r){
+    return '<div class="spec-row"><div class="k">' + esc(r[0]) + '</div><div class="v">' + (r[2] ? r[1] : esc(r[1])) + '</div></div>';
+  }).join("");
+
+  return '<div class="screen no-nav" style="padding-block-end:96px">' +
+    '<div class="topbar">' +
+      '<button class="iconbtn" type="button" data-act="back" aria-label="' + esc(t("back")) + '">' + ICON.back + '</button>' +
+      '<span class="tb-t">' + esc(a.title) + '</span>' +
+      '<button class="iconbtn" type="button" data-act="fav" data-id="' + a.id + '" aria-pressed="' + on +
+        '" aria-label="' + esc(on ? t("saved") : t("save")) + '">' + (on ? ICON.pinfill : ICON.pin) + '</button>' +
+    '</div>' +
+    '<div class="art" style="aspect-ratio:5/4;border-block-end:3px solid var(--rule);position:relative" data-settle>' +
+      posterSVG(a) +
+      '<div style="position:absolute;inset-block-start:12px;inset-inline-end:12px;z-index:3">' + dateStamp(a) + '</div>' +
+      (statusOf(a) === "full" ? '<div style="position:absolute;inset-block-end:14px;inset-inline-start:14px;z-index:3">' +
+        '<span class="stamp stamp-full">' + esc(t("full")) + '</span></div>' : "") +
+    '</div>' +
+    '<header class="poster-head ' + inkClass(a.category) + ' halftone" data-settle>' +
+      '<div class="stamps" style="margin-block-end:16px">' + stampKind(a) + stampCat(a) + '</div>' +
+      '<h1 class="display" style="font-size:2.375rem">' + words + '</h1>' +
+      '<p class="lede" style="margin-block-start:18px">' + esc(a.short_description) + '</p>' +
+    '</header>' +
+    '<section class="pad" style="padding-block:22px 24px" data-settle>' +
+      '<div class="sect-wrap" style="margin-block-start:0"><h2 class="sect">' + esc(t("d_about")) + '</h2></div>' +
+      '<p style="margin:0;font-size:1rem;line-height:1.55">' + esc(a.description) + '</p>' +
+    '</section>' +
+    '<section class="spec" data-settle>' + specHTML + '</section>' +
+    '<div class="pad" style="padding-block:18px 16px" data-settle>' +
+      '<p class="small muted" style="margin:0">' + esc(t("d_reg_note")) + '</p>' +
+    '</div>' +
+    '<div class="ctabar">' +
+      (url
+        ? '<a class="btn ink-yellow" href="' + esc(url) + '" target="_blank" rel="noopener" style="--reg:var(--blue)">' +
+            esc(label) + ICON.ext + '</a>'
+        : '<button class="btn" type="button" disabled>' + esc(t("d_reg_soon")) + '</button>') +
+    '</div>' +
+  '</div>';
+}
+
+function favScreen(){
+  return '<div class="screen">' +
+    '<header class="ink-yellow halftone" style="padding:26px 16px 22px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<h1 class="display reg-2" style="font-size:2.5rem;--regink:var(--pink)"><span class="ln">' + esc(t("w_title")) + '</span></h1>' +
+    '</header>' +
+    '<div class="pad" style="padding-block:14px 0" data-settle>' +
+      '<div style="position:relative">' +
+        '<input class="inp" id="fav-q" type="search" value="' + esc(S.ui.favQ) + '" placeholder="' + esc(t("w_search_ph")) +
+          '" aria-label="' + esc(t("w_search_ph")) + '" style="padding-inline-end:48px">' +
+        '<span style="position:absolute;inset-inline-end:14px;inset-block-start:50%;transform:translateY(-50%);pointer-events:none">' + ICON.search + '</span>' +
+      '</div>' +
+      '<label class="field"><span class="lab">' + esc(t("w_sort")) + '</span>' +
+        '<span class="selwrap" style="display:block">' +
+          '<select class="inp" id="fav-sort" data-act="fav-sort">' +
+            ['soon','added','cat','name'].map(function(k){
+              return '<option value="' + k + '"' + (S.ui.favSort === k ? " selected" : "") + '>' + esc(t("sort_" + k)) + '</option>';
+            }).join("") +
+          '</select><span class="caret">' + ICON.caret + '</span></span></label>' +
+    '</div>' +
+    '<div class="pad" style="padding-block-start:12px"><div class="chiprow">' + catChips(S.ui.favCat, "fav-cat") + '</div></div>' +
+    '<div class="pad" id="fav-wrap">' + favListHTML() + '</div>' +
+  '</div>';
+}
+function favListHTML(){
+  if (!S.favs.length){
+    return '<div class="empty" data-settle>' +
+      '<h2 class="sect">' + esc(t("w_empty")) + '</h2>' +
+      '<p class="small muted" style="margin:12px 0 20px">' + esc(t("w_empty_sub")) + '</p>' +
+      '<button class="btn ink-pink" type="button" data-act="go" data-screen="home" style="--reg:var(--blue)">' + esc(t("w_empty_cta")) + '</button>' +
+    '</div>';
+  }
+  var list = favList();
+  if (!list.length){
+    return '<div class="empty" data-settle>' +
+      '<h2 class="sect">' + esc(t("w_none_filter")) + '</h2>' +
+      '<p class="small muted" style="margin:12px 0 18px">' + esc(t("w_none_filter_sub")) + '</p>' +
+      '<button class="btn ink-yellow" type="button" data-act="fav-clear" style="--reg:var(--blue)">' + esc(t("clear")) + '</button>' +
+    '</div>';
+  }
+  return '<p class="small" style="margin:16px 0 4px;font-weight:700">' + esc(tf("results", { n: list.length })) + '</p>' +
+    '<div class="feed">' + list.map(function(a, i){
+      return cardHTML(a, i, (i % 3 === 0) ? "hero" : (i % 3 === 1 ? "wide" : "flat"));
+    }).join("") + '</div>';
+}
+
+function profileScreen(){
+  var p = prof();
+  var name = p.name || (S.auth && S.auth.username) || "";
+  if (S.ui.profileEdit) return profileEditScreen(p);
+
+  var rows = [
+    [t("p_name"), p.name || t("p_none")],
+    [t("p_age"), p.age ? String(p.age) : t("p_none")],
+    [t("p_grade"), p.grade ? tf("grade_lbl", { g: p.grade }) : t("p_none")],
+    [t("p_area"), p.area || t("any_area")],
+    [t("p_topics"), (p.topics && p.topics.length) ? p.topics.join(" · ") : t("p_none")],
+    [t("p_kinds"), (p.kinds && p.kinds.length) ? p.kinds.map(function(k){ return t("k_" + k); }).join(" · ") : t("p_none")]
+  ];
+
+  return '<div class="screen">' +
+    '<header class="ink-green halftone" style="padding:26px 16px 22px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<div style="display:flex;gap:16px;align-items:center">' +
+        '<div class="avatar">' + monogramSVG(name || "?") + '</div>' +
+        '<div style="min-inline-size:0">' +
+          '<h1 class="display" style="font-size:1.875rem"><span class="ln">' + esc(name || t("p_title")) + '</span></h1>' +
+          '<p class="small" style="margin:8px 0 0;font-weight:700;word-break:break-all">@' + esc((S.auth && S.auth.username) || "") + '</p>' +
+        '</div>' +
+      '</div>' +
+    '</header>' +
+    '<div class="pad" style="padding-block:14px 0" data-settle>' +
+      '<button class="btn ink-paper" type="button" data-act="profile-edit" style="--reg:var(--green)">' + ICON.edit + esc(t("p_edit")) + '</button>' +
+    '</div>' +
+    '<div class="pad"><div class="sect-wrap"><h2 class="sect">' + esc(t("p_answers")) + '</h2></div></div>' +
+    '<section class="spec" data-settle>' + rows.map(function(r){
+      return '<div class="spec-row"><div class="k">' + esc(r[0]) + '</div><div class="v">' + esc(r[1]) + '</div></div>';
+    }).join("") + '</section>' +
+  '</div>';
+}
+
+function profileEditScreen(p){
+  var d = S.ui.profileDraft || {};
+  var topics = d.topics || [];
+  var kinds = d.kinds || [];
+  return '<div class="screen">' +
+    '<header class="ink-green halftone" style="padding:26px 16px 22px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<h1 class="display" style="font-size:2.25rem"><span class="ln">' + esc(t("p_edit")) + '</span></h1>' +
+    '</header>' +
+    '<div class="pad" style="padding-block:6px 30px" data-settle>' +
+      '<label class="field"><span class="lab">' + esc(t("p_name")) + '</span>' +
+        '<input class="inp" id="pe-name" type="text" value="' + esc(d.name || "") + '" placeholder="' + esc(t("ph_name")) + '"></label>' +
+      '<label class="field"><span class="lab">' + esc(t("p_age")) + '</span>' +
+        '<span class="selwrap" style="display:block"><select class="inp" id="pe-age">' +
+          '<option value="">' + esc(t("pick")) + '</option>' +
+          [12,13,14,15,16,17,18].map(function(n){
+            return '<option value="' + n + '"' + (String(d.age) === String(n) ? " selected" : "") + '>' + n + '</option>';
+          }).join("") +
+        '</select><span class="caret">' + ICON.caret + '</span></span></label>' +
+      '<label class="field"><span class="lab">' + esc(t("p_grade")) + '</span>' +
+        '<span class="selwrap" style="display:block"><select class="inp" id="pe-grade">' +
+          '<option value="">' + esc(t("pick")) + '</option>' +
+          GRADES.map(function(g){
+            return '<option value="' + esc(g) + '"' + (d.grade === g ? " selected" : "") + '>' + esc(g) + '</option>';
+          }).join("") +
+        '</select><span class="caret">' + ICON.caret + '</span></span></label>' +
+      '<label class="field"><span class="lab">' + esc(t("p_area")) + '</span>' +
+        '<span class="selwrap" style="display:block"><select class="inp" id="pe-area">' +
+          '<option value="">' + esc(t("any_area")) + '</option>' +
+          ALL_AREAS.map(function(a){
+            return '<option value="' + esc(a) + '"' + (d.area === a ? " selected" : "") + '>' + esc(a) + '</option>';
+          }).join("") +
+        '</select><span class="caret">' + ICON.caret + '</span></span></label>' +
+      '<div class="field"><span class="lab">' + esc(t("p_topics")) + '</span>' +
+        '<div class="chipwrap">' + ALL_TOPICS.map(function(x, n){
+          var ink = ["ink-pink","ink-blue","ink-yellow","ink-green","ink-orange"][n % 5];
+          return '<button class="chip ' + ink + '" type="button" data-act="pe-topic" data-v="' + esc(x) + '" aria-pressed="' +
+                 (topics.indexOf(x) !== -1) + '">' + esc(x) + '</button>';
+        }).join("") + '</div></div>' +
+      '<div class="field"><span class="lab">' + esc(t("p_kinds")) + '</span>' +
+        '<div class="chipwrap">' + ['activity','event'].map(function(k, n){
+          return '<button class="chip ' + (n === 0 ? "ink-blue" : "ink-pink") + '" type="button" data-act="pe-kind" data-v="' + k +
+                 '" aria-pressed="' + (kinds.indexOf(k) !== -1) + '">' + esc(t("k_" + k)) + '</button>';
+        }).join("") + '</div></div>' +
+      '<div style="margin-block-start:28px" class="stack-gap">' +
+        '<button class="btn ink-yellow" type="button" data-act="pe-save" style="--reg:var(--green)">' + esc(t("p_save")) + '</button>' +
+        '<button class="btn btn-quiet" type="button" data-act="pe-cancel">' + esc(t("p_cancel")) + '</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function settingsScreen(){
+  var st = S.settings;
+  var themeSeg =
+    '<div class="seg">' +
+      '<button class="chip ink-paper" type="button" data-act="set-theme" data-v="light" aria-pressed="' + (st.theme === "light") + '">' + esc(t("s_light")) + '</button>' +
+      '<button class="chip ink-black" type="button" data-act="set-theme" data-v="dark" aria-pressed="' + (st.theme === "dark") + '">' + esc(t("s_dark")) + '</button>' +
+    '</div>';
+  var tsSeg = '<div class="seg">' + [["small","s_small"],["med","s_med"],["large","s_large"]].map(function(p){
+      return '<button class="chip ink-orange" type="button" data-act="set-ts" data-v="' + p[0] + '" aria-pressed="' + (st.ts === p[0]) + '">' + esc(t(p[1])) + '</button>';
+    }).join("") + '</div>';
+  var langGrid = '<div class="langgrid">' + LANGS.map(function(l, n){
+      var ink = ["ink-pink","ink-blue","ink-green","ink-yellow"][n % 4];
+      return '<button class="chip ' + ink + '" type="button" data-act="set-lang" data-v="' + l[0] +
+             '" aria-pressed="' + (st.lang === l[0]) + '" style="text-align:center;justify-content:center">' + esc(l[1]) + '</button>';
+    }).join("") + '</div>';
+
+  var acct = isGuest()
+    ? '<div class="notice">' + esc(t("s_guest_note")) + '</div>' +
+      '<div class="stack-gap" style="margin-block-start:12px">' +
+        '<button class="btn ink-pink" type="button" data-act="guest-signup" style="--reg:var(--blue)">' + esc(t("signup_t")) + '</button>' +
+        '<button class="btn btn-quiet" type="button" data-act="signout">' + esc(t("s_exitguest")) + '</button>' +
+      '</div>'
+    : '<p class="small" style="margin:0 0 12px;font-weight:700">' + esc(tf("signed_as", { n: (S.auth && S.auth.username) || "" })) + '</p>' +
+      '<button class="btn btn-quiet" type="button" data-act="signout">' + esc(t("s_signout")) + '</button>';
+
+  return '<div class="screen">' +
+    '<header class="ink-black halftone" style="padding:26px 16px 22px;border-block-end:3px solid var(--rule)" data-settle>' +
+      '<h1 class="display reg" style="font-size:2.5rem;--regink:var(--pink)"><span class="ln">' + esc(t("s_title")) + '</span></h1>' +
+    '</header>' +
+    '<div class="pad" style="padding-block-end:20px">' +
+      '<div class="sect-wrap"><h2 class="sect">' + esc(t("s_theme")) + '</h2></div>' + themeSeg +
+      '<div class="sect-wrap"><h2 class="sect">' + esc(t("s_text")) + '</h2></div>' + tsSeg +
+      '<div class="sect-wrap"><h2 class="sect">' + esc(t("s_lang")) + '</h2></div>' + langGrid +
+      '<p class="small muted" style="margin:10px 0 0">' + esc(t("s_lang_note")) + '</p>' +
+      '<div class="sect-wrap"><h2 class="sect">' + esc(isGuest() ? t("s_guest") : t("s_acct")) + '</h2></div>' + acct +
+    '</div>' +
+  '</div>';
+}
+
+/* ------------------------------------------------------------------ */
+/* nav + render                                                        */
+/* ------------------------------------------------------------------ */
+function navItems(){
+  if (isGuest()) return [["home", t("nav_home"), ICON.home], ["settings", t("nav_set"), ICON.sliders]];
+  return [["home", t("nav_home"), ICON.home],
+          ["favorites", t("nav_wall"), ICON.pin],
+          ["profile", t("nav_profile"), ICON.user],
+          ["settings", t("nav_set"), ICON.sliders]];
+}
+function renderNav(){
+  var nav = document.getElementById("nav");
+  var sc = S.ui.screen;
+  var show = (sc === "home" || sc === "favorites" || sc === "profile" || sc === "settings");
+  nav.hidden = !show;
+  if (!show){ nav.innerHTML = ""; return; }
+  var items = navItems();
+  nav.style.gridTemplateColumns = "repeat(" + items.length + ", 1fr)";
+  nav.innerHTML = items.map(function(it){
+    return '<button class="nav-btn" type="button" data-act="go" data-screen="' + it[0] + '"' +
+      (sc === it[0] ? ' aria-current="page"' : "") + '>' + it[2] + '<span>' + esc(it[1]) + '</span></button>';
+  }).join("");
+}
+
+function settle(){
+  if (REDUCED) return;
+  var els = document.querySelectorAll("#view [data-settle]");
+  for (var i=0;i<els.length;i++){
+    var el = els[i];
+    el.style.setProperty("--i", Math.min(i, 12));
+    el.classList.remove("settling");
+    void el.offsetWidth;
+    el.classList.add("settling");
+  }
+}
+
+function applyChrome(){
+  var d = STRINGS[S.settings.lang] || STRINGS.he;
+  document.documentElement.lang = S.settings.lang;
+  document.documentElement.dir = d.dir;
+  document.documentElement.setAttribute("data-theme", S.settings.theme);
+  document.documentElement.style.setProperty("--ts", TS_MAP[S.settings.ts] || 1);
+}
+
+function render(keepScroll){
+  applyChrome();
+  var view = document.getElementById("view");
+  var sc = S.ui.screen;
+  var html =
+    sc === "auth"      ? authScreen() :
+    sc === "onboard"   ? obScreen() :
+    sc === "home"      ? homeScreen() :
+    sc === "detail"    ? detailScreen() :
+    sc === "favorites" ? favScreen() :
+    sc === "profile"   ? profileScreen() :
+                         settingsScreen();
+  view.innerHTML = html;
+  renderNav();
+  if (!keepScroll){ settle(); window.scrollTo(0, 0); }
+}
+
+function go(screen){
+  S.ui.screen = screen;
+  S.ui.err = "";
+  render();
+}
+
+/* ------------------------------------------------------------------ */
+/* interactions — one delegated handler                                */
+/* ------------------------------------------------------------------ */
+function refreshFeed(){
+  var w = document.getElementById("feed-wrap");
+  if (w){ w.innerHTML = feedHTML(); }
+}
+function refreshFavList(){
+  var w = document.getElementById("fav-wrap");
+  if (w){ w.innerHTML = favListHTML(); }
+}
+function syncPins(id){
+  var on = isFav(id);
+  var btns = document.querySelectorAll('[data-act="fav"][data-id="' + id + '"]');
+  for (var i=0;i<btns.length;i++){
+    btns[i].setAttribute("aria-pressed", String(on));
+    btns[i].setAttribute("aria-label", on ? t("saved") : t("save"));
+    btns[i].innerHTML = on ? ICON.pinfill : ICON.pin;
+  }
+}
+
+document.addEventListener("click", function(ev){
+  var el = ev.target.closest ? ev.target.closest("[data-act]") : null;
+  if (!el) return;
+  var act = el.getAttribute("data-act");
+  if (el.tagName === "FORM" || el.tagName === "SELECT") return;
+
+  /* ---- auth ---- */
+  if (act === "auth-mode"){ S.ui.authMode = el.getAttribute("data-mode"); S.ui.err = ""; render(); return; }
+  if (act === "guest"){
+    S.auth = { mode:"guest" }; save("auth", S.auth);
+    S.ui.screen = "home"; render(); return;
+  }
+  if (act === "guest-signup"){
+    S.auth = null; save("auth", null);
+    S.ui.authMode = "signup"; S.ui.err = ""; go("auth"); return;
+  }
+  if (act === "signout"){
+    S.auth = null; save("auth", null);
+    S.ui.authMode = "welcome"; S.ui.err = "";
+    S.ui.q = ""; S.ui.cat = "all"; S.ui.topic = "all";
+    go("auth"); return;
+  }
+
+  /* ---- onboarding ---- */
+  if (act === "ob-age"){ S.ui.obDraft.age = +el.getAttribute("data-v"); render(true); return; }
+  if (act === "ob-grade"){ S.ui.obDraft.grade = el.getAttribute("data-v"); render(true); return; }
+  if (act === "ob-area"){ S.ui.obDraft.area = el.getAttribute("data-v") || ""; render(true); return; }
+  if (act === "ob-topic"){
+    var v = el.getAttribute("data-v");
+    var arr = S.ui.obDraft.topics || [];
+    S.ui.obDraft.topics = arr.indexOf(v) !== -1 ? arr.filter(function(x){ return x !== v; }) : arr.concat([v]);
+    render(true); return;
+  }
+  if (act === "ob-kind"){
+    var k = el.getAttribute("data-v");
+    var ka = S.ui.obDraft.kinds || [];
+    S.ui.obDraft.kinds = ka.indexOf(k) !== -1 ? ka.filter(function(x){ return x !== k; }) : ka.concat([k]);
+    render(true); return;
+  }
+  if (act === "ob-next" || act === "ob-skip"){
+    if (act === "ob-next"){
+      var ni = document.getElementById("ob-name");
+      if (ni) S.ui.obDraft.name = ni.value.trim();
+    }
+    if (S.ui.obStep < OB_STEPS.length - 1){ S.ui.obStep++; render(); }
+    else {
+      S.profile[userKey()] = Object.assign({}, S.profile[userKey()] || {}, S.ui.obDraft);
+      save("profile", S.profile);
+      go("home");
+    }
+    return;
+  }
+  if (act === "ob-prev"){
+    var ni2 = document.getElementById("ob-name");
+    if (ni2) S.ui.obDraft.name = ni2.value.trim();
+    if (S.ui.obStep > 0) S.ui.obStep--;
+    render(); return;
+  }
+
+  /* ---- browse ---- */
+  if (act === "home-cat"){
+    S.ui.cat = el.getAttribute("data-cat"); S.ui.topic = "all";
+    var cr = document.getElementById("home-cats");
+    if (cr) cr.innerHTML = catChips(S.ui.cat, "home-cat");
+    var tw = document.getElementById("home-topics");
+    if (tw) tw.innerHTML = homeTopicsHTML();
+    refreshFeed(); return;
+  }
+  if (act === "home-topic"){
+    S.ui.topic = el.getAttribute("data-v");
+    var tw2 = document.getElementById("home-topics");
+    if (tw2) tw2.innerHTML = homeTopicsHTML();
+    refreshFeed(); return;
+  }
+  if (act === "home-clear"){
+    S.ui.q = ""; S.ui.cat = "all"; S.ui.topic = "all"; render(); return;
+  }
+  if (act === "open"){
+    S.ui.backTo = (S.ui.screen === "detail") ? (S.ui.backTo || "home") : S.ui.screen;
+    S.ui.detailId = el.getAttribute("data-id");
+    go("detail"); return;
+  }
+  if (act === "back"){ go(S.ui.backTo || "home"); return; }
+  if (act === "go"){ go(el.getAttribute("data-screen")); return; }
+  if (act === "fav"){
+    var id = el.getAttribute("data-id");
+    toggleFav(id);
+    syncPins(id);
+    if (S.ui.screen === "favorites") refreshFavList();
+    return;
+  }
+
+  /* ---- favorites ---- */
+  if (act === "fav-cat"){
+    S.ui.favCat = el.getAttribute("data-cat");
+    var fcr = el.parentElement;
+    if (fcr) fcr.innerHTML = catChips(S.ui.favCat, "fav-cat");
+    refreshFavList(); return;
+  }
+  if (act === "fav-clear"){ S.ui.favQ = ""; S.ui.favCat = "all"; render(); return; }
+
+  /* ---- profile ---- */
+  if (act === "profile-edit"){
+    var p = prof();
+    S.ui.profileDraft = {
+      name: p.name || "", age: p.age || "", grade: p.grade || "", area: p.area || "",
+      topics: (p.topics || []).slice(), kinds: (p.kinds || []).slice()
+    };
+    S.ui.profileEdit = true; render(); return;
+  }
+  if (act === "pe-topic"){
+    var pv = el.getAttribute("data-v");
+    var pt = S.ui.profileDraft.topics || [];
+    S.ui.profileDraft.topics = pt.indexOf(pv) !== -1 ? pt.filter(function(x){ return x !== pv; }) : pt.concat([pv]);
+    readProfileInputs();
+    render(true); return;
+  }
+  if (act === "pe-kind"){
+    var pk = el.getAttribute("data-v");
+    var pks = S.ui.profileDraft.kinds || [];
+    S.ui.profileDraft.kinds = pks.indexOf(pk) !== -1 ? pks.filter(function(x){ return x !== pk; }) : pks.concat([pk]);
+    readProfileInputs();
+    render(true); return;
+  }
+  if (act === "pe-save"){
+    readProfileInputs();
+    var d = S.ui.profileDraft;
+    S.profile[userKey()] = Object.assign({}, S.profile[userKey()] || {}, {
+      name: d.name, age: d.age ? +d.age : "", grade: d.grade, area: d.area,
+      topics: d.topics, kinds: d.kinds
+    });
+    save("profile", S.profile);
+    S.ui.profileEdit = false; render(); return;
+  }
+  if (act === "pe-cancel"){ S.ui.profileEdit = false; render(); return; }
+
+  /* ---- settings ---- */
+  if (act === "set-theme"){ S.settings.theme = el.getAttribute("data-v"); save("settings", S.settings); render(true); return; }
+  if (act === "set-ts"){ S.settings.ts = el.getAttribute("data-v"); save("settings", S.settings); render(true); return; }
+  if (act === "set-lang"){ S.settings.lang = el.getAttribute("data-v"); save("settings", S.settings); render(true); return; }
+});
+
+function readProfileInputs(){
+  var d = S.ui.profileDraft; if (!d) return;
+  var n = document.getElementById("pe-name"); if (n) d.name = n.value.trim();
+  var a = document.getElementById("pe-age"); if (a) d.age = a.value;
+  var g = document.getElementById("pe-grade"); if (g) d.grade = g.value;
+  var ar = document.getElementById("pe-area"); if (ar) d.area = ar.value;
+}
+
+document.addEventListener("input", function(ev){
+  var el = ev.target;
+  if (el.id === "home-q"){ S.ui.q = el.value; refreshFeed(); return; }
+  if (el.id === "fav-q"){ S.ui.favQ = el.value; refreshFavList(); return; }
+});
+
+document.addEventListener("change", function(ev){
+  var el = ev.target;
+  if (el.id === "fav-sort"){ S.ui.favSort = el.value; refreshFavList(); return; }
+});
+
+document.addEventListener("submit", function(ev){
+  var f = ev.target;
+  if (!f.matches || !f.matches('[data-act="auth-submit"]')) return;
+  ev.preventDefault();
+  var mode = f.getAttribute("data-mode");
+  var u = (f.elements.username.value || "").trim();
+  var pw = f.elements.password.value || "";
+
+  if (!u){ S.ui.err = t("e_user_empty"); render(); return; }
+  if (pw.length < 6){ S.ui.err = t("e_pass_short"); render(); return; }
+
+  if (mode === "signup"){
+    if (S.users[u]){ S.ui.err = t("e_taken"); render(); return; }
+    S.users[u] = { pass: pw };
+    save("users", S.users);
+    S.auth = { mode:"user", username:u }; save("auth", S.auth);
+    S.ui.err = "";
+    S.ui.obDraft = { name:"", age:"", grade:"", area:"", topics:[], kinds:[] };
+    S.ui.obStep = 0;
+    go("onboard");
+    return;
+  }
+  if (!S.users[u]){ S.ui.err = t("e_nouser"); render(); return; }
+  if (S.users[u].pass !== pw){ S.ui.err = t("e_wrongpass"); render(); return; }
+  S.auth = { mode:"user", username:u }; save("auth", S.auth);
+  S.ui.err = "";
+  go("home");
+});
+
+/* ------------------------------------------------------------------ */
+/* boot                                                                */
+/* ------------------------------------------------------------------ */
+function boot(){
+  if (!S.settings || !S.settings.lang) S.settings = { lang:"he", theme:"light", ts:"med" };
+  if (!TS_MAP[S.settings.ts]) S.settings.ts = "med";
+  if (S.settings.theme !== "dark") S.settings.theme = "light";
+  if (!STRINGS[S.settings.lang]) S.settings.lang = "he";
+  if (!Array.isArray(S.favs)) S.favs = [];
+  if (!S.users || typeof S.users !== "object") S.users = {};
+  if (!S.profile || typeof S.profile !== "object") S.profile = {};
+
+  S.ui.screen = S.auth ? "home" : "auth";
+  S.ui.backTo = "home";
+  render();
+}
+boot();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מה בי״ם — חמש וריאציות עיצוב</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#0F1012; --panel:#17181C; --panel2:#1E2025; --line:#2A2D34;
+    --ink:#F2F3F5; --ink2:#A7ACB6; --ink3:#767C88;
+    --accent:#7DE2C3;
+    --zoom:.66;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font-family:"Heebo",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--accent);color:#0F1012}
+  ::-webkit-scrollbar{width:11px;height:11px}
+  ::-webkit-scrollbar-track{background:var(--ground)}
+  ::-webkit-scrollbar-thumb{background:#33373F;border-radius:99px;border:3px solid var(--ground)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+  button{font-family:inherit;cursor:pointer}
+
+  .wrap{max-width:1720px;margin:0 auto;padding:30px 22px 70px}
+  header{margin-bottom:22px}
+  h1{font-size:clamp(24px,3.4vw,38px);font-weight:900;letter-spacing:-.035em;margin:0 0 9px;line-height:1.12}
+  .sub{margin:0;color:var(--ink2);font-size:15px;line-height:1.62;max-width:70ch}
+  .sub b{color:var(--ink);font-weight:600}
+
+  .bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ground) 92%,transparent);
+    backdrop-filter:blur(14px);border-block:1px solid var(--line);margin:20px 0 24px;
+    padding:12px 0;display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .grp{display:flex;align-items:center;gap:8px}
+  .lbl{font-size:12.5px;font-weight:700;color:var(--ink3);letter-spacing:.02em}
+  .b{border:1px solid var(--line);background:var(--panel);color:var(--ink2);
+    font-size:13px;font-weight:600;padding:8px 14px;border-radius:99px;
+    transition:background .16s,color .16s,border-color .16s}
+  .b:hover{background:var(--panel2);color:var(--ink)}
+  .b[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0F1012}
+  .b.solid{background:var(--accent);border-color:var(--accent);color:#0F1012}
+  .b.solid:hover{filter:brightness(1.08);color:#0F1012}
+
+  .strip{display:flex;gap:18px;align-items:flex-start;overflow-x:auto;padding-bottom:14px}
+  .strip::-webkit-scrollbar{height:10px}
+  .col{flex:none;width:calc(390px * var(--zoom));display:flex;flex-direction:column;gap:11px}
+
+  .head{display:flex;flex-direction:column;gap:7px;min-height:104px}
+  .titleRow{display:flex;align-items:center;gap:8px}
+  .sw{display:flex;gap:3px;flex:none}
+  .sw i{width:11px;height:11px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  h2{font-size:15.5px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
+  .note{margin:0;color:var(--ink2);font-size:12.5px;line-height:1.5}
+  .meta{margin:0;color:var(--ink3);font-size:11.5px;font-weight:600}
+
+  .phone{
+    width:390px;height:812px;flex:none;
+    transform:scale(var(--zoom));transform-origin:top right;
+    border-radius:24px;overflow:hidden;background:#000;border:1px solid var(--line);
+    box-shadow:0 14px 34px -16px rgba(0,0,0,.85);
+  }
+  html[dir="ltr"] .phone{transform-origin:top left}
+  .shell{height:calc(812px * var(--zoom));overflow:hidden}
+  .phone iframe{width:390px;height:812px;border:0;display:block;background:#fff}
+
+  .acts{display:flex;gap:7px}
+  .acts .b{flex:1;text-align:center;text-decoration:none;padding:8px 6px;font-size:12px}
+
+  footer{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink3);font-size:12.5px;line-height:1.72}
+  footer b{color:var(--ink2);font-weight:600}
+  .warn{color:#F0B37A}
+
+  @media (max-width:720px){
+    .wrap{padding:20px 14px 50px}
+    .bar{gap:12px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>מה בי״ם — חמש וריאציות עיצוב</h1>
+    <p class="sub">
+      חמישה עולמות עיצוביים לאותו מוצר, כולם עם <b>אותם 18 החוגים והאירועים האמיתיים</b> מהדאטהבייס.
+      כל וריאציה היא אפליקציה עובדת: חיפוש, סינון, מועדפים, פרופיל והגדרות. אפשר ללחוץ ולנווט בתוך כל מסגרת,
+      או להשתמש בכפתורים למטה כדי להקפיץ את <b>כולן יחד</b> לאותו מסך ולהשוות.
+    </p>
+  </header>
+
+  <div class="bar">
+    <div class="grp">
+      <span class="lbl">כניסה בכולן</span>
+      <button class="b solid" id="allGuest">כאורח</button>
+      <button class="b solid" id="allUser">עם חשבון</button>
+    </div>
+    <div class="grp">
+      <span class="lbl">קפיצה לאותו מסך</span>
+      <button class="b" data-sync="home">בית</button>
+      <button class="b" data-sync="favorites">מועדפים</button>
+      <button class="b" data-sync="profile">פרופיל</button>
+      <button class="b" data-sync="settings">הגדרות</button>
+    </div>
+    <div class="grp">
+      <span class="lbl">גודל</span>
+      <button class="b" data-zoom=".5">קטן</button>
+      <button class="b" data-zoom=".66" aria-pressed="true">בינוני</button>
+      <button class="b" data-zoom="1">מלא</button>
+    </div>
+    <div class="grp">
+      <button class="b" id="resetAll">איפוס הכול</button>
+    </div>
+  </div>
+
+  <div class="strip" id="strip"></div>
+
+  <footer>
+    <b>איך זה נבנה:</b> ארבע מהוריאציות נגזרו מהרפרנסים הוויזואליים שסופקו; החמישית (״ריזו״) היא הצעה עצמאית
+    שנגזרה מעולם הפוסטרים של תנועות הנוער ולוחות המודעות בירושלים.
+    כל התוכן אמיתי מהפרויקט — לא הומצאו מחירים, מספרי משתתפים או המלצות.
+    ההרשמה בכל הוריאציות נשארת חיצונית ופותחת את הקישור של המארגן, בדיוק כמו במוצר עצמו.
+    <br><span class="warn">שים לב:</span> ״עם חשבון״ יוצר משתמש דמו מקומי בכל וריאציה (נשמר ב-localStorage של הדפדפן בלבד) כדי שאפשר יהיה להשוות מועדפים ופרופיל.
+  </footer>
+
+</div>
+
+<script>
+const VARIANTS = [
+  {file:"v1-pop.html",name:"1. פופ בהיר",
+   note:"לבן ונקי, כפתורי גלולה שחורים וקונפטי צבעוני. ידידותי ומרווח — הכי נגיש.",
+   meta:"רקע בהיר · פעולה שחורה",
+   sw:["#0B0B0F","#FF6B4A","#3ECF8E","#FFC53D"]},
+  {file:"v2-violet.html",name:"2. סגול נייטיב",
+   note:"סגול עז בשפת אפליקציית אייפון: כותרות גדולות, רשימות מקובצות, טאב מרכזי מודגש.",
+   meta:"רקע בהיר · תחושת iOS",
+   sw:["#7C3AED","#F3EEFF","#111114","#E5E5EA"]},
+  {file:"v3-neon.html",name:"3. ניאון לילה",
+   note:"שחור עמוק עם ליים חשמלי וסרגל ניווט מרחף. אנרגיית הופעות — הכי נועז.",
+   meta:"כהה · ליים · לוח זמנים",
+   sw:["#0D0D12","#C4F82A","#9B8AFB","#F4F4F7"]},
+  {file:"v4-ember.html",name:"4. גחלת עורכת",
+   note:"שחור חמים עם טרקוטה וכותרות בסריף עברי. מוקפד ובוגר, עם כרטיס אישי.",
+   meta:"כהה חם · סריף עברי",
+   sw:["#16110E","#E2674A","#F5EBE3","#C4874F"]},
+  {file:"v5-riso.html",name:"5. ריזו — לוח מודעות",
+   note:"הדפס ריזוגרף: דיו שטוח ורווי, טיפוגרפיה עברית בגודל פוסטר. ההצעה החופשית.",
+   meta:"דיו מלא · הכי ייחודי",
+   sw:["#FF48A0","#0B63CE","#FFD400","#141210"]}
+];
+
+const strip = document.getElementById("strip");
+strip.innerHTML = VARIANTS.map((v,i)=>`
+  <div class="col">
+    <div class="head">
+      <div class="titleRow">
+        <span class="sw" aria-hidden="true">${v.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span>
+        <h2>${v.name}</h2>
+      </div>
+      <p class="note">${v.note}</p>
+      <p class="meta">${v.meta}</p>
+    </div>
+    <div class="shell">
+      <div class="phone"><iframe src="${v.file}" title="${v.name}" data-i="${i}"></iframe></div>
+    </div>
+    <div class="acts">
+      <a class="b solid" href="${v.file}" target="_blank" rel="noopener">מסך מלא</a>
+      <button class="b" data-reload="${i}">איפוס</button>
+    </div>
+  </div>
+`).join("");
+
+const frames = () => [...document.querySelectorAll(".phone iframe")];
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+/* Each variant ships its own nav conventions: v1–v4 use [data-go="sHome"],
+   v5 uses [data-act="go"][data-screen="home"]. Try both, skip what isn't there. */
+const SCREEN = {
+  home:      {std:"sHome",  riso:"home"},
+  favorites: {std:"sFav",   riso:"favorites"},
+  profile:   {std:"sProf",  riso:"profile"},
+  settings:  {std:"sSet",   riso:"settings"}
+};
+
+function doc(f){ try{ return f.contentDocument }catch(e){ return null } }
+
+function clickIn(d, selectors){
+  for(const s of selectors){
+    const el = d.querySelector(s);
+    if(el){ el.click(); return true }
+  }
+  return false;
+}
+function byText(d, re, tag="button"){
+  return [...d.querySelectorAll(tag)].find(b=>re.test(b.textContent||""));
+}
+
+/* The heavier worlds (grain overlays, poster type) finish loading later than the
+   light ones, so poll for the control instead of trusting a fixed delay. */
+async function waitFor(f, find, tries=40){
+  for(let i=0;i<tries;i++){
+    const d = doc(f);
+    if(d && d.readyState !== "loading"){
+      const el = find(d);
+      if(el) return el;
+    }
+    await wait(100);
+  }
+  return null;
+}
+
+async function enterGuest(f){
+  const b = await waitFor(f, d => byText(d, /אורח/));
+  if(b){ b.click(); await wait(280) }
+}
+
+async function enterUser(f){
+  await waitFor(f, d => d.querySelector("button"));
+  const d = doc(f); if(!d) return;
+  // open the signup form (each world words it differently)
+  const open = byText(d, /נתחיל|יצירת חשבון|פתיחת חשבון|הרשמה/);
+  if(open){ open.click(); await wait(220) }
+  const w = f.contentWindow;
+  const u = d.querySelector('input[type="text"]') || d.querySelector('#au');
+  const p = d.querySelector('input[type="password"]') || d.querySelector('#ap');
+  if(!u || !p) return;
+  u.value = "maor"; p.value = "123456";
+  [u,p].forEach(el=>el.dispatchEvent(new w.Event("input",{bubbles:true})));
+  const submit = d.querySelector("#aSubmit") || byText(d, /המשך|יצירת חשבון|פתיחת חשבון|התחברות/);
+  if(submit){ submit.click(); await wait(320) }
+  // The questionnaire renders a step at a time and each world paces it differently,
+  // so wait for the skip control rather than assuming it is already there.
+  const skip = await waitFor(f, dd => byText(dd, /דילוג|דלג/), 15);
+  if(skip) skip.click();
+  for(let i=0;i<8;i++){
+    await wait(200);
+    const again = byText(doc(f) || d, /דילוג|דלג/);
+    if(!again) break;
+    again.click();
+  }
+}
+
+async function runAll(fn){
+  // run the variants in parallel; one failing must not stop the rest
+  await Promise.all(frames().map(f => Promise.resolve().then(()=>fn(f)).catch(()=>{})));
+}
+
+/* Entering all five takes a couple of seconds. Without this, a sync click during
+   that window lands on frames that are still loading and silently does nothing. */
+let busy = false;
+const controls = () => document.querySelectorAll(".bar button");
+async function batch(fn){
+  if(busy) return;
+  busy = true;
+  controls().forEach(b => b.disabled = true);
+  document.body.style.cursor = "progress";
+  try{ await fn() }
+  finally{
+    busy = false;
+    controls().forEach(b => b.disabled = false);
+    document.body.style.cursor = "";
+  }
+}
+
+function reloadAll(){
+  return Promise.all(frames().map(f => new Promise(res=>{
+    try{ f.contentWindow.localStorage.clear() }catch(e){}
+    f.addEventListener("load", ()=>res(), {once:true});
+    f.src = f.getAttribute("src");
+  })));
+}
+
+document.getElementById("allGuest").onclick = () =>
+  batch(async () => { await reloadAll(); await runAll(enterGuest) });
+document.getElementById("allUser").onclick = () =>
+  batch(async () => { await reloadAll(); await runAll(enterUser) });
+document.getElementById("resetAll").onclick = () => batch(reloadAll);
+
+document.querySelectorAll("[data-sync]").forEach(btn=>{
+  btn.onclick = () => batch(async () => {
+    const map = SCREEN[btn.dataset.sync];
+    await runAll(async f => {
+      const el = await waitFor(f, d =>
+        d.querySelector(`[data-go="${map.std}"]`) ||
+        d.querySelector(`[data-act="go"][data-screen="${map.riso}"]`), 12);
+      if(el) el.click();
+    });
+  });
+});
+
+document.querySelectorAll("[data-zoom]").forEach(btn=>{
+  btn.onclick = () => {
+    document.documentElement.style.setProperty("--zoom", btn.dataset.zoom);
+    document.querySelectorAll("[data-zoom]").forEach(b=>
+      b.setAttribute("aria-pressed", String(b===btn)));
+  };
+});
+
+strip.addEventListener("click", e=>{
+  const b = e.target.closest("[data-reload]");
+  if(!b) return;
+  const f = frames()[+b.dataset.reload];
+  try{ f.contentWindow.localStorage.clear() }catch(err){}
+  f.src = f.src.split("#")[0];
+});
+</script>
+</body>
+</html>
