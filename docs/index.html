@@ -4679,6 +4679,36 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   const SUPABASE_ANON_KEY = "sb_publishable_Js1OgoSr1x7INhSfR_hfwQ_0aTH1vIW";
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // ---- Reaching the backend.
+  // A Supabase project on the free tier is paused after a stretch of inactivity,
+  // and its subdomain stops resolving entirely. Without a ceiling the client's
+  // request never settles, so the submit button stays disabled forever with no
+  // message — a dead end the user can only escape by reloading. Every call that
+  // blocks a button gets a bound, and an unreachable server is reported as an
+  // outage rather than as a wrong password. ----
+  const NET_TIMEOUT_MS = 12000;
+
+  function withTimeout(thenable, ms = NET_TIMEOUT_MS) {
+    let timer;
+    const limit = new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        const err = new Error("network timeout");
+        err.isNetworkFailure = true;
+        reject(err);
+      }, ms);
+    });
+    return Promise.race([Promise.resolve(thenable), limit]).finally(() => clearTimeout(timer));
+  }
+
+  function isNetworkFailure(err) {
+    if (!err) return false;
+    if (err.isNetworkFailure) return true;
+    const text = `${err.message || ""} ${err.name || ""}`.toLowerCase();
+    return text.includes("failed to fetch") || text.includes("networkerror") ||
+           text.includes("network timeout") || text.includes("load failed") ||
+           text.includes("err_name_not_resolved") || text.includes("typeerror");
+  }
+
   // ---- i18n ----
   const LANG_DIR = { he: "rtl", ar: "rtl", en: "ltr", ru: "ltr" };
   const LANG_NAME = { he: "עברית", ar: "العربية", en: "English", ru: "Русский" };
@@ -4692,6 +4722,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       errPasswordLength: "הסיסמה צריכה להיות בין 6 ל-10 תווים.",
       errUsernameTaken: "שם המשתמש הזה תפוס, נסה שם אחר.",
       errSignupNeedsVerification: "ההרשמה בוצעה, אך נדרש עוד אימות. פנה למנהל המערכת.",
+      errServerDown: "השרת לא זמין כרגע. אפשר להמשיך כאורח, ולנסות להתחבר שוב בהמשך.",
       errLoginFailed: "שם משתמש או סיסמה שגויים.", errSignupFailed: "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה אחרת.",
       searchPlaceholder: "חיפוש לפי שם, תיאור או ארגון…",
       chipAll: "הכל", topicsAllChip: "כל הנושאים", signOut: "התנתקות", profileBtn: "פרופיל", settingsBtn: "הגדרות",
@@ -4795,6 +4826,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       errPasswordLength: "يجب أن تكون كلمة المرور بين 6 و-10 أحرف.",
       errUsernameTaken: "اسم المستخدم هذا مستخدم، جرّب اسمًا آخر.",
       errSignupNeedsVerification: "تم التسجيل، لكن مطلوب تأكيد إضافي. تواصل مع مدير النظام.",
+      errServerDown: "الخادم غير متاح حاليًا. يمكن المتابعة كزائر والمحاولة لاحقًا.",
       errLoginFailed: "اسم المستخدم أو كلمة المرور غير صحيحة.", errSignupFailed: "فشل التسجيل. جرّب اسم مستخدم أو كلمة مرور مختلفة.",
       searchPlaceholder: "بحث بالاسم أو الوصف أو الجهة…",
       chipAll: "الكل", topicsAllChip: "كل المواضيع", signOut: "تسجيل خروج", profileBtn: "الملف الشخصي", settingsBtn: "الإعدادات",
@@ -4898,6 +4930,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       errPasswordLength: "Password must be 6–10 characters.",
       errUsernameTaken: "That username is taken, try another one.",
       errSignupNeedsVerification: "Signed up, but verification is still required. Contact the site admin.",
+      errServerDown: "The server is unavailable right now. You can continue as a guest and try again later.",
       errLoginFailed: "Incorrect username or password.", errSignupFailed: "Sign-up failed. Try a different username or password.",
       searchPlaceholder: "Search by name, description, or organization…",
       chipAll: "All", topicsAllChip: "All topics", signOut: "Sign out", profileBtn: "Profile", settingsBtn: "Settings",
@@ -5001,6 +5034,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       errPasswordLength: "Пароль должен быть от 6 до 10 символов.",
       errUsernameTaken: "Это имя пользователя уже занято, попробуйте другое.",
       errSignupNeedsVerification: "Регистрация выполнена, но требуется подтверждение. Обратитесь к администратору.",
+      errServerDown: "Сервер сейчас недоступен. Можно продолжить как гость и повторить попытку позже.",
       errLoginFailed: "Неверное имя пользователя или пароль.", errSignupFailed: "Регистрация не удалась. Попробуйте другое имя пользователя или пароль.",
       searchPlaceholder: "Поиск по названию, описанию или организации…",
       chipAll: "Все", topicsAllChip: "Все темы", signOut: "Выйти", profileBtn: "Профиль", settingsBtn: "Настройки",
@@ -5368,15 +5402,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           setAuthError(L().errPasswordLength, "password");
           return;
         }
-        const { data: existing } = await sb.from("users").select("id").eq("username", username).maybeSingle();
+        const { data: existing, error: lookupError } =
+          await withTimeout(sb.from("users").select("id").eq("username", username).maybeSingle());
+        if (lookupError) throw lookupError;
         if (existing) {
           setAuthError(L().errUsernameTaken, "username");
           return;
         }
-        const { data, error } = await sb.auth.signUp({
+        const { data, error } = await withTimeout(sb.auth.signUp({
           email, password,
           options: { data: { username, full_name: username } }
-        });
+        }));
         if (error) throw error;
         if (!data.session) {
           setAuthError(L().errSignupNeedsVerification);
@@ -5385,16 +5421,23 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         localStorage.removeItem("mb_guest");
         await proceedAfterAuth(data.user.id, username);
       } else {
-        const { data: existing } = await sb.from("users").select("email").eq("username", username).maybeSingle();
-        if (!existing) throw new Error("not found");
-        const { data, error } = await sb.auth.signInWithPassword({ email: existing.email, password });
+        // The lookup's own error has to be inspected, not just its data: a
+        // network failure returns {data: null, error}, and treating that as
+        // "no such user" reports an outage as a wrong password.
+        const { data: existing, error: lookupError } =
+          await withTimeout(sb.from("users").select("email").eq("username", username).maybeSingle());
+        if (lookupError) throw lookupError;
+        if (!existing) { setAuthError(L().errLoginFailed, "username"); return; }
+        const { data, error } = await withTimeout(sb.auth.signInWithPassword({ email: existing.email, password }));
         if (error) throw error;
         localStorage.removeItem("mb_guest");
         const name = data.user?.user_metadata?.username || username;
         await proceedAfterAuth(data.user.id, name);
       }
     } catch (err) {
-      setAuthError(authMode === "login" ? L().errLoginFailed : L().errSignupFailed);
+      console.error(err);
+      if (isNetworkFailure(err)) setAuthError(L().errServerDown);
+      else setAuthError(authMode === "login" ? L().errLoginFailed : L().errSignupFailed);
     } finally {
       authSubmitEl.disabled = false;
     }
@@ -6146,15 +6189,20 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         showApp(null);
         return;
       }
-      const { data: { session } } = await sb.auth.getSession();
+      const { data: { session } } = await withTimeout(sb.auth.getSession());
       if (session) {
         const name = session.user?.user_metadata?.username || session.user?.email;
-        await proceedAfterAuth(session.user.id, name);
+        // A returning user holds a valid session in localStorage even while the
+        // backend is down, so this path must be bounded too — otherwise the
+        // first screen they get is an indefinite blank.
+        await withTimeout(proceedAfterAuth(session.user.id, name), NET_TIMEOUT_MS + 4000);
       } else {
         showAuth();
       }
     } catch (err) {
+      console.error(err);
       showAuth();
+      if (isNetworkFailure(err)) toast(L().errServerDown);
     }
   })();
   </script>
