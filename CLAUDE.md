@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Live app: https://noarappproject.github.io/ma-byam_1.0/
 - Supabase project ref: `soncpzmasqcjxcawhqqw` (URL and publishable key are hardcoded in `docs/index.html` — see Notes below)
-- Test login: `admin` / `123456` (several other throwaway test accounts exist in the DB from development)
+- Test login: `testuser_mb1` / `test1234` (verified working 2026-09-17). **`admin` / `123456` no longer works** — the row still exists but the password was changed at some point, and the auth endpoint returns 400; it was documented here for a long time and cost real debugging time, so don't reinstate it without testing it first. Many other throwaway accounts exist in `public.users` from development; most have unknown passwords.
+- **The Supabase project is on the free tier and pauses itself after roughly a week of inactivity.** When paused its subdomain stops resolving entirely (`nslookup` returns NXDOMAIN) and `supabase projects list` reports `INACTIVE`. Nothing is lost — restoring from the dashboard brings the data back intact — but it cannot be restored from the CLI; it takes a click on **Restore project** at https://supabase.com/dashboard/project/soncpzmasqcjxcawhqqw. Symptom to recognise: every DB call fails while guest browsing still works perfectly.
 
 ## Commands
 
