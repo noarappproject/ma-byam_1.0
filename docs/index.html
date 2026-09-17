@@ -1580,11 +1580,119 @@
   .stat span { font-size: calc(11.5px * var(--text-scale)); font-weight: 600; color: var(--ink-faint); }
   .stat-divider { width: 1px; height: 26px; background: var(--line); flex: none; }
 
-  /* ---- Edit mode: the header is edited on itself, not on a separate screen. ---- */
-  .edit-header { position: relative; width: 100%; margin-bottom: 46px; }
-  .edit-header .profile-banner { margin-top: 0; border-radius: 0; }
+  /* ---- Edit mode ------------------------------------------------------------
+     A press form. The previous version stacked four identical bordered boxes and
+     parked Save at the bottom of an 1800px scroll, so committing a one-character
+     change meant reaching the end of the document. Now a sticky press bar carries
+     the title and the only Save; sections are ruled bands on the paper ground
+     rather than nested cards; and text, select and chip share one field grammar
+     instead of borrowing the quiz screen's centered one. Save stays disabled
+     until something actually differs from what loaded.
+  --------------------------------------------------------------------------- */
+  /* `dir` is set on <html> by applyDocLang(), but `body` pins `direction: rtl`
+     unconditionally, so English and Russian lay out right-to-left with their
+     punctuation on the wrong end of every line. That is app-wide and predates
+     this screen; scoped here so the profile is correct in all four languages
+     without silently reflowing every other screen. The global fix is the same
+     rule with `body` in place of `#profileContent`. */
+  html[dir="ltr"] #profileContent { direction: ltr; }
 
-  .banner-edit-btn {
+  .pf-editbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    width: calc(100% + 36px);
+    margin-inline: -18px;
+    margin-top: -28px;
+    padding: 9px 14px;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s var(--ease-out);
+  }
+  .pf-editbar.is-stuck { border-bottom-color: var(--line); }
+
+  .pf-editbar-title {
+    font-family: var(--font-display);
+    font-size: calc(15.5px * var(--text-scale));
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pf-editbar-x {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 99px;
+    background: none;
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.14s var(--ease-out), color 0.14s var(--ease-out);
+  }
+  .pf-editbar-x:hover { background: var(--chip-bg); color: var(--ink); }
+
+  .pf-editbar-save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 94px;
+    min-height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 99px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: var(--font-display);
+    font-size: calc(14.5px * var(--text-scale));
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: transform 0.14s var(--ease-out), filter 0.14s var(--ease-out), background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+  }
+  .pf-editbar-save:hover:not(:disabled) { filter: brightness(1.1); }
+  .pf-editbar-save:active:not(:disabled) { transform: translateY(1.5px) scale(0.98); }
+  .pf-editbar-save:disabled {
+    background: var(--chip-bg);
+    color: var(--ink-soft);
+    cursor: default;
+  }
+  .pf-editbar-save.is-saved { background: #0F7537; color: #FFFFFF; }
+  :root[data-theme="dark"] .pf-editbar-save.is-saved { background: #35A85A; color: #06140A; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .pf-editbar-save.is-saved { background: #35A85A; color: #06140A; }
+  }
+  .pf-editbar-save .ic { width: 17px; height: 17px; stroke-width: 2.6; }
+
+  .pf-spinner {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    border-radius: 99px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    animation: pfSpin 0.62s linear infinite;
+  }
+  @keyframes pfSpin { to { transform: rotate(360deg); } }
+
+  /* Media: banner and avatar are edited on themselves. The affordances are ink
+     plates, not frosted glass — this press has no glass in it. */
+  .pf-media { position: relative; width: 100%; margin-bottom: 50px; }
+  .pf-media .profile-banner { margin-top: 0; border-radius: 0; }
+
+  .pf-media-banner-btn {
     position: absolute;
     top: 12px;
     inset-inline-end: 12px;
@@ -1595,83 +1703,303 @@
     padding: 9px 15px;
     border: none;
     border-radius: 99px;
-    background: hsl(35 40% 97% / 0.94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #17110D;
+    background: var(--plate);
+    color: var(--plate-ink);
     font-family: var(--font-display);
-    font-size: calc(13px * var(--text-scale));
+    font-size: calc(12.5px * var(--text-scale));
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 3px 12px hsl(20 40% 6% / 0.2);
-    transition: transform 0.14s var(--ease-out), background 0.14s var(--ease-out);
+    box-shadow: 0 4px 14px hsl(var(--shadow) / 0.35);
+    transition: transform 0.14s var(--ease-out), filter 0.14s var(--ease-out);
   }
-  .banner-edit-btn:hover { background: #FFF; }
-  .banner-edit-btn:active { transform: translateY(1.5px); }
+  .pf-media-banner-btn .ic { width: 16px; height: 16px; }
+  .pf-media-banner-btn:hover { filter: brightness(1.18); }
+  .pf-media-banner-btn:active { transform: translateY(1.5px); }
 
-  .edit-avatar-wrap {
+  .pf-avatar-wrap {
     position: absolute;
-    bottom: -40px;
+    bottom: -44px;
     inset-inline-start: 50%;
     transform: translateX(50%);
     z-index: 3;
   }
-  html[dir="ltr"] .edit-avatar-wrap { transform: translateX(-50%); }
-  .edit-avatar-wrap .avatar-lg {
+  html[dir="ltr"] .pf-avatar-wrap { transform: translateX(-50%); }
+  .pf-avatar-wrap .avatar-lg {
     border-width: 4px;
     border-color: var(--bg);
-    box-shadow: 0 6px 22px hsl(var(--shadow) / 0.22);
+    box-shadow: 0 8px 24px hsl(var(--shadow) / 0.28);
   }
 
-  .avatar-edit-btn {
+  .pf-avatar-btn {
     position: absolute;
-    bottom: -2px;
-    inset-inline-end: -4px;
-    width: 32px;
-    height: 32px;
+    bottom: -3px;
+    inset-inline-end: -5px;
+    width: 34px;
+    height: 34px;
     border-radius: 99px;
-    border: 2.5px solid var(--bg);
+    border: 3px solid var(--bg);
     background: var(--accent);
-    color: #FFF;
+    color: var(--accent-ink);
     display: grid;
     place-items: center;
     cursor: pointer;
-    transition: transform 0.14s var(--ease-out);
+    transition: transform 0.16s var(--ease-out), filter 0.14s var(--ease-out);
   }
-  .avatar-edit-btn:active { transform: scale(0.9); }
-  .avatar-edit-btn .ic { stroke: #FFF; }
+  .pf-avatar-btn .ic { width: 16px; height: 16px; stroke: currentColor; }
+  .pf-avatar-btn:hover { filter: brightness(1.12); }
+  .pf-avatar-btn:active { transform: scale(0.9); }
 
-  .edit-fields {
+  .pf-media-note {
+    font-size: calc(12.5px * var(--text-scale));
+    line-height: 1.55;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* Sections: ruled bands on the paper, not four stacked boxes. */
+  .pf-sec {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 13px;
     width: 100%;
-    padding: 16px;
-    background: var(--surface);
-    border: 1.5px solid var(--line);
-    border-radius: var(--r-md);
+  }
+  .pf-sec + .pf-sec {
+    margin-top: 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
   }
 
-  .edit-actions {
+  .pf-sec-head {
     display: flex;
-    gap: 11px;
-    width: 100%;
-    margin-top: 6px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
   }
-  .edit-actions .outline-btn { flex: 0 0 34%; }
-  .edit-actions .plate-btn { flex: 1; }
 
-  .save-msg {
-    text-align: center;
+  .pf-sec-title {
+    font-family: var(--font-display);
+    font-size: calc(17.5px * var(--text-scale));
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .pf-sec-count {
+    font-family: var(--font-display);
+    font-size: calc(11.5px * var(--text-scale));
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .pf-sec-count.is-empty { color: var(--ink-soft); letter-spacing: 0; }
+
+  .pf-sec-note {
+    font-size: calc(12.5px * var(--text-scale));
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: -7px 0 2px;
+    text-wrap: pretty;
+  }
+
+  .pf-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+  }
+
+  /* One field grammar for text and select alike: start-aligned label, full-width
+     control, matching height. The quiz screen's centered 260px select, dropped in
+     next to a full-width text input, was the loudest thing wrong with this form. */
+  .pf-field { display: flex; flex-direction: column; gap: 7px; }
+
+  .pf-field-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px 10px;
+    font-size: calc(13px * var(--text-scale));
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .pf-field-hint {
+    font-size: calc(11.5px * var(--text-scale));
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: end;
+  }
+
+  .pf-input {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 16px;
+    border-radius: var(--r-md);
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    caret-color: var(--accent);
+    font-family: inherit;
+    font-size: calc(16px * var(--text-scale));
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+  }
+  .pf-input::placeholder { color: var(--ink-soft); }
+  .pf-input:hover { border-color: var(--ink-faint); }
+  /* The ring is the focus indicator here, so the global outline is turned off
+     rather than stacked on top of it — two concentric accent rings around one
+     input read as a rendering fault, not as emphasis. */
+  .pf-input:focus-visible,
+  .pf-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 26%, transparent);
+  }
+  .pf-input[aria-invalid="true"] { border-color: var(--danger); }
+  .pf-input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 24%, transparent); }
+
+  .pf-select-wrap { position: relative; display: flex; }
+  .pf-select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-inline-end: 46px;
+    cursor: pointer;
+  }
+  .pf-caret {
+    position: absolute;
+    inset-inline-end: 16px;
+    top: 50%;
+    translate: 0 -50%;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    stroke: var(--ink-soft);
+    stroke-width: 2.1;
+  }
+  .pf-select-wrap select.is-unset { color: var(--ink-soft); }
+
+  /* The credential fields are an LTR island inside an RTL form — the value is
+     latin and reads left to right — so the reveal toggle belongs at the end of
+     that value, not at the end of the surrounding Hebrew line. Setting the
+     direction on the wrapper is what makes `inset-inline-end` and the input's
+     own `padding-inline-end` resolve to the same side. */
+  .pf-pass-wrap { position: relative; display: flex; direction: ltr; }
+  .pf-pass-wrap .pf-input { padding-inline-end: 52px; }
+  .pf-pass-toggle {
+    position: absolute;
+    inset-inline-end: 6px;
+    top: 50%;
+    translate: 0 -50%;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 99px;
+    background: none;
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: color 0.14s var(--ease-out), background 0.14s var(--ease-out);
+  }
+  .pf-pass-toggle:hover { color: var(--ink); background: var(--chip-bg); }
+  .pf-pass-toggle .ic { width: 19px; height: 19px; }
+
+  /* Chips: start-aligned in a form, and a chosen one carries a drawn check so
+     selection is not signalled by colour alone. */
+  .pf-chips {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    gap: 9px;
+  }
+
+  .pf-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 15px;
+    border-radius: 99px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: calc(14px * var(--text-scale));
+    line-height: 1.35;
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease-out), background 0.15s var(--ease-out), transform 0.12s var(--ease-out);
+  }
+  .pf-chip:hover { border-color: var(--ink-faint); }
+  .pf-chip:active { transform: scale(0.96); }
+  .pf-chip .ic { width: 15px; height: 15px; stroke-width: 2.6; margin-inline-start: -2px; }
+  .pf-chip[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-wash);
+    font-weight: 700;
+  }
+  .pf-chip[aria-pressed="true"] .ic { stroke: var(--accent); }
+  .pf-chip.is-custom { border-style: dashed; }
+  .pf-chip.is-custom .ic { stroke: var(--ink-soft); }
+  .pf-chip.is-custom:hover { border-color: var(--danger); }
+  .pf-chip.is-custom:hover .ic { stroke: var(--danger); }
+
+  .pf-add-row { display: flex; gap: 8px; margin-top: 3px; }
+  .pf-add-row .pf-input { min-height: 46px; font-size: calc(14.5px * var(--text-scale)); }
+  .pf-add-btn {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.14s var(--ease-out), opacity 0.14s var(--ease-out);
+  }
+  .pf-add-btn:hover:not(:disabled) { background: var(--chip-bg); }
+  .pf-add-btn:disabled { opacity: 0.4; cursor: default; border-color: var(--line); }
+
+  .pf-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: calc(13px * var(--text-scale));
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--danger);
+    margin: 0;
+  }
+  .pf-msg:empty { display: none; }
+  .pf-msg .ic { width: 17px; height: 17px; stroke: var(--danger); margin-top: 1px; }
+
+  .pf-foot { display: flex; justify-content: center; padding: 6px 0 4px; }
+  .pf-discard {
+    border: none;
+    background: none;
+    color: var(--ink-soft);
+    font-family: inherit;
     font-size: calc(13.5px * var(--text-scale));
     font-weight: 700;
-    color: #12813C;
-    margin: 4px 0 0;
-    min-height: 1.2em;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+    text-decoration-color: var(--line);
+    padding: 10px 14px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: color 0.14s var(--ease-out);
   }
-  :root[data-theme="dark"] .save-msg { color: #4ADE80; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .save-msg { color: #4ADE80; }
+  .pf-discard:hover { color: var(--danger); text-decoration-color: currentColor; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pf-spinner { animation-duration: 1.8s; }
   }
 
   .profile-header-row {
@@ -3022,7 +3350,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     gear: '<path d="M4 7.5h10M18 7.5h2M4 16.5h2M10 16.5h10"/><circle cx="16" cy="7.5" r="2.2"/><circle cx="8" cy="16.5" r="2.2"/>',
     pencil: '<path d="M4.4 19.6h3.4L19 8.4a2.2 2.2 0 0 0-3.1-3.1L4.7 16.5z"/><path d="M14.4 6.8l2.8 2.8"/>',
     lock: '<rect x="4.6" y="10.4" width="14.8" height="10.2" rx="2.4"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/>',
-    x: '<path d="M6.4 6.4l11.2 11.2M17.6 6.4L6.4 17.6"/>'
+    x: '<path d="M6.4 6.4l11.2 11.2M17.6 6.4L6.4 17.6"/>',
+    // A chevron pointing down. The bare `chevron` is direction-dependent and
+    // flips with the locale; a select caret must not.
+    caretDown: '<path d="M6.4 9.6 12 15.2l5.6-5.6"/>',
+    camera: '<path d="M3.4 8.6h3.3l1.5-2.6h7.6l1.5 2.6h3.3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.6" r="3.9"/>',
+    eye: '<path d="M2.2 12S5.9 5.8 12 5.8 21.8 12 21.8 12 18.1 18.2 12 18.2 2.2 12 2.2 12z"/><circle cx="12" cy="12" r="3.1"/>',
+    eyeOff: '<path d="M4.2 4.2 19.8 19.8"/><path d="M9.6 9.7A3.1 3.1 0 0 0 12 15.1c.86 0 1.64-.35 2.2-.92"/><path d="M6.5 6.7C3.9 8.3 2.2 12 2.2 12s3.7 6.2 9.8 6.2c1.7 0 3.2-.48 4.5-1.2M17.9 15A13 13 0 0 0 21.8 12S18.1 5.8 12 5.8c-.83 0-1.6.11-2.33.31"/>',
+    plus: '<path d="M12 5.6v12.8M5.6 12h12.8"/>'
   };
 
   function icon(name, cls) {
@@ -4759,6 +5094,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       pricePerClubNote: "תשלום מתחדש לפי התקופה שמפורסמת אצל המארגן.",
       bannerChange: "שינוי באנר", aboutYouGroup: "עליך", loginGroup: "פרטי התחברות",
       mediaHint: "הבאנר והתמונה נשמרים מיד. עד 5MB לתמונה.",
+      editProfileTitle: "עריכת פרופיל", editPhotosGroup: "תמונות",
+      selectedCount: n => n === 1 ? "נבחר אחד" : `${n} נבחרו`, noneSelectedYet: "עדיין לא בחרת",
+      aboutYouNote: "הפרטים האלה עוזרים להתאים לך פעילויות. אף אחד מהם אינו חובה.",
+      interestsNote: "ככל שתסמן יותר, ההמלצות בעמוד הבית יהיו מדויקות יותר.",
+      activityTypesNote: "איזה סוג של דבר אתה מחפש.",
+      loginNote: "השאר ריק כדי להשאיר כמו שהוא.",
+      usernameHint: "אות באנגלית, ואז אותיות, ספרות וקו תחתון", passwordHint: "6–10 תווים",
+      showPasswordLabel: "הצג סיסמה", hidePasswordLabel: "הסתר סיסמה",
+      savingBtn: "שומר…", discardBtn: "בטל שינויים", discardPrompt: "לבטל את השינויים שלא נשמרו?",
+      addTopicLabel: "הוסף תחום משלך",
       mediaUploading: "מעלה…", mediaSaved: "התמונה עודכנה", mediaFailed: "ההעלאה נכשלה. נסה שוב.",
       mediaTooBig: "התמונה גדולה מדי (עד 5MB).", mediaNotImage: "אפשר להעלות רק תמונות.",
       interestsHeading: "תחומי עניין", activityTypesHeading: "סוגי פעילויות",
@@ -4796,7 +5141,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       areaOptions: ["מרכז", "צפון", "דרום", "מזרח", "מערב"],
       activityTypeOptions: ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"],
       topicOptions: ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"],
-      profileTitle: "הפרופיל שלי", avatarChange: "שינוי תמונת פרופיל", saveBtn: "שמור", savedMsg: "נשמר ✓", backToApp: "חזרה לאפליקציה",
+      profileTitle: "הפרופיל שלי", avatarChange: "שינוי תמונת פרופיל", saveBtn: "שמור", savedMsg: "נשמר", backToApp: "חזרה לאפליקציה",
       settingsTitle: "הגדרות", themeLabel: "מצב תצוגה", themeLight: "בהיר", themeDark: "כהה", themeSystem: "לפי המכשיר",
       textSizeLabel: "גודל טקסט", textSizeSmall: "קטן", textSizeMedium: "רגיל", textSizeLarge: "גדול", languageLabel: "שפה",
       changeUsernameLabel: "שינוי שם משתמש", changePasswordLabel: "שינוי סיסמה",
@@ -4863,6 +5208,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       pricePerClubNote: "دفع متكرر حسب الفترة المعلنة عند الجهة المنظِّمة.",
       bannerChange: "تغيير الغلاف", aboutYouGroup: "عنك", loginGroup: "بيانات الدخول",
       mediaHint: "الغلاف والصورة يُحفظان فورًا. حتى 5MB للصورة.",
+      editProfileTitle: "تعديل الملف الشخصي", editPhotosGroup: "الصور",
+      selectedCount: n => n === 1 ? "اخترت واحدًا" : `تم اختيار ${n}`, noneSelectedYet: "لم تختر بعد",
+      aboutYouNote: "هذه التفاصيل تساعد على ملاءمة الأنشطة لك. كلها اختيارية.",
+      interestsNote: "كلما اخترت أكثر، كانت التوصيات في الصفحة الرئيسية أدق.",
+      activityTypesNote: "ما نوع الشيء الذي تبحث عنه.",
+      loginNote: "اتركه فارغًا للإبقاء عليه كما هو.",
+      usernameHint: "حرف إنجليزي، ثم حروف أو أرقام أو شرطة سفلية", passwordHint: "6–10 محارف",
+      showPasswordLabel: "إظهار كلمة المرور", hidePasswordLabel: "إخفاء كلمة المرور",
+      savingBtn: "جارٍ الحفظ…", discardBtn: "تجاهل التغييرات", discardPrompt: "هل تريد تجاهل التغييرات غير المحفوظة؟",
+      addTopicLabel: "أضف مجالًا خاصًا بك",
       mediaUploading: "جارٍ الرفع…", mediaSaved: "تم تحديث الصورة", mediaFailed: "فشل الرفع. حاول مرة أخرى.",
       mediaTooBig: "الصورة كبيرة جدًا (حتى 5MB).", mediaNotImage: "يمكن رفع الصور فقط.",
       interestsHeading: "الاهتمامات", activityTypesHeading: "أنواع الأنشطة",
@@ -4900,7 +5255,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       areaOptions: ["المركز", "الشمال", "الجنوب", "الشرق", "الغرب"],
       activityTypeOptions: ["دورات", "محاضرات", "نوادي", "عروض", "تطوع", "أماكن عمل"],
       topicOptions: ["رياضة", "فنون وتصميم", "تكنولوجيا", "موسيقى", "طبخ", "علوم", "سينما وتصوير", "ريادة أعمال", "مجتمع"],
-      profileTitle: "ملفي الشخصي", avatarChange: "تغيير صورة الملف الشخصي", saveBtn: "حفظ", savedMsg: "تم الحفظ ✓", backToApp: "العودة إلى التطبيق",
+      profileTitle: "ملفي الشخصي", avatarChange: "تغيير صورة الملف الشخصي", saveBtn: "حفظ", savedMsg: "تم الحفظ", backToApp: "العودة إلى التطبيق",
       settingsTitle: "الإعدادات", themeLabel: "المظهر", themeLight: "فاتح", themeDark: "داكن", themeSystem: "حسب الجهاز",
       textSizeLabel: "حجم النص", textSizeSmall: "صغير", textSizeMedium: "عادي", textSizeLarge: "كبير", languageLabel: "اللغة",
       changeUsernameLabel: "تغيير اسم المستخدم", changePasswordLabel: "تغيير كلمة المرور",
@@ -4967,6 +5322,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       pricePerClubNote: "Recurring, on the schedule the organizer publishes.",
       bannerChange: "Change banner", aboutYouGroup: "About you", loginGroup: "Sign-in details",
       mediaHint: "Banner and photo save immediately. Up to 5MB each.",
+      editProfileTitle: "Edit profile", editPhotosGroup: "Photos",
+      selectedCount: n => `${n} selected`, noneSelectedYet: "Nothing picked yet",
+      aboutYouNote: "These help us match activities to you. None of them are required.",
+      interestsNote: "The more you pick, the sharper your home recommendations get.",
+      activityTypesNote: "What kind of thing you are looking for.",
+      loginNote: "Leave blank to keep what you have.",
+      usernameHint: "A letter, then letters, digits or _", passwordHint: "6–10 characters",
+      showPasswordLabel: "Show password", hidePasswordLabel: "Hide password",
+      savingBtn: "Saving…", discardBtn: "Discard changes", discardPrompt: "Discard your unsaved changes?",
+      addTopicLabel: "Add your own topic",
       mediaUploading: "Uploading…", mediaSaved: "Photo updated", mediaFailed: "Upload failed. Try again.",
       mediaTooBig: "That image is too large (5MB max).", mediaNotImage: "Images only.",
       interestsHeading: "Interests", activityTypesHeading: "Activity types",
@@ -5004,7 +5369,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       areaOptions: ["Center", "North", "South", "East", "West"],
       activityTypeOptions: ["Courses", "Lectures", "Clubs", "Shows", "Volunteering", "Job placements"],
       topicOptions: ["Sport", "Art & design", "Technology", "Music", "Cooking", "Science", "Film & photography", "Entrepreneurship", "Community"],
-      profileTitle: "My profile", avatarChange: "Change profile picture", saveBtn: "Save", savedMsg: "Saved ✓", backToApp: "Back to the app",
+      profileTitle: "My profile", avatarChange: "Change profile picture", saveBtn: "Save", savedMsg: "Saved", backToApp: "Back to the app",
       settingsTitle: "Settings", themeLabel: "Appearance", themeLight: "Light", themeDark: "Dark", themeSystem: "Match device",
       textSizeLabel: "Text size", textSizeSmall: "Small", textSizeMedium: "Medium", textSizeLarge: "Large", languageLabel: "Language",
       changeUsernameLabel: "Change username", changePasswordLabel: "Change password",
@@ -5071,6 +5436,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       pricePerClubNote: "Периодическая оплата по расписанию организатора.",
       bannerChange: "Сменить баннер", aboutYouGroup: "О вас", loginGroup: "Данные для входа",
       mediaHint: "Баннер и фото сохраняются сразу. До 5MB.",
+      editProfileTitle: "Редактирование профиля", editPhotosGroup: "Фотографии",
+      selectedCount: n => `Выбрано: ${n}`, noneSelectedYet: "Пока ничего не выбрано",
+      aboutYouNote: "Это помогает подбирать занятия под вас. Всё по желанию.",
+      interestsNote: "Чем больше выберете, тем точнее рекомендации на главной.",
+      activityTypesNote: "Что именно вы ищете.",
+      loginNote: "Оставьте пустым, чтобы ничего не менять.",
+      usernameHint: "Латинская буква, затем буквы, цифры или _", passwordHint: "6–10 символов",
+      showPasswordLabel: "Показать пароль", hidePasswordLabel: "Скрыть пароль",
+      savingBtn: "Сохранение…", discardBtn: "Отменить изменения", discardPrompt: "Отменить несохранённые изменения?",
+      addTopicLabel: "Добавить свою тему",
       mediaUploading: "Загрузка…", mediaSaved: "Фото обновлено", mediaFailed: "Загрузка не удалась. Попробуйте снова.",
       mediaTooBig: "Изображение слишком большое (до 5MB).", mediaNotImage: "Только изображения.",
       interestsHeading: "Интересы", activityTypesHeading: "Виды занятий",
@@ -5108,7 +5483,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       areaOptions: ["Центр", "Север", "Юг", "Восток", "Запад"],
       activityTypeOptions: ["Курсы", "Лекции", "Кружки", "Концерты/шоу", "Волонтёрство", "Стажировки"],
       topicOptions: ["Спорт", "Искусство и дизайн", "Технологии", "Музыка", "Кулинария", "Наука", "Кино и фотография", "Предпринимательство", "Сообщество"],
-      profileTitle: "Мой профиль", avatarChange: "Изменить фото профиля", saveBtn: "Сохранить", savedMsg: "Сохранено ✓", backToApp: "Назад в приложение",
+      profileTitle: "Мой профиль", avatarChange: "Изменить фото профиля", saveBtn: "Сохранить", savedMsg: "Сохранено", backToApp: "Назад в приложение",
       settingsTitle: "Настройки", themeLabel: "Оформление", themeLight: "Светлая", themeDark: "Тёмная", themeSystem: "Как на устройстве",
       textSizeLabel: "Размер текста", textSizeSmall: "Маленький", textSizeMedium: "Обычный", textSizeLarge: "Крупный", languageLabel: "Язык",
       changeUsernameLabel: "Изменить имя пользователя", changePasswordLabel: "Изменить пароль",
@@ -5475,6 +5850,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // ---- Profile ----
   let profileState = null;
   let profileMode = "view";
+  // Edit-mode only. The two credential fields live out here rather than in the
+  // DOM because a chip tap re-renders the whole section out from under them, and
+  // `profileBaseline` is the snapshot Save and the discard link compare against.
+  let profileBaseline = "";
+  let profileEditUsername = "";
+  let profileEditPassword = "";
+  let profileBarScrollHandler = () => {};
 
   async function showProfile() {
     returnToScreen = null;
@@ -5524,6 +5906,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   function staticChipsHtml(values) {
     if (!values.length) return `<p class="quiz-subtitle">${L().noneYet}</p>`;
     return `<div class="quiz-options">${values.map(v => `<span class="quiz-option static" aria-pressed="true">${v}</span>`).join("")}</div>`;
+  }
+
+  // Opening the form takes the baseline once. Every later render inside edit
+  // mode reuses it, so tapping a chip and tapping it back leaves Save inert.
+  function enterProfileEdit() {
+    profileMode = "edit";
+    profileEditUsername = userProfile?.username || "";
+    profileEditPassword = "";
+    profileBaseline = profileEditSnapshot();
+    window.scrollTo({ top: 0 });
+    renderProfile();
   }
 
   function renderProfile() {
@@ -5578,7 +5971,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       document.getElementById("pFavList").innerHTML = favs.length
         ? favs.map((a, i) => favRowHtml(a, { index: i })).join("")
         : `<p class="rail-empty">${t.favEmptyNoFavoritesMsg}</p>`;
-      document.getElementById("pEditBtn").addEventListener("click", () => { profileMode = "edit"; renderProfile(); });
+      document.getElementById("pEditBtn").addEventListener("click", () => { enterProfileEdit(); });
       document.getElementById("pSettingsBtn").addEventListener("click", showSettings);
       document.getElementById("pFollowersBtn").addEventListener("click", () => showFollowList("followers", currentUserId));
       document.getElementById("pFollowingBtn").addEventListener("click", () => showFollowList("following", currentUserId));
@@ -5587,76 +5980,170 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       return;
     }
 
-    // Edit mode: the header is directly editable in place — you change the banner
-    // and the avatar on the thing itself, not through a separate media screen.
+    // Edit mode. The header is edited on itself — banner and avatar are changed
+    // on the thing, not through a separate media screen — and everything below is
+    // one sticky-barred form. `profileBaseline` is the snapshot taken when the
+    // form opened; Save compares against it, so the button is live only when
+    // something actually differs and the discard link knows whether it is
+    // throwing work away. Media is excluded from that comparison: an upload
+    // writes straight through the moment a file is picked.
     const name = userProfile?.username || "";
+    const topicCount = profileState.interestTopics.length;
+    const typeCount = profileState.activityTypes.length;
+    let step = 0;
+    const rise = () => `class="pf-sec ink-in" style="animation-delay:${(step++) * 55}ms"`;
+
     profileContentEl.innerHTML = `
-      <div class="back-row"><button type="button" class="back-btn" id="pCancelTop">${icon(LANG_DIR[currentLang] === "rtl" ? "chevronBack" : "chevron")}${t.cancelBtn}</button></div>
+      <header class="pf-editbar" id="pEditBar">
+        <button type="button" class="pf-editbar-x" id="pCancelTop" aria-label="${t.cancelBtn}">${icon("x")}</button>
+        <span class="pf-editbar-title">${t.editProfileTitle}</span>
+        <button type="button" class="pf-editbar-save" id="pSave" disabled>${t.saveBtn}</button>
+      </header>
 
-      <div class="edit-header">
-        <div class="profile-banner">${bannerHtml(name, userProfile?.banner_url)}</div>
-        <button type="button" class="banner-edit-btn" id="bannerBtn">${icon("pencil", "ic-sm")}${t.bannerChange}</button>
-        <input type="file" id="bannerInput" accept="image/*" hidden>
-        <div class="edit-avatar-wrap">
-          <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : (name || "?").charAt(0).toUpperCase()}</span>
-          <button type="button" class="avatar-edit-btn" id="avatarBtn" aria-label="${t.avatarChange}">${icon("pencil", "ic-sm")}</button>
-          <input type="file" id="avatarInput" accept="image/*" hidden>
-        </div>
-      </div>
-      <p class="gate-note" id="mediaHint">${t.mediaHint}</p>
-
-      <section class="settings-group">
-        <p class="label settings-group-label">${t.aboutYouGroup}</p>
-        <div class="edit-fields">
-          <div class="field"><label for="pFirstName">${t.firstNameLabel}</label><input type="text" id="pFirstName" value="${profileState.firstName}"></div>
-          <div class="field"><label for="pLastName">${t.lastNameLabel}</label><input type="text" id="pLastName" value="${profileState.lastName}"></div>
-          ${selectFieldHtml("pAge", t.ageQLabel, AGE_VALUES, profileState.ageRange)}
-          ${selectFieldHtml("pGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
-          ${selectFieldHtml("pArea", t.areaQLabel, t.areaOptions, profileState.area)}
-        </div>
-      </section>
-
-      <section class="settings-group">
-        <p class="label settings-group-label">${t.interestsHeading}</p>
-        <div class="edit-fields">
-          ${pillOptionsHtml("ptopic", t.topicOptions, profileState.interestTopics, true)}
-          ${customTagsHtml("ptopic", t.topicOptions, profileState.interestTopics)}
-          ${addCustomRowHtml("pAddTopic", "pAddTopicBtn")}
-        </div>
-      </section>
-
-      <section class="settings-group">
-        <p class="label settings-group-label">${t.activityTypesHeading}</p>
-        <div class="edit-fields">
-          ${pillOptionsHtml("patype", t.activityTypeOptions, profileState.activityTypes, true)}
-        </div>
-      </section>
-
-      <section class="settings-group">
-        <p class="label settings-group-label">${t.loginGroup}</p>
-        <div class="edit-fields">
-          <div class="field">
-            <label for="pNewUsername">${t.changeUsernameLabel}</label>
-            <input type="text" id="pNewUsername" value="${name}" dir="ltr">
-            <p class="form-error" id="pUsernameMsg"></p>
+      <section ${rise()}>
+        <div class="pf-media">
+          <div class="profile-banner">${bannerHtml(name, userProfile?.banner_url)}</div>
+          <button type="button" class="pf-media-banner-btn" id="bannerBtn">${icon("camera")}${t.bannerChange}</button>
+          <input type="file" id="bannerInput" accept="image/*" hidden>
+          <div class="pf-avatar-wrap">
+            <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : (name || "?").charAt(0).toUpperCase()}</span>
+            <button type="button" class="pf-avatar-btn" id="avatarBtn" aria-label="${t.avatarChange}">${icon("camera")}</button>
+            <input type="file" id="avatarInput" accept="image/*" hidden>
           </div>
-          <div class="field">
-            <label for="pNewPassword">${t.changePasswordLabel}</label>
-            <input type="password" id="pNewPassword" placeholder="${t.newPasswordPlaceholder}" minlength="6" maxlength="10" dir="ltr">
-            <p class="form-error" id="pPasswordMsg"></p>
+        </div>
+        <p class="pf-media-note">${t.mediaHint}</p>
+      </section>
+
+      <section ${rise()}>
+        <div class="pf-sec-head"><h2 class="pf-sec-title">${t.aboutYouGroup}</h2></div>
+        <p class="pf-sec-note">${t.aboutYouNote}</p>
+        <div class="pf-fields">
+          ${pfTextFieldHtml("pFirstName", t.firstNameLabel, profileState.firstName)}
+          ${pfTextFieldHtml("pLastName", t.lastNameLabel, profileState.lastName)}
+          ${pfSelectHtml("pAge", t.ageQLabel, AGE_VALUES, profileState.ageRange)}
+          ${pfSelectHtml("pGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
+          ${pfSelectHtml("pArea", t.areaQLabel, t.areaOptions, profileState.area)}
+        </div>
+      </section>
+
+      <section ${rise()}>
+        <div class="pf-sec-head">
+          <h2 class="pf-sec-title">${t.interestsHeading}</h2>
+          <span class="pf-sec-count${topicCount ? "" : " is-empty"}">${topicCount ? t.selectedCount(topicCount) : t.noneSelectedYet}</span>
+        </div>
+        <p class="pf-sec-note">${t.interestsNote}</p>
+        ${pfChipsHtml("ptopic", t.topicOptions, profileState.interestTopics)}
+        ${pfCustomChipsHtml("ptopic", t.topicOptions, profileState.interestTopics)}
+        <div class="pf-field">
+          <label class="pf-field-label" for="pAddTopic">${t.addTopicLabel}</label>
+          <div class="pf-add-row">
+            <input type="text" class="pf-input" id="pAddTopic" placeholder="${t.addCustomTopicPlaceholder}">
+            <button type="button" class="pf-add-btn" id="pAddTopicBtn" aria-label="${t.addBtn}" disabled>${icon("plus")}</button>
           </div>
         </div>
       </section>
 
-      <div class="edit-actions">
-        <button type="button" class="outline-btn" id="pCancel">${t.cancelBtn}</button>
-        <button type="button" class="plate-btn" id="pSave">${t.saveBtn}</button>
-      </div>
-      <p class="save-msg" id="pSavedMsg"></p>
+      <section ${rise()}>
+        <div class="pf-sec-head">
+          <h2 class="pf-sec-title">${t.activityTypesHeading}</h2>
+          <span class="pf-sec-count${typeCount ? "" : " is-empty"}">${typeCount ? t.selectedCount(typeCount) : t.noneSelectedYet}</span>
+        </div>
+        <p class="pf-sec-note">${t.activityTypesNote}</p>
+        ${pfChipsHtml("patype", t.activityTypeOptions, profileState.activityTypes)}
+      </section>
+
+      <section ${rise()}>
+        <div class="pf-sec-head"><h2 class="pf-sec-title">${t.loginGroup}</h2></div>
+        <p class="pf-sec-note">${t.loginNote}</p>
+        <div class="pf-fields">
+          <div class="pf-field">
+            <label class="pf-field-label" for="pNewUsername">${t.changeUsernameLabel}<span class="pf-field-hint">${t.usernameHint}</span></label>
+            <input type="text" class="pf-input" id="pNewUsername" value="${escapeAttr(profileEditUsername)}" dir="ltr" autocomplete="username" aria-describedby="pUsernameMsg">
+            <p class="pf-msg" id="pUsernameMsg" role="alert"></p>
+          </div>
+          <div class="pf-field">
+            <label class="pf-field-label" for="pNewPassword">${t.changePasswordLabel}<span class="pf-field-hint">${t.passwordHint}</span></label>
+            <div class="pf-pass-wrap">
+              <input type="password" class="pf-input" id="pNewPassword" value="${escapeAttr(profileEditPassword)}" placeholder="${t.newPasswordPlaceholder}" minlength="6" maxlength="10" dir="ltr" autocomplete="new-password" aria-describedby="pPasswordMsg">
+              <button type="button" class="pf-pass-toggle" id="pPassToggle" aria-label="${t.showPasswordLabel}" aria-pressed="false">${icon("eye")}</button>
+            </div>
+            <p class="pf-msg" id="pPasswordMsg" role="alert"></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="pf-foot"><button type="button" class="pf-discard" id="pCancel">${t.discardBtn}</button></div>
     `;
     wireProfileEdit();
   }
 
+  // An attribute value is not a text node: a quote or an angle bracket in a name
+  // used to break out of the attribute it was written into.
+  function escapeAttr(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // What Save compares against. Sorted arrays so reselecting the same chips in a
+  // different order is not mistaken for a change.
+  function profileEditSnapshot() {
+    return JSON.stringify({
+      firstName: profileState.firstName.trim(),
+      lastName: profileState.lastName.trim(),
+      ageRange: profileState.ageRange || "",
+      grade: profileState.grade || "",
+      area: profileState.area || "",
+      topics: [...profileState.interestTopics].sort(),
+      types: [...profileState.activityTypes].sort(),
+      username: profileEditUsername.trim(),
+      password: profileEditPassword
+    });
+  }
+
+  function pfTextFieldHtml(id, labelText, value) {
+    return `
+      <div class="pf-field">
+        <label class="pf-field-label" for="${id}">${labelText}</label>
+        <input type="text" class="pf-input" id="${id}" value="${escapeAttr(value)}">
+      </div>
+    `;
+  }
+
+  // Same shell as a text field, with the native arrow replaced by a drawn caret —
+  // the platform arrow is the one part of a select that belongs to no design system.
+  function pfSelectHtml(id, labelText, options, value) {
+    return `
+      <div class="pf-field">
+        <label class="pf-field-label" for="${id}">${labelText}</label>
+        <div class="pf-select-wrap">
+          <select class="pf-input${value ? "" : " is-unset"}" id="${id}">
+            <option value="" ${!value ? "selected" : ""}>${L().selectPlaceholder}</option>
+            ${options.map(o => `<option value="${escapeAttr(o)}" ${value === o ? "selected" : ""}>${o}</option>`).join("")}
+          </select>
+          ${icon("caretDown", "pf-caret")}
+        </div>
+      </div>
+    `;
+  }
+
+  function pfChipsHtml(name, options, selected) {
+    return `<div class="pf-chips">${options.map(opt => {
+      const isSel = selected.includes(opt);
+      return `<button type="button" class="pf-chip" aria-pressed="${isSel}" data-${name}="${escapeAttr(opt)}">${isSel ? icon("check") : ""}${opt}</button>`;
+    }).join("")}</div>`;
+  }
+
+  // Topics the user typed themselves: dashed outline so they read as their own,
+  // and a drawn ✕ rather than the literal character the old version printed into
+  // the label, which screen readers announced as part of the topic name.
+  function pfCustomChipsHtml(name, presetOptions, selected) {
+    const custom = selected.filter(v => !presetOptions.includes(v));
+    if (!custom.length) return "";
+    return `<div class="pf-chips">${custom.map(v =>
+      `<button type="button" class="pf-chip is-custom" aria-pressed="true" data-${name}-remove="${escapeAttr(v)}">${v}${icon("x")}</button>`
+    ).join("")}</div>`;
+  }
   // Avatar and banner share one uploader: same public bucket, same per-user
   // folder, so the bucket's existing owner-only RLS covers both. The failure
   // path reports rather than silently doing nothing, which is how the old
@@ -5693,69 +6180,184 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     e.target.value = "";
   }
 
+  // Save is the only committing control on the screen and it lives in the sticky
+  // bar, so it has to reflect the form continuously rather than only at submit.
+  function refreshProfileSaveState() {
+    const btn = document.getElementById("pSave");
+    if (!btn || btn.dataset.busy === "1") return;
+    const dirty = profileEditSnapshot() !== profileBaseline;
+    btn.disabled = !dirty;
+    btn.classList.remove("is-saved");
+    btn.innerHTML = L().saveBtn;
+  }
+
   function wireProfileEdit() {
     const t = L();
-    const backToView = () => { profileMode = "view"; showProfile(); };
-    document.getElementById("pCancel").addEventListener("click", backToView);
-    document.getElementById("pCancelTop").addEventListener("click", backToView);
-    document.getElementById("avatarBtn").addEventListener("click", () => document.getElementById("avatarInput").click());
-    document.getElementById("avatarInput").addEventListener("change", handleAvatarUpload);
-    document.getElementById("bannerBtn").addEventListener("click", () => document.getElementById("bannerInput").click());
-    document.getElementById("bannerInput").addEventListener("change", handleBannerUpload);
-    document.getElementById("pFirstName").addEventListener("input", e => profileState.firstName = e.target.value);
-    document.getElementById("pLastName").addEventListener("input", e => profileState.lastName = e.target.value);
-    document.getElementById("pAge").addEventListener("change", e => profileState.ageRange = e.target.value || null);
-    document.getElementById("pGrade").addEventListener("change", e => {
+    const el = id => document.getElementById(id);
+
+    // The bar only grows a rule once it is actually holding content back.
+    const bar = el("pEditBar");
+    const onScroll = () => bar.classList.toggle("is-stuck", bar.getBoundingClientRect().top <= 0.5);
+    onScroll();
+    window.removeEventListener("scroll", profileBarScrollHandler);
+    profileBarScrollHandler = onScroll;
+    window.addEventListener("scroll", profileBarScrollHandler, { passive: true });
+
+    const leaveEdit = () => {
+      window.removeEventListener("scroll", profileBarScrollHandler);
+      profileMode = "view";
+      showProfile();
+    };
+    const cancel = () => {
+      if (profileEditSnapshot() !== profileBaseline && !confirm(t.discardPrompt)) return;
+      leaveEdit();
+    };
+    el("pCancel").addEventListener("click", cancel);
+    el("pCancelTop").addEventListener("click", cancel);
+
+    el("avatarBtn").addEventListener("click", () => el("avatarInput").click());
+    el("avatarInput").addEventListener("change", handleAvatarUpload);
+    el("bannerBtn").addEventListener("click", () => el("bannerInput").click());
+    el("bannerInput").addEventListener("change", handleBannerUpload);
+
+    el("pFirstName").addEventListener("input", e => { profileState.firstName = e.target.value; refreshProfileSaveState(); });
+    el("pLastName").addEventListener("input", e => { profileState.lastName = e.target.value; refreshProfileSaveState(); });
+    el("pAge").addEventListener("change", e => {
+      profileState.ageRange = e.target.value || null;
+      e.target.classList.toggle("is-unset", !e.target.value);
+      refreshProfileSaveState();
+    });
+    el("pGrade").addEventListener("change", e => {
       const match = t.gradeOptions.find(g => g[1] === e.target.value);
       profileState.grade = match ? match[0] : null;
       profileState.gradeLabel = e.target.value;
+      e.target.classList.toggle("is-unset", !e.target.value);
+      refreshProfileSaveState();
     });
-    document.getElementById("pArea").addEventListener("change", e => profileState.area = e.target.value || null);
+    el("pArea").addEventListener("change", e => {
+      profileState.area = e.target.value || null;
+      e.target.classList.toggle("is-unset", !e.target.value);
+      refreshProfileSaveState();
+    });
+
+    // Chip edits re-render the section (the count and the check marks move with
+    // them), so the live values of the two text inputs are parked on module state
+    // first — otherwise typing a username and then tapping a chip loses it.
+    const stashCredentials = () => {
+      profileEditUsername = el("pNewUsername").value;
+      profileEditPassword = el("pNewPassword").value;
+    };
+
     profileContentEl.querySelectorAll("[data-ptopic]").forEach(btn => btn.addEventListener("click", () => {
+      stashCredentials();
       const v = btn.dataset.ptopic;
       const i = profileState.interestTopics.indexOf(v);
       if (i === -1) profileState.interestTopics.push(v); else profileState.interestTopics.splice(i, 1);
       renderProfile();
     }));
     profileContentEl.querySelectorAll("[data-ptopic-remove]").forEach(btn => btn.addEventListener("click", () => {
+      stashCredentials();
       profileState.interestTopics = profileState.interestTopics.filter(x => x !== btn.dataset.ptopicRemove);
       renderProfile();
     }));
-    document.getElementById("pAddTopicBtn").addEventListener("click", () => {
-      const input = document.getElementById("pAddTopic");
-      const v = input.value.trim();
-      if (v && !profileState.interestTopics.includes(v)) profileState.interestTopics.push(v);
-      renderProfile();
-    });
     profileContentEl.querySelectorAll("[data-patype]").forEach(btn => btn.addEventListener("click", () => {
+      stashCredentials();
       const v = btn.dataset.patype;
       const i = profileState.activityTypes.indexOf(v);
       if (i === -1) profileState.activityTypes.push(v); else profileState.activityTypes.splice(i, 1);
       renderProfile();
     }));
 
-    document.getElementById("pSave").addEventListener("click", async () => {
-      const savedMsgEl = document.getElementById("pSavedMsg");
-      const uMsgEl = document.getElementById("pUsernameMsg");
-      const pMsgEl = document.getElementById("pPasswordMsg");
-      uMsgEl.textContent = ""; pMsgEl.textContent = "";
+    const addInput = el("pAddTopic");
+    const addBtn = el("pAddTopicBtn");
+    const canAdd = () => {
+      const v = addInput.value.trim();
+      return !!v && !profileState.interestTopics.includes(v);
+    };
+    const addTopic = () => {
+      if (!canAdd()) return;
+      stashCredentials();
+      profileState.interestTopics.push(addInput.value.trim());
+      renderProfile();
+    };
+    addInput.addEventListener("input", () => { addBtn.disabled = !canAdd(); });
+    addInput.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addTopic(); } });
+    addBtn.addEventListener("click", addTopic);
 
+    const passInput = el("pNewPassword");
+    const passToggle = el("pPassToggle");
+    passToggle.addEventListener("click", () => {
+      const show = passInput.type === "password";
+      passInput.type = show ? "text" : "password";
+      passToggle.setAttribute("aria-pressed", String(show));
+      passToggle.setAttribute("aria-label", show ? t.hidePasswordLabel : t.showPasswordLabel);
+      passToggle.innerHTML = icon(show ? "eyeOff" : "eye");
+      passInput.focus();
+    });
+
+    const userInput = el("pNewUsername");
+    userInput.addEventListener("input", () => {
+      profileEditUsername = userInput.value;
+      userInput.removeAttribute("aria-invalid");
+      el("pUsernameMsg").innerHTML = "";
+      refreshProfileSaveState();
+    });
+    passInput.addEventListener("input", () => {
+      profileEditPassword = passInput.value;
+      passInput.removeAttribute("aria-invalid");
+      el("pPasswordMsg").innerHTML = "";
+      refreshProfileSaveState();
+    });
+
+    refreshProfileSaveState();
+    el("pSave").addEventListener("click", saveProfileEdits);
+  }
+
+  function pfFieldError(msgId, inputId, text) {
+    document.getElementById(msgId).innerHTML = icon("alert") + text;
+    const input = document.getElementById(inputId);
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    input.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+
+  async function saveProfileEdits() {
+    const t = L();
+    const btn = document.getElementById("pSave");
+    const uMsgEl = document.getElementById("pUsernameMsg");
+    const pMsgEl = document.getElementById("pPasswordMsg");
+    uMsgEl.innerHTML = ""; pMsgEl.innerHTML = "";
+
+    // The button becomes the progress indicator; nothing else on screen moves,
+    // so the control the thumb is already on is the one that reports back.
+    btn.dataset.busy = "1";
+    btn.disabled = true;
+    btn.classList.remove("is-saved");
+    btn.innerHTML = `<span class="pf-spinner"></span>${t.savingBtn}`;
+
+    const fail = (msgId, inputId, text) => {
+      btn.dataset.busy = "";
+      pfFieldError(msgId, inputId, text);
+      refreshProfileSaveState();
+    };
+
+    try {
       const newUsername = document.getElementById("pNewUsername").value.trim();
       if (newUsername && newUsername !== userProfile?.username) {
-        if (!USERNAME_RE.test(newUsername)) { uMsgEl.textContent = t.errUsernameFormat; return; }
+        if (!USERNAME_RE.test(newUsername)) return fail("pUsernameMsg", "pNewUsername", t.errUsernameFormat);
         const { data: existing } = await sb.from("users").select("id").eq("username", newUsername).maybeSingle();
-        if (existing) { uMsgEl.textContent = t.errUsernameTaken; return; }
+        if (existing) return fail("pUsernameMsg", "pNewUsername", t.errUsernameTaken);
         const { error } = await sb.auth.updateUser({ data: { username: newUsername, full_name: newUsername } });
-        if (error) { uMsgEl.textContent = t.errSignupFailed; return; }
+        if (error) return fail("pUsernameMsg", "pNewUsername", t.errSignupFailed);
         await sb.from("users").update({ username: newUsername }).eq("id", currentUserId);
         userProfile.username = newUsername;
       }
 
       const newPassword = document.getElementById("pNewPassword").value;
       if (newPassword) {
-        if (newPassword.length < 6 || newPassword.length > 10) { pMsgEl.textContent = t.errPasswordLength; return; }
+        if (newPassword.length < 6 || newPassword.length > 10) return fail("pPasswordMsg", "pNewPassword", t.errPasswordLength);
         const { error } = await sb.auth.updateUser({ password: newPassword });
-        if (error) { pMsgEl.textContent = t.errSignupFailed; return; }
+        if (error) return fail("pPasswordMsg", "pNewPassword", t.errSignupFailed);
       }
 
       await sb.from("user_preferences").upsert({
@@ -5765,10 +6367,25 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         activity_types: profileState.activityTypes, interest_topics: profileState.interestTopics
       });
       currentInterestTopics = profileState.interestTopics;
+    } catch (err) {
+      console.error(err);
+      btn.dataset.busy = "";
+      refreshProfileSaveState();
+      toast(t.errServerDown);
+      return;
+    }
 
-      savedMsgEl.textContent = t.savedMsg;
-      setTimeout(() => { profileMode = "view"; showProfile(); }, 600);
-    });
+    btn.dataset.busy = "";
+    profileEditPassword = "";
+    profileEditUsername = userProfile?.username || "";
+    profileBaseline = profileEditSnapshot();
+    btn.classList.add("is-saved");
+    btn.innerHTML = icon("check") + t.savedMsg;
+    setTimeout(() => {
+      window.removeEventListener("scroll", profileBarScrollHandler);
+      profileMode = "view";
+      showProfile();
+    }, 850);
   }
 
   // ---- Settings ----
