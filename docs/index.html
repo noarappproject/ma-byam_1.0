@@ -4912,8 +4912,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // while the reviews are still in flight, so the form has to be renderable
   // before the network answers. `loadReviews()` replaces it with the user's
   // own review if they already left one.
+  //
+  // A review posts under the writer's name unless they ask otherwise. The
+  // column still defaults to anonymous in the database, deliberately: that is
+  // the safe direction for a row that reaches the table without this field,
+  // since hiding a name nobody meant to hide costs nothing and showing one
+  // cannot be taken back.
   function emptyReviewDraft() {
-    return { rating: 0, body: "", anonymous: true };
+    return { rating: 0, body: "", anonymous: false };
   }
 
   function resetReviewState() {
@@ -4960,7 +4966,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     }
     // A slow backend must not overwrite words already typed into the form while
     // the request was still out — the timeout here is seconds long by design.
-    const touched = reviewDraft && (reviewDraft.rating || reviewDraft.body || !reviewDraft.anonymous);
+    // The anonymity test compares against the blank draft rather than against a
+    // literal, so flipping which way that field starts cannot silently turn this
+    // check inside out and start discarding the very edits it exists to protect.
+    const blank = emptyReviewDraft();
+    const touched = reviewDraft && (reviewDraft.rating || reviewDraft.body || reviewDraft.anonymous !== blank.anonymous);
     if (!touched) {
       reviewDraft = myReview
         ? { rating: myReview.rating, body: myReview.body || "", anonymous: myReview.is_anonymous }
@@ -5071,6 +5081,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       if (error) throw error;
       await loadReviews(a.id);
       if (favDetailOpenId !== a.id) return;
+      // Show what was stored, not what was typed: the body is trimmed and capped
+      // on the way out, so leaving the draft as-is would leave the form claiming
+      // an edit the database did not keep.
+      if (myReview) reviewDraft = { rating: myReview.rating, body: myReview.body || "", anonymous: myReview.is_anonymous };
       reviewsOpen = true;
       renderReviewsBlock();
       toast(t.reviewSaved);
@@ -5091,6 +5105,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       if (error) throw error;
       await loadReviews(a.id);
       if (favDetailOpenId !== a.id) return;
+      // loadReviews() protects a draft in progress, which is right when a slow
+      // read races someone typing — but here the draft IS the thing just thrown
+      // away, so the form has to come back blank rather than still holding the
+      // stars and words of the review that no longer exists.
+      reviewDraft = emptyReviewDraft();
       renderReviewsBlock();
       toast(t.reviewDeleted);
     } catch (err) {
