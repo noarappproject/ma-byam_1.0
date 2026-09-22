@@ -1,6 +1,6 @@
 # מה בי״ם — Project Handoff
 
-Last verified end-to-end: **2026-09-17**. Read `CLAUDE.md` for architecture; this file is the operational picture — links, credentials, state, and the traps.
+Last full end-to-end pass: **2026-09-17**. Reviews added and verified **2026-09-22** (that pass covered reviews only, not the whole app). Read `CLAUDE.md` for architecture; this file is the operational picture — links, credentials, state, and the traps.
 
 ---
 
@@ -53,9 +53,10 @@ Verified against the live site on 2026-09-17, logged in as `testuser_mb1`, reads
 - **Home** — identity strip + messages bell, headline, search, a sideways rail of large image-led cards, and a downward stack of new activities that grows as you reach its end
 - **Archive** — the full searchable/filterable catalog, reached from either section's "לארכיון"
 - **Activity detail** — a real full screen; fact rows and the CTA change by `item_kind` (חוג / אירוע / פעילות), and `status` outranks the kind so a full or cancelled activity never invites registration
+- **Reviews** — a 1–5 star rating and an optional 100-character note on the activity detail sheet. Anyone can read them, including guests; writing needs an account. Anonymous is the default and is enforced in the database, not the UI (see the trap below). Added 2026-09-22 and verified that day against the **live Supabase backend from a local server**, not yet against the deployed Pages site: write, edit, delete, guest read, and a guest write correctly rejected by RLS.
 - **Favourites, Profile (with channel-style banner), Settings, Accessibility, Social** — all working
 - **Guest mode** — works completely **without the backend**, because activities are a hardcoded array and guest prefs are localStorage. This is the fallback when the DB is down.
-- **i18n** — he / ar / en / ru, 216 keys, all four blocks at parity
+- **i18n** — he / ar / en / ru, 252 keys, all four blocks at parity
 - **PWA** — installable via Add to Home Screen. No service worker, so **no offline support, by design.**
 
 ### Visual identity — settled, don't reopen
@@ -65,6 +66,12 @@ A **risograph event-flyer press**: one riso ink set on two substrates (warm pape
 `docs/variants/` holds 5 older whole-app explorations. They are **superseded history, not live options.** Ignore them unless asked.
 
 ---
+
+## Two traps around migrations
+
+**Run the CLI from the repo root, not from its parent.** `supabase link` will happily succeed one directory up — it just writes a `supabase/.temp/` there — and then `db push` finds no local `migrations/` folder and reports *"Remote migration versions not found in local migrations directory"*, listing every existing migration as missing. It then suggests `migration repair --status reverted <all 11 versions>`. **Do not run that.** Nothing is wrong with the history; you are in the wrong directory. `cd` into the repo, re-run `link`, and `db push` works. Check with `db push --dry-run` first — it should name only the migrations you actually added.
+
+**A new table is not reachable through the Data API until you grant it.** `auto_expose_new_tables` is unset in `supabase/config.toml`, which matches the current cloud default: entities created in `public` get no privileges for `anon`/`authenticated`/`service_role` automatically. The older tables here were made while the legacy auto-expose behaviour was still on, so their migrations contain no `grant` and still work — copy one as a template and you get a table that exists and rejects every write, with an error that looks like an RLS problem. `20260922120000_add_activity_reviews.sql` shows the explicit form.
 
 ## Commands
 
@@ -95,11 +102,13 @@ Deployment is automatic: push to `master`, GitHub Pages rebuilds from `/docs`. T
 
 ## Database
 
-Schema lives in `supabase/migrations/*.sql`, applied in timestamp order — 11 migrations, local and remote in sync as of 2026-09-17. Several tables were rebuilt after creation, so **read the most recent migration touching a table, not its original `CREATE`.**
+Schema lives in `supabase/migrations/*.sql`, applied in timestamp order — 12 migrations, local and remote in sync as of 2026-09-22. Several tables were rebuilt after creation, so **read the most recent migration touching a table, not its original `CREATE`.**
 
-Tables: `users`, `activities` (48-field model, 18 seeded rows), `favorites`, `follows`, `user_preferences`, `registrations`. Storage bucket `avatars` (public read, owner-only write, `<user_id>/avatar.<ext>` and `<user_id>/banner.<ext>`).
+Tables: `users`, `activities` (48-field model, 18 seeded rows), `favorites`, `follows`, `user_preferences`, `registrations`, `activity_reviews`. Storage bucket `avatars` (public read, owner-only write, `<user_id>/avatar.<ext>` and `<user_id>/banner.<ext>`).
 
 RLS is on everywhere. Notable: `favorites`'s select policy is wider than owner-only — an accepted follower can read a followee's favourites, which is what powers "friends who saved this". `canViewProfile()` is the single visibility rule the UI and that policy implement in parallel.
+
+`activity_reviews` goes the other way: its select policy is **owner-only**, and everyone else reads through the `activity_reviews_public()` function, which strips the author from anonymous rows before they leave the database. That is what makes the anonymity real rather than cosmetic — do not "simplify" it into a public select policy.
 
 ---
 

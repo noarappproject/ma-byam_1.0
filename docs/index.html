@@ -31,6 +31,9 @@
     --accent-ink: #FFFFFF;
     --accent-wash: #FFE9DF;
     --stamp: #FF3D8B;
+    /* Rating yellow. Deeper than a plain yellow because the light substrate is
+       warm cream — #FFE800 on #FFF5EE is a smudge, not a star. */
+    --star: #EFA00B;
     --line: #EADDD2;
     --line-strong: #17110D;
     --chip-bg: #F8ECE3;
@@ -78,6 +81,7 @@
       --accent-ink: #1A0E07;
       --accent-wash: #33170C;
       --stamp: #FF5C9E;
+      --star: #FFC53D;
       --line: #2F2521;
       --line-strong: #4A3B33;
       --chip-bg: #251C18;
@@ -115,6 +119,7 @@
     --accent-ink: #1A0E07;
     --accent-wash: #33170C;
     --stamp: #FF5C9E;
+    --star: #FFC53D;
     --line: #2F2521;
     --line-strong: #4A3B33;
     --chip-bg: #251C18;
@@ -551,6 +556,180 @@
     font-weight: 600;
     color: var(--ink);
     line-height: 1.45;
+  }
+
+  /* Reviews. The summary line is always on the sheet; the list unfolds under it.
+     Stars are the one place the stamp ink is used as a fill rather than a mark,
+     which is why they read as scored rather than as another status tag. */
+  .rev-block { border-block: 1px solid var(--line); padding: 4px 0; }
+
+  /* The whole summary row is the control, not just the words on its end — it is
+     the one affordance on the sheet that opens something, so it gets the whole
+     width rather than a tap target the size of a label. */
+  .rev-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 14px 10px;
+    margin-inline: -10px;
+    border: none;
+    border-radius: var(--r-md);
+    background: none;
+    color: inherit;
+    font-family: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: background 0.15s var(--ease-out);
+  }
+  .rev-head:hover { background: var(--chip-bg); }
+  .rev-head:active { background: var(--chip-bg); }
+
+  .rev-score { display: flex; align-items: center; gap: 9px; min-width: 0; }
+
+  .rev-stars { display: flex; gap: 2px; flex: none; }
+  .rev-stars .ic { width: 17px; height: 17px; stroke: var(--line-strong); fill: none; opacity: 0.32; }
+  .rev-stars .ic.is-on { stroke: var(--star); fill: var(--star); opacity: 1; }
+
+  .rev-score-num {
+    font-family: var(--font-display);
+    font-size: calc(15px * var(--text-scale));
+    font-weight: 800;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .rev-score-of { font-size: calc(12.5px * var(--text-scale)); font-weight: 600; color: var(--ink-soft); }
+
+  .rev-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: none;
+    color: var(--ink-soft);
+    font-family: var(--font-display);
+    font-size: calc(13px * var(--text-scale));
+    font-weight: 700;
+  }
+  .rev-head:hover .rev-toggle-label { color: var(--ink); }
+  .rev-toggle-label .ic { width: 15px; height: 15px; stroke-width: 2.4; transition: transform 0.18s var(--ease-out); }
+  .rev-head[aria-expanded="true"] .rev-toggle-label .ic { transform: rotate(180deg); }
+
+  .rev-body { display: flex; flex-direction: column; gap: 14px; padding: 2px 0 16px; }
+
+  .rev-list { display: flex; flex-direction: column; gap: 0; }
+
+  .rev-item { display: flex; flex-direction: column; gap: 6px; padding: 13px 0; }
+  .rev-item + .rev-item { border-top: 1px solid var(--line); }
+
+  .rev-item-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rev-item-name {
+    font-size: calc(13px * var(--text-scale));
+    font-weight: 700;
+    color: var(--ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rev-item-name.is-anon { color: var(--ink-soft); font-weight: 600; }
+  .rev-item-head .rev-stars .ic { width: 14px; height: 14px; }
+  .rev-item-date { margin-inline-start: auto; font-size: calc(11.5px * var(--text-scale)); color: var(--ink-faint); }
+
+  .rev-item-text {
+    font-size: calc(14px * var(--text-scale));
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .rev-empty, .rev-note {
+    font-size: calc(13px * var(--text-scale));
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .rev-form { display: flex; flex-direction: column; gap: 11px; }
+  .rev-form-title {
+    font-size: calc(13.5px * var(--text-scale));
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .rev-pick { display: flex; gap: 4px; }
+  .rev-pick-btn {
+    border: none;
+    background: none;
+    padding: 3px;
+    margin: -3px;
+    cursor: pointer;
+    color: inherit;
+    line-height: 0;
+  }
+  .rev-pick-btn .ic { width: 27px; height: 27px; stroke: var(--line-strong); fill: none; opacity: 0.32; transition: transform 0.12s var(--ease-out); }
+  .rev-pick-btn.is-on .ic { stroke: var(--star); fill: var(--star); opacity: 1; }
+  .rev-pick-btn:active .ic { transform: scale(0.85); }
+
+  .rev-textarea {
+    min-height: 74px;
+    padding: 13px 16px;
+    line-height: 1.55;
+    resize: none;
+  }
+
+  .rev-form-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+  .rev-anon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: calc(13px * var(--text-scale));
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .rev-anon input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+
+  .rev-count {
+    flex: none;
+    font-size: calc(11.5px * var(--text-scale));
+    font-weight: 600;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rev-actions { display: flex; gap: 10px; }
+
+  .rev-submit {
+    flex: 1;
+    min-height: 46px;
+    border: none;
+    border-radius: var(--r-md);
+    background: var(--ink);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: calc(14.5px * var(--text-scale));
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .rev-submit:disabled { opacity: 0.42; cursor: not-allowed; }
+
+  .rev-delete {
+    flex: none;
+    min-height: 46px;
+    padding: 0 16px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-md);
+    background: none;
+    color: var(--danger);
+    font-family: var(--font-display);
+    font-size: calc(13.5px * var(--text-scale));
+    font-weight: 700;
+    cursor: pointer;
   }
 
   .detail-desc {
@@ -3357,11 +3536,22 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     camera: '<path d="M3.4 8.6h3.3l1.5-2.6h7.6l1.5 2.6h3.3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.6" r="3.9"/>',
     eye: '<path d="M2.2 12S5.9 5.8 12 5.8 21.8 12 21.8 12 18.1 18.2 12 18.2 2.2 12 2.2 12z"/><circle cx="12" cy="12" r="3.1"/>',
     eyeOff: '<path d="M4.2 4.2 19.8 19.8"/><path d="M9.6 9.7A3.1 3.1 0 0 0 12 15.1c.86 0 1.64-.35 2.2-.92"/><path d="M6.5 6.7C3.9 8.3 2.2 12 2.2 12s3.7 6.2 9.8 6.2c1.7 0 3.2-.48 4.5-1.2M17.9 15A13 13 0 0 0 21.8 12S18.1 5.8 12 5.8c-.83 0-1.6.11-2.33.31"/>',
-    plus: '<path d="M12 5.6v12.8M5.6 12h12.8"/>'
+    plus: '<path d="M12 5.6v12.8M5.6 12h12.8"/>',
+    star: '<path d="M12 3.6l2.63 5.52 5.97.85-4.32 4.3 1.02 6.13L12 17.5l-5.3 2.9 1.02-6.13-4.32-4.3 5.97-.85z"/>'
   };
 
   function icon(name, cls) {
     return `<svg class="ic ${cls || ""}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+  }
+
+  // Everything rendered before reviews came from the hardcoded activity array or
+  // from format-constrained usernames. A review body is the first free text a
+  // stranger can put on someone else's screen, and it goes in through innerHTML
+  // like the rest of the app — so it has to be escaped at the seam.
+  function escHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
   // ---- Category plates. Every activity gets a risograph poster built from its
@@ -4459,14 +4649,23 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   function openActivityDetail(id) {
     favDetailOpenId = id;
+    resetReviewState();
     renderActivityDetail();
     detailScreenEl.hidden = false;
     detailScreenEl.scrollTop = 0;
     document.body.style.overflow = "hidden";
+    loadReviews(id).then(() => {
+      if (favDetailOpenId !== id) return;
+      // Same reason the favorites list repaints one control: re-rendering the
+      // block would rebuild the textarea and drop the caret mid-word.
+      if (document.activeElement && document.activeElement.id === "revBody") return;
+      renderReviewsBlock();
+    });
   }
 
   function closeActivityDetail() {
     favDetailOpenId = null;
+    resetReviewState();
     detailScreenEl.hidden = true;
     detailSheetEl.innerHTML = "";
     detailPlateEl.innerHTML = "";
@@ -4511,6 +4710,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ${a.short_description ? `<p class="lede" style="max-width:none">${a.short_description}</p>` : ""}
       <div class="fact-list">${factRowsFor(a)}</div>
       <div id="detailFriends"></div>
+      <div class="rev-block" id="detailReviews"></div>
       <p class="detail-desc">${a.description}</p>
       ${(a.topics || []).length ? `<div class="topic-tags">${a.topics.map(x => `<span class="topic-tag">${x}</span>`).join("")}</div>` : ""}
       ${a.source_name ? `<p class="detail-source">${t.sourceLabel} ${a.source_url ? `<a href="${a.source_url}" target="_blank" rel="noopener">${a.source_name}</a>` : a.source_name}</p>` : ""}
@@ -4523,6 +4723,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           ? `<span class="cta-btn is-disabled">${cta.label}</span>`
           : `<a class="cta-btn" href="${cta.href}" target="_blank" rel="noopener">${cta.icon ? icon(cta.icon) : ""}${cta.label}</a>`}
       </div>`;
+
+    renderReviewsBlock();
 
     // Padding for the docked CTA, measured rather than guessed.
     requestAnimationFrame(() => {
@@ -4547,6 +4749,234 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <span class="friends-text">${t.friendsPinned(users.length)}</span>
       </div>`;
   }
+
+  // ---- Reviews ----
+  // Read by anyone including guests, written only by an account. The list comes
+  // back from `activity_reviews_public()` rather than from the table, so an
+  // anonymous row simply has no author attached by the time it is here — there
+  // is no identity on the client to accidentally render.
+  let detailReviews = [];
+  let myReview = null;
+  let reviewsOpen = false;
+  let reviewDraft = null;
+  const REVIEW_MAX = 100;
+
+  // The draft starts empty rather than null: the sheet paints synchronously
+  // while the reviews are still in flight, so the form has to be renderable
+  // before the network answers. `loadReviews()` replaces it with the user's
+  // own review if they already left one.
+  function emptyReviewDraft() {
+    return { rating: 0, body: "", anonymous: true };
+  }
+
+  function resetReviewState() {
+    detailReviews = [];
+    myReview = null;
+    reviewsOpen = false;
+    reviewDraft = emptyReviewDraft();
+  }
+
+  function reviewAverage() {
+    if (!detailReviews.length) return 0;
+    return detailReviews.reduce((sum, r) => sum + r.rating, 0) / detailReviews.length;
+  }
+
+  function starsHtml(value) {
+    const filled = Math.round(value);
+    return `<span class="rev-stars">${
+      [1, 2, 3, 4, 5].map(n => icon("star", n <= filled ? "is-on" : "")).join("")
+    }</span>`;
+  }
+
+  async function loadReviews(activityId) {
+    // Guest browsing works with the backend down, and the detail screen must
+    // keep working too — an unreachable server means "no reviews yet" here,
+    // never a broken sheet.
+    try {
+      const { data, error } = await withTimeout(sb.rpc("activity_reviews_public", { p_activity_id: activityId }));
+      if (error) throw error;
+      detailReviews = data || [];
+    } catch (err) {
+      console.warn("reviews unavailable:", err.message);
+      detailReviews = [];
+    }
+    myReview = null;
+    if (currentUserId) {
+      try {
+        const { data } = await withTimeout(sb.from("activity_reviews")
+          .select("id, rating, body, is_anonymous")
+          .eq("activity_id", activityId).eq("user_id", currentUserId).maybeSingle());
+        myReview = data || null;
+      } catch (err) {
+        console.warn("own review unavailable:", err.message);
+      }
+    }
+    // A slow backend must not overwrite words already typed into the form while
+    // the request was still out — the timeout here is seconds long by design.
+    const touched = reviewDraft && (reviewDraft.rating || reviewDraft.body || !reviewDraft.anonymous);
+    if (!touched) {
+      reviewDraft = myReview
+        ? { rating: myReview.rating, body: myReview.body || "", anonymous: myReview.is_anonymous }
+        : emptyReviewDraft();
+    }
+  }
+
+  function reviewItemHtml(r) {
+    const t = L();
+    const named = !r.is_anonymous && r.display_name;
+    return `
+      <div class="rev-item">
+        <div class="rev-item-head">
+          <span class="rev-item-name${named ? "" : " is-anon"}">${named ? escHtml(r.display_name) : t.anonymousName}</span>
+          ${starsHtml(r.rating)}
+          <span class="rev-item-date">${fmtDate(String(r.created_at).slice(0, 10))}</span>
+        </div>
+        ${r.body ? `<p class="rev-item-text">${escHtml(r.body)}</p>` : ""}
+      </div>`;
+  }
+
+  function reviewFormHtml() {
+    const t = L();
+    const d = reviewDraft;
+    return `
+      <div class="rev-form">
+        <p class="rev-form-title">${myReview ? t.yourReviewTitle : t.writeReviewTitle}</p>
+        <div class="rev-pick" role="group" aria-label="${t.ratingLabel}">
+          ${[1, 2, 3, 4, 5].map(n => `
+            <button type="button" class="rev-pick-btn${n <= d.rating ? " is-on" : ""}"
+              data-rate="${n}" aria-pressed="${n <= d.rating}" aria-label="${t.starsAria(n)}">${icon("star")}</button>
+          `).join("")}
+        </div>
+        <textarea class="pf-input rev-textarea" id="revBody" maxlength="${REVIEW_MAX}"
+          placeholder="${t.reviewPlaceholder}" aria-label="${t.reviewBodyLabel}">${escHtml(d.body)}</textarea>
+        <div class="rev-form-foot">
+          <label class="rev-anon">
+            <input type="checkbox" id="revAnon" ${d.anonymous ? "checked" : ""}>
+            ${t.postAnonymously}
+          </label>
+          <span class="rev-count" id="revCount">${d.body.length}/${REVIEW_MAX}</span>
+        </div>
+        <div class="rev-actions">
+          <button type="button" class="rev-submit" id="revSubmit" ${d.rating ? "" : "disabled"}>
+            ${myReview ? t.updateReview : t.submitReview}
+          </button>
+          ${myReview ? `<button type="button" class="rev-delete" id="revDelete">${t.deleteReview}</button>` : ""}
+        </div>
+      </div>`;
+  }
+
+  function renderReviewsBlock() {
+    const el = document.getElementById("detailReviews");
+    if (!el) return;
+    const t = L();
+    const count = detailReviews.length;
+    const avg = reviewAverage();
+
+    el.innerHTML = `
+      <button type="button" class="rev-head" id="revToggle" aria-expanded="${reviewsOpen}" aria-controls="revBodyWrap">
+        <span class="rev-score">
+          ${starsHtml(avg)}
+          ${count
+            ? `<span class="rev-score-num">${avg.toFixed(1)}</span><span class="rev-score-of">${t.outOfFive}</span>`
+            : `<span class="rev-score-of">${t.noRatingsYet}</span>`}
+        </span>
+        <span class="rev-toggle-label">${t.reviewsLabel} ${count}${icon("caretDown")}</span>
+      </button>
+      <div class="rev-body" id="revBodyWrap"${reviewsOpen ? "" : " hidden"}>
+        ${count
+          ? `<div class="rev-list">${detailReviews.map(reviewItemHtml).join("")}</div>`
+          : `<p class="rev-empty">${t.noReviewsYet}</p>`}
+        ${isGuestMode() || !currentUserId
+          ? `<p class="rev-note">${t.reviewGuestNote}</p>`
+          : reviewFormHtml()}
+      </div>`;
+  }
+
+  // A star tap or a keystroke repaints its own control, never the block: a full
+  // re-render would drop the caret out of the textarea mid-sentence.
+  function refreshReviewPick() {
+    const wrap = document.getElementById("detailReviews");
+    if (!wrap || !reviewDraft) return;
+    wrap.querySelectorAll(".rev-pick-btn").forEach(btn => {
+      const on = Number(btn.dataset.rate) <= reviewDraft.rating;
+      btn.classList.toggle("is-on", on);
+      btn.setAttribute("aria-pressed", String(on));
+    });
+    const submit = document.getElementById("revSubmit");
+    if (submit) submit.disabled = !reviewDraft.rating;
+  }
+
+  async function submitReview() {
+    const a = activities.find(x => x.id === favDetailOpenId);
+    if (!a || !currentUserId || !reviewDraft || !reviewDraft.rating) return;
+    const t = L();
+    const btn = document.getElementById("revSubmit");
+    if (btn) { btn.disabled = true; btn.textContent = t.savingBtn; }
+    const body = reviewDraft.body.trim().slice(0, REVIEW_MAX);
+    try {
+      const { error } = await withTimeout(sb.from("activity_reviews").upsert({
+        activity_id: a.id,
+        user_id: currentUserId,
+        rating: reviewDraft.rating,
+        body: body || null,
+        is_anonymous: reviewDraft.anonymous
+      }, { onConflict: "activity_id,user_id" }));
+      if (error) throw error;
+      await loadReviews(a.id);
+      if (favDetailOpenId !== a.id) return;
+      reviewsOpen = true;
+      renderReviewsBlock();
+      toast(t.reviewSaved);
+    } catch (err) {
+      console.error(err);
+      if (btn) { btn.disabled = false; btn.textContent = myReview ? t.updateReview : t.submitReview; }
+      toast(isNetworkFailure(err) ? t.errServerDown : t.reviewFailed);
+    }
+  }
+
+  async function deleteReview() {
+    const a = activities.find(x => x.id === favDetailOpenId);
+    if (!a || !currentUserId || !myReview) return;
+    const t = L();
+    if (!confirm(t.deleteReviewPrompt)) return;
+    try {
+      const { error } = await withTimeout(sb.from("activity_reviews").delete().eq("id", myReview.id));
+      if (error) throw error;
+      await loadReviews(a.id);
+      if (favDetailOpenId !== a.id) return;
+      renderReviewsBlock();
+      toast(t.reviewDeleted);
+    } catch (err) {
+      console.error(err);
+      toast(isNetworkFailure(err) ? t.errServerDown : t.reviewFailed);
+    }
+  }
+
+  // Delegated off the sheet, which is a persistent node whose innerHTML is
+  // replaced — the same reason the archive and favorites screens wire their
+  // chip rows here rather than after each render.
+  detailSheetEl.addEventListener("click", (e) => {
+    const star = e.target.closest(".rev-pick-btn");
+    if (star) { reviewDraft.rating = Number(star.dataset.rate); refreshReviewPick(); return; }
+    if (e.target.closest("#revToggle")) {
+      reviewsOpen = !reviewsOpen;
+      renderReviewsBlock();
+      return;
+    }
+    if (e.target.closest("#revSubmit")) { submitReview(); return; }
+    if (e.target.closest("#revDelete")) deleteReview();
+  });
+
+  detailSheetEl.addEventListener("input", (e) => {
+    if (e.target.id !== "revBody" || !reviewDraft) return;
+    reviewDraft.body = e.target.value;
+    const countEl = document.getElementById("revCount");
+    if (countEl) countEl.textContent = `${e.target.value.length}/${REVIEW_MAX}`;
+  });
+
+  detailSheetEl.addEventListener("change", (e) => {
+    if (e.target.id === "revAnon" && reviewDraft) reviewDraft.anonymous = e.target.checked;
+  });
 
   detailBackBtnEl.addEventListener("click", closeActivityDetail);
   detailSaveBtnEl.addEventListener("click", () => {
@@ -5088,6 +5518,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       startsOnLabel: "תקופת הפעילות", deadlineLabel: "מועד אחרון להרשמה",
       sessionsLabel: n => `${n} מפגשים`, accessibleNote: "נגיש לכיסא גלגלים",
       friendsPinned: n => n === 1 ? "חבר אחד שלך שמר את זה" : `${n} מהחברים שלך שמרו את זה`,
+      reviewsLabel: "תגובות:", outOfFive: "מתוך 5", noRatingsYet: "אין דירוגים עדיין",
+      noReviewsYet: "עדיין אין תגובות כאן.", anonymousName: "אנונימי",
+      writeReviewTitle: "הוספת תגובה", yourReviewTitle: "התגובה שלך",
+      ratingLabel: "דירוג", reviewBodyLabel: "תגובה",
+      reviewPlaceholder: "מה חשבת? עד 100 תווים.",
+      postAnonymously: "לפרסם בעילום שם", starsAria: n => n === 1 ? "כוכב אחד" : `${n} כוכבים`,
+      submitReview: "פרסום", updateReview: "עדכון", deleteReview: "מחיקה",
+      deleteReviewPrompt: "למחוק את התגובה שלך?",
+      reviewGuestNote: "כדי להגיב צריך חשבון. אפשר לקרוא את התגובות גם בלי.",
+      reviewSaved: "התגובה פורסמה", reviewDeleted: "התגובה נמחקה",
+      reviewFailed: "הפרסום נכשל. נסו שוב.",
       favCountText: n => n === 1 ? "פעילות אחת" : `${n} פעילויות`,
       favEmptyTitle: "עוד לא שמרת כלום",
       pinnedLabel: "שמורים", myPinnedTitle: "מה ששמרתי",
@@ -5202,6 +5643,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       startsOnLabel: "فترة النشاط", deadlineLabel: "آخر موعد للتسجيل",
       sessionsLabel: n => `${n} لقاءات`, accessibleNote: "مهيّأ لكرسي متحرك",
       friendsPinned: n => n === 1 ? "صديق واحد حفظ هذا" : `${n} من أصدقائك حفظوا هذا`,
+      reviewsLabel: "التعليقات:", outOfFive: "من ٥", noRatingsYet: "لا توجد تقييمات بعد",
+      noReviewsYet: "لا توجد تعليقات هنا بعد.", anonymousName: "مجهول",
+      writeReviewTitle: "إضافة تعليق", yourReviewTitle: "تعليقك",
+      ratingLabel: "التقييم", reviewBodyLabel: "تعليق",
+      reviewPlaceholder: "ما رأيك؟ حتى ١٠٠ حرف.",
+      postAnonymously: "النشر دون ذكر الاسم", starsAria: n => n === 1 ? "نجمة واحدة" : `${n} نجوم`,
+      submitReview: "نشر", updateReview: "تحديث", deleteReview: "حذف",
+      deleteReviewPrompt: "هل تريد حذف تعليقك؟",
+      reviewGuestNote: "التعليق يحتاج إلى حساب. يمكن قراءة التعليقات بدونه.",
+      reviewSaved: "تم نشر التعليق", reviewDeleted: "تم حذف التعليق",
+      reviewFailed: "فشل النشر. حاول مرة أخرى.",
       favCountText: n => n === 1 ? "نشاط واحد" : `${n} أنشطة`,
       favEmptyTitle: "لم تحفظ شيئًا بعد",
       pinnedLabel: "محفوظات", myPinnedTitle: "ما حفظتُه",
@@ -5316,6 +5768,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       startsOnLabel: "Runs", deadlineLabel: "Registration closes",
       sessionsLabel: n => `${n} sessions`, accessibleNote: "Wheelchair accessible",
       friendsPinned: n => n === 1 ? "1 friend saved this" : `${n} friends saved this`,
+      reviewsLabel: "Comments:", outOfFive: "out of 5", noRatingsYet: "No ratings yet",
+      noReviewsYet: "No comments here yet.", anonymousName: "Anonymous",
+      writeReviewTitle: "Add a comment", yourReviewTitle: "Your comment",
+      ratingLabel: "Rating", reviewBodyLabel: "Comment",
+      reviewPlaceholder: "What did you think? Up to 100 characters.",
+      postAnonymously: "Post anonymously", starsAria: n => n === 1 ? "1 star" : `${n} stars`,
+      submitReview: "Post", updateReview: "Update", deleteReview: "Delete",
+      deleteReviewPrompt: "Delete your comment?",
+      reviewGuestNote: "Commenting needs an account. Reading them doesn't.",
+      reviewSaved: "Comment posted", reviewDeleted: "Comment deleted",
+      reviewFailed: "Posting failed. Try again.",
       favCountText: n => n === 1 ? "1 activity" : `${n} activities`,
       favEmptyTitle: "Nothing saved yet",
       pinnedLabel: "Saved", myPinnedTitle: "What I saved",
@@ -5430,6 +5893,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       startsOnLabel: "Период", deadlineLabel: "Приём заявок до",
       sessionsLabel: n => `${n} занятий`, accessibleNote: "Доступно для колясок",
       friendsPinned: n => n === 1 ? "1 друг сохранил это" : `${n} друзей сохранили это`,
+      reviewsLabel: "Комментарии:", outOfFive: "из 5", noRatingsYet: "Оценок пока нет",
+      noReviewsYet: "Комментариев пока нет.", anonymousName: "Аноним",
+      writeReviewTitle: "Добавить комментарий", yourReviewTitle: "Ваш комментарий",
+      ratingLabel: "Оценка", reviewBodyLabel: "Комментарий",
+      reviewPlaceholder: "Что вы думаете? До 100 символов.",
+      postAnonymously: "Опубликовать анонимно", starsAria: n => n === 1 ? "1 звезда" : `${n} звёзд`,
+      submitReview: "Опубликовать", updateReview: "Обновить", deleteReview: "Удалить",
+      deleteReviewPrompt: "Удалить ваш комментарий?",
+      reviewGuestNote: "Для комментария нужен аккаунт. Читать можно и без него.",
+      reviewSaved: "Комментарий опубликован", reviewDeleted: "Комментарий удалён",
+      reviewFailed: "Не удалось опубликовать. Попробуйте ещё раз.",
       favCountText: n => n === 1 ? "1 занятие" : `${n} занятий`,
       favEmptyTitle: "Пока ничего не сохранено",
       pinnedLabel: "Сохранено", myPinnedTitle: "Что я сохранил",
