@@ -28,6 +28,8 @@ Publishable key (public by design, already in the app source): `sb_publishable_J
 
 Many other throwaway accounts exist from development (`big_…`, `favcheck…`, `exittest_…`, single letters). Most have unknown passwords. Harmless clutter.
 
+**`demo_noa1` / `demo1234`** and **`demo_itay1` / `demo1234`** — created 2026-09-22 specifically to make "friends who saved this" demonstrable. Before these, the *entire* database had exactly one follow relationship with an overlapping favorite (`testuser_mb1` → `socialA1`, one activity, buried at position 4 of a rail — practically invisible during normal browsing, which is why the feature looked broken). Both are public accounts (`is_private = false`); `testuser_mb1` follows both. Between them they favorited: קייטנת כדורגל לחופש הגדול (both — this is the one that shows "X ו-Y saved this" on the very first card of Home's recommended rail), חוג שחייה לנוער, טורניר גיימינג לנוער, תוכנית חונכות והתנדבות קהילתית, חוג רובוטיקה לנוער. If this data disappears (or you want it seeded elsewhere), it's cheap to reproduce: sign up, flip privacy off in Settings, favorite a few activities, follow from `testuser_mb1`.
+
 ---
 
 ## ⚠️ The one thing that will bite you

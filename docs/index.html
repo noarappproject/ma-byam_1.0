@@ -558,9 +558,22 @@
     line-height: 1.45;
   }
 
+  /* The compact version of the same fact, dropped into a card's existing meta
+     row instead of its own chip — a third "who else saved it" line reusing
+     card-lg-meta / card-sm-meta / fav-row-meta's own type and color so it never
+     reads as a bolted-on widget. */
+  .friends-meta { align-items: center; }
+  .mini-avatar-stack { display: flex; flex: none; }
+  .mini-avatar-stack .avatar-xs { border-color: var(--surface); }
+  .mini-avatar-stack .avatar-xs + .avatar-xs { margin-inline-start: -8px; }
+  /* card-lg-meta sits on the dark photo scrim, not var(--surface) — the ring
+     has to match that ground instead, or it reads as a pale halo. */
+  .card-lg-meta .mini-avatar-stack .avatar-xs { border-color: hsl(20 30% 4% / 0.85); }
+
   /* Reviews. The summary line is always on the sheet; the list unfolds under it.
-     Stars are the one place the stamp ink is used as a fill rather than a mark,
-     which is why they read as scored rather than as another status tag. */
+     Stars take --star, deliberately not the --stamp ink the saved heart uses:
+     saving and rating sit inches apart on this sheet and mean different things,
+     so they must not share a colour. */
   .rev-block { border-block: 1px solid var(--line); padding: 4px 0; }
 
   /* The whole summary row is the control, not just the words on its end — it is
@@ -894,6 +907,7 @@
 
   .avatar-lg { width: 78px; height: 78px; border-radius: 24px; font-size: calc(28px * var(--text-scale)); }
   .avatar-sm { width: 30px; height: 30px; border-radius: 10px; font-size: calc(11px * var(--text-scale)); border-width: 1px; }
+  .avatar-xs { width: 19px; height: 19px; border-radius: 7px; font-size: calc(8.5px * var(--text-scale)); border-width: 1.5px; flex-shrink: 0; }
 
   .home-user-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
   .home-user-hi { font-size: calc(12px * var(--text-scale)); font-weight: 600; color: var(--ink-faint); }
@@ -3154,7 +3168,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <span id="navHomeLabel"></span>
       </button>
       <button type="button" class="bottom-nav-btn" id="navFavorites" data-tab="favorites">
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.6h11a1 1 0 0 1 1 1v15.3a.7.7 0 0 1-1.08.59L12 16.9l-5.42 3.59A.7.7 0 0 1 5.5 19.9V4.6a1 1 0 0 1 1-1z"/></svg>
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         <span id="navFavoritesLabel"></span>
       </button>
       <button type="button" class="bottom-nav-btn" id="navSocial" data-tab="social">
@@ -3512,8 +3526,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     pin: '<path d="M12 21.2s-7-6.3-7-11.3a7 7 0 1 1 14 0c0 5-7 11.3-7 11.3z"/><circle cx="12" cy="9.9" r="2.6"/>',
     clock: '<circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/>',
     users: '<circle cx="9.2" cy="8" r="3.4"/><path d="M2.8 20c0-3.7 2.9-6.1 6.4-6.1s6.4 2.4 6.4 6.1"/><path d="M16.4 4.9a3.2 3.2 0 0 1 0 6.2M18.2 14.4c2 .7 3 2.5 3 5.6"/>',
-    // A ribbon bookmark: this app saves flyers, it does not pin them.
-    bookmark: '<path d="M6.5 3.6h11a1 1 0 0 1 1 1v15.3a.7.7 0 0 1-1.08.59L12 16.9l-5.42 3.59A.7.7 0 0 1 5.5 19.9V4.6a1 1 0 0 1 1-1z"/>',
+    // A heart: this app saves flyers, it does not pin them — ICONS.pin stays
+    // location-only so the two never read as the same action.
+    heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
     bell: '<path d="M6.2 10.4a5.8 5.8 0 0 1 11.6 0c0 4 1.4 5.6 1.4 5.6H4.8s1.4-1.6 1.4-5.6z"/><path d="M9.8 19.2a2.4 2.4 0 0 0 4.4 0"/>',
     search: '<circle cx="11" cy="11" r="7.2"/><path d="m20.5 20.5-4.1-4.1"/>',
     chevron: '<path d="M14.5 6 8.8 12l5.7 6"/>',
@@ -3805,6 +3820,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   const favState = { q: "", category: null, topic: null, sort: "soonest" };
   let favDetailOpenId = null;
 
+  // activityId -> [{id, username, avatar_url, is_private}]: people you follow
+  // (accepted only) who favorited that activity — real signal only, same rule
+  // as everywhere else in this app (see registrations note). Batch-loaded once
+  // per login rather than per card, so showing it next to every activity in
+  // every list costs one query pair, not one round trip per card.
+  let followedFavoritesByActivity = new Map();
+
   const otherProfileScreenEl = document.getElementById("otherProfileScreen");
   const otherProfileContentEl = document.getElementById("otherProfileContent");
   const followListScreenEl = document.getElementById("followListScreen");
@@ -3832,9 +3854,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return [...set];
   }
 
-  // ---- Recommendations: scored from the quiz's interest_topics plus the
-  // topics/categories of the user's own favorited activities — no separate
-  // search-history tracking (deliberately kept out of scope, see CLAUDE.md). ----
+  // ---- Recommendations: scored from the quiz's interest_topics, the
+  // topics/categories of the user's own favorited activities, and — the
+  // strongest signal, since it's a real person's choice rather than an
+  // inferred topic overlap — how many people you follow saved something you
+  // haven't. No separate search-history tracking (deliberately kept out of
+  // scope, see CLAUDE.md). ----
   function favoritedTopicsAndCategories() {
     const topics = new Set();
     const categories = new Set();
@@ -3845,6 +3870,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return { topics, categories };
   }
 
+  // Only for activities the viewer hasn't saved themselves — once it's
+  // already in their own favorites, the "friends discovered this for you"
+  // push has done its job. Weighted well above a topic match (worth 2 at
+  // most) so it's monotonic: each additional friend who saved it pushes the
+  // card further forward, the way the feature was asked for.
+  const FRIEND_SAVE_WEIGHT = 4;
+  function friendSaveBoost(a) {
+    if (!a.id || favoriteIds.has(a.id)) return 0;
+    return followedFavoritesFor(a.id).length * FRIEND_SAVE_WEIGHT;
+  }
+
   function recommendationScore(a, signal) {
     let score = 0;
     (a.topics || []).forEach(t => {
@@ -3852,12 +3888,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       if (signal.topics.has(t)) score += 1;
     });
     if (signal.categories.has(a.category)) score += 0.5;
+    score += friendSaveBoost(a);
     return score;
   }
 
   function recommendedActivities() {
     const signal = favoritedTopicsAndCategories();
-    const hasSignal = currentInterestTopics.length > 0 || signal.topics.size > 0 || signal.categories.size > 0;
+    const hasFriendSignal = [...followedFavoritesByActivity.keys()].some(id => !favoriteIds.has(id));
+    const hasSignal = currentInterestTopics.length > 0 || signal.topics.size > 0 || signal.categories.size > 0 || hasFriendSignal;
     const sorted = [...activities];
     if (!hasSignal) {
       sorted.sort((a, b) => activityTimestamp(a) - activityTimestamp(b));
@@ -3894,7 +3932,22 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (isGuestMode() || !a.id) return "";
     const isFav = favoriteIds.has(a.id);
     return `<button type="button" class="${cls}" data-fav-id="${a.id}" aria-pressed="${isFav}"
-      aria-label="${isFav ? L().unfavoriteLabel : L().favoriteLabel}">${icon("bookmark")}</button>`;
+      aria-label="${isFav ? L().unfavoriteLabel : L().favoriteLabel}">${icon("heart")}</button>`;
+  }
+
+  // Friends who saved this, wherever the activity itself appears — independent
+  // of whether the viewer saved it themselves. `metaClass` borrows whichever
+  // meta-row style the caller already uses (card-lg-meta / card-sm-meta /
+  // fav-row-meta) so this reads as one more fact line, not a bolted-on widget.
+  function friendsMetaHtml(activityId, metaClass) {
+    const users = followedFavoritesFor(activityId);
+    if (!users.length) return "";
+    const shown = users.slice(0, 3);
+    const names = shown.map(u => bidiIsolate(u.username || "?"));
+    return `<p class="${metaClass} friends-meta">
+      <span class="mini-avatar-stack">${shown.map(u => `<span class="avatar avatar-xs" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>`).join("")}</span>
+      <span>${L().savedByLine(names, users.length)}</span>
+    </p>`;
   }
 
   // Cards carry a nested save control, so they are role=button divs — a real
@@ -3912,6 +3965,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <h3 class="card-lg-title">${a.title}</h3>
           <p class="card-lg-meta">${icon("pin")}<span>${a.neighborhood || a.location_name}</span></p>
           <p class="card-lg-meta">${icon("clock")}<span>${when.sub || when.main}</span></p>
+          ${friendsMetaHtml(a.id, "card-lg-meta")}
         </span>
       </div>`;
   }
@@ -3926,6 +3980,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <span class="card-sm-kind">${kindLabel(a)}</span>
           <h3 class="card-sm-title">${a.title}</h3>
           <p class="card-sm-meta">${icon("calendar")}<span>${when.main}</span></p>
+          ${friendsMetaHtml(a.id, "card-sm-meta")}
         </span>
         ${saveBtnHtml(a, "card-sm-save")}
       </div>`;
@@ -4328,6 +4383,35 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     });
   }
 
+  // Two queries, not N: everyone this account follows (accepted), then every
+  // favorite row any of them hold, batched — the same shape as
+  // favoritedTopicsAndCategories() and just as deliberately not a live
+  // subscription. `favorites_select_visible` already grants a follower read
+  // access to a followee's rows, so this needs no RLS change.
+  async function loadFollowedFavoritesMap() {
+    followedFavoritesByActivity = new Map();
+    if (isGuestMode() || !currentUserId) return;
+    const { data: rel } = await sb.from("follows").select("followee_id")
+      .eq("follower_id", currentUserId).eq("status", "accepted");
+    const followeeIds = [...new Set((rel || []).map(r => r.followee_id))];
+    if (!followeeIds.length) return;
+    const { data: favs } = await sb.from("favorites").select("activity_id, user_id").in("user_id", followeeIds);
+    if (!favs || !favs.length) return;
+    const userIds = [...new Set(favs.map(f => f.user_id))];
+    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", userIds);
+    const userById = new Map((users || []).map(u => [u.id, u]));
+    favs.forEach(f => {
+      const u = userById.get(f.user_id);
+      if (!u) return;
+      if (!followedFavoritesByActivity.has(f.activity_id)) followedFavoritesByActivity.set(f.activity_id, []);
+      followedFavoritesByActivity.get(f.activity_id).push(u);
+    });
+  }
+
+  function followedFavoritesFor(activityId) {
+    return followedFavoritesByActivity.get(activityId) || [];
+  }
+
   async function toggleFavorite(activityId) {
     if (!currentUserId) return;
     const wasFav = favoriteIds.has(activityId);
@@ -4431,8 +4515,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <h3 class="fav-row-title">${a.title}</h3>
           <p class="fav-row-meta">${icon("calendar")}<span>${when.main}</span></p>
           <p class="fav-row-meta">${icon("pin")}<span>${a.neighborhood || a.location_name}</span></p>
+          ${friendsMetaHtml(a.id, "fav-row-meta")}
         </div>
-        ${readOnly ? "" : `<button type="button" class="fav-star-btn" data-fav-id="${a.id}" aria-pressed="${isFav}" aria-label="${isFav ? L().unfavoriteLabel : L().favoriteLabel}">${icon("bookmark")}</button>`}
+        ${readOnly ? "" : `<button type="button" class="fav-star-btn" data-fav-id="${a.id}" aria-pressed="${isFav}" aria-label="${isFav ? L().unfavoriteLabel : L().favoriteLabel}">${icon("heart")}</button>`}
       </div>
     `;
   }
@@ -4455,7 +4540,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       document.getElementById("favFiltersWrap").hidden = true;
       favListEl.innerHTML = `
         <div class="empty-state">
-          <span class="empty-mark">${icon("bookmark", "ic-lg")}</span>
+          <span class="empty-mark">${icon("heart", "ic-lg")}</span>
           <h2 class="display display-md">${t.favEmptyTitle}</h2>
           <p class="lede" style="text-align:center">${t.favEmptyNoFavoritesMsg}</p>
           <button type="button" class="plate-btn" id="favGoHomeBtn" style="max-width:260px">${t.favEmptyNoFavoritesCta}</button>
@@ -4631,22 +4716,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </div>`).join("");
   }
 
-  // Real signal only: who among the people you follow has pinned this. There is
-  // no registration tracking in this product, so no attendance count is invented.
-  async function friendsWhoPinned(activityId) {
-    if (!currentUserId) return [];
-    const { data: rel } = await sb.from("follows").select("followee_id")
-      .eq("follower_id", currentUserId).eq("status", "accepted");
-    const ids = (rel || []).map(r => r.followee_id);
-    if (!ids.length) return [];
-    const { data: favs } = await sb.from("favorites").select("user_id")
-      .eq("activity_id", activityId).in("user_id", ids);
-    const pinnedBy = [...new Set((favs || []).map(r => r.user_id))];
-    if (!pinnedBy.length) return [];
-    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", pinnedBy);
-    return users || [];
-  }
-
   function openActivityDetail(id) {
     favDetailOpenId = id;
     resetReviewState();
@@ -4691,7 +4760,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     detailBackBtnEl.setAttribute("aria-label", t.backLabel);
     detailSaveBtnEl.hidden = !canSave;
     if (canSave) {
-      detailSaveBtnEl.innerHTML = icon("bookmark");
+      detailSaveBtnEl.innerHTML = icon("heart");
       detailSaveBtnEl.setAttribute("aria-pressed", String(isFav));
       detailSaveBtnEl.setAttribute("aria-label", isFav ? t.unfavoriteLabel : t.favoriteLabel);
       detailSaveBtnEl.dataset.favId = a.id;
@@ -4731,22 +4800,27 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       detailSheetEl.style.paddingBottom = (detailDockEl.offsetHeight + 24) + "px";
     });
 
-    if (canSave) renderDetailFriends(a.id);
+    // Independent of canSave: a guest or a signed-in viewer who cannot save
+    // this activity themselves can still see who among the people they follow
+    // did. The map is empty for a guest (no currentUserId, nothing to follow
+    // with), so this degrades to nothing shown rather than needing its own gate.
+    if (a.id) renderDetailFriends(a.id);
   }
 
-  async function renderDetailFriends(activityId) {
-    const users = await friendsWhoPinned(activityId);
+  function renderDetailFriends(activityId) {
     const el = document.getElementById("detailFriends");
-    if (!el || favDetailOpenId !== activityId) return;
+    if (!el) return;
+    const users = followedFavoritesFor(activityId);
     if (!users.length) { el.innerHTML = ""; return; }
     const t = L();
     const shown = users.slice(0, 4);
+    const names = shown.slice(0, 2).map(u => bidiIsolate(u.username || "?"));
     el.innerHTML = `
       <div class="friends-row">
         <span class="friends-stack">${shown.map(u => `
           <span class="avatar avatar-sm" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>
         `).join("")}</span>
-        <span class="friends-text">${t.friendsPinned(users.length)}</span>
+        <span class="friends-text">${t.savedByLine(names, users.length)}</span>
       </div>`;
   }
 
@@ -5017,6 +5091,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return data ? data.status : null;
   }
 
+  // Both change whose accepted favorites should show up next to an activity —
+  // approveRequest/denyOrRemove don't, because those touch who follows *you*,
+  // not who you follow.
   async function followUser(otherUserId, otherIsPrivate) {
     if (!currentUserId) return;
     const { error } = await sb.from("follows").insert({
@@ -5024,14 +5101,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       followee_id: otherUserId,
       status: otherIsPrivate ? "pending" : "accepted"
     });
-    if (error) console.error(error);
+    if (error) { console.error(error); return; }
+    if (!otherIsPrivate) await loadFollowedFavoritesMap();
   }
 
   async function unfollowOrCancel(otherUserId) {
     if (!currentUserId) return;
     const { error } = await sb.from("follows").delete()
       .eq("follower_id", currentUserId).eq("followee_id", otherUserId);
-    if (error) console.error(error);
+    if (error) { console.error(error); return; }
+    await loadFollowedFavoritesMap();
   }
 
   async function approveRequest(followerId) {
@@ -5088,6 +5167,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   function userAvatarStyle(u) {
     return !u.is_private && u.avatar_url ? `background-image:url('${u.avatar_url}')` : "";
+  }
+
+  // A Latin username dropped into a Hebrew/Arabic sentence with no isolation
+  // is exactly the case the bidi algorithm gets wrong: it can fuse with a
+  // one-letter connector like "ו" on either side and read as one garbled run.
+  // FSI/PDI (U+2068/U+2069) tell the browser "this span owns its own
+  // direction, don't merge it with what's next to it" — fixes it once here
+  // instead of hand-tuning spacing in four languages' STRINGS entries.
+  function bidiIsolate(s) {
+    return `⁨${s}⁩`;
   }
 
   function followBtnHtml(userId, isPrivate, relationship) {
@@ -5517,7 +5606,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "אין מקומות פנויים", ctaCancelled: "הפעילות בוטלה", ctaEnded: "הפעילות הסתיימה", ctaPostponed: "נדחה — לפרטים",
       startsOnLabel: "תקופת הפעילות", deadlineLabel: "מועד אחרון להרשמה",
       sessionsLabel: n => `${n} מפגשים`, accessibleNote: "נגיש לכיסא גלגלים",
-      friendsPinned: n => n === 1 ? "חבר אחד שלך שמר את זה" : `${n} מהחברים שלך שמרו את זה`,
+      // "ו-" with the hyphen, not a bare "ו", is the standard Hebrew form for
+      // joining the conjunction directly onto a Latin word (a username here).
+      savedByLine: (names, total) => total === 1 ? `<b>${names[0]}</b> שמר/ה את זה`
+        : total === 2 ? `<b>${names[0]}</b> ו-<b>${names[1]}</b> שמרו את זה`
+        : `<b>${names[0]}</b> ועוד ${total - 1} שמרו את זה`,
       reviewsLabel: "תגובות:", outOfFive: "מתוך 5", noRatingsYet: "אין דירוגים עדיין",
       noReviewsYet: "עדיין אין תגובות כאן.", anonymousName: "אנונימי",
       writeReviewTitle: "הוספת תגובה", yourReviewTitle: "התגובה שלך",
@@ -5642,7 +5735,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "لا توجد مقاعد", ctaCancelled: "أُلغي النشاط", ctaEnded: "انتهى النشاط", ctaPostponed: "تأجّل — للتفاصيل",
       startsOnLabel: "فترة النشاط", deadlineLabel: "آخر موعد للتسجيل",
       sessionsLabel: n => `${n} لقاءات`, accessibleNote: "مهيّأ لكرسي متحرك",
-      friendsPinned: n => n === 1 ? "صديق واحد حفظ هذا" : `${n} من أصدقائك حفظوا هذا`,
+      // Passive voice sidesteps Arabic's gendered singular verb (حفظ/حفظت).
+      savedByLine: (names, total) => total === 1 ? `تم حفظ هذا بواسطة <b>${names[0]}</b>`
+        : total === 2 ? `تم حفظ هذا بواسطة <b>${names[0]}</b> و<b>${names[1]}</b>`
+        : `تم حفظ هذا بواسطة <b>${names[0]}</b> و${total - 1} آخرين`,
       reviewsLabel: "التعليقات:", outOfFive: "من ٥", noRatingsYet: "لا توجد تقييمات بعد",
       noReviewsYet: "لا توجد تعليقات هنا بعد.", anonymousName: "مجهول",
       writeReviewTitle: "إضافة تعليق", yourReviewTitle: "تعليقك",
@@ -5767,7 +5863,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "No spots left", ctaCancelled: "Cancelled", ctaEnded: "Already over", ctaPostponed: "Postponed — details",
       startsOnLabel: "Runs", deadlineLabel: "Registration closes",
       sessionsLabel: n => `${n} sessions`, accessibleNote: "Wheelchair accessible",
-      friendsPinned: n => n === 1 ? "1 friend saved this" : `${n} friends saved this`,
+      savedByLine: (names, total) => total === 1 ? `<b>${names[0]}</b> saved this`
+        : total === 2 ? `<b>${names[0]}</b> and <b>${names[1]}</b> saved this`
+        : `<b>${names[0]}</b> and ${total - 1} others saved this`,
       reviewsLabel: "Comments:", outOfFive: "out of 5", noRatingsYet: "No ratings yet",
       noReviewsYet: "No comments here yet.", anonymousName: "Anonymous",
       writeReviewTitle: "Add a comment", yourReviewTitle: "Your comment",
@@ -5892,7 +5990,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "Мест нет", ctaCancelled: "Отменено", ctaEnded: "Уже прошло", ctaPostponed: "Отложено — детали",
       startsOnLabel: "Период", deadlineLabel: "Приём заявок до",
       sessionsLabel: n => `${n} занятий`, accessibleNote: "Доступно для колясок",
-      friendsPinned: n => n === 1 ? "1 друг сохранил это" : `${n} друзей сохранили это`,
+      // "Сохранено:" (passive/noun form) sidesteps the gendered singular past
+      // tense (сохранил/сохранила) — the plural form has no such split.
+      savedByLine: (names, total) => total === 1 ? `Сохранено: <b>${names[0]}</b>`
+        : total === 2 ? `Сохранено: <b>${names[0]}</b> и <b>${names[1]}</b>`
+        : `Сохранено: <b>${names[0]}</b> и ещё ${total - 1}`,
       reviewsLabel: "Комментарии:", outOfFive: "из 5", noRatingsYet: "Оценок пока нет",
       noReviewsYet: "Комментариев пока нет.", anonymousName: "Аноним",
       writeReviewTitle: "Добавить комментарий", yourReviewTitle: "Ваш комментарий",
@@ -6218,6 +6320,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   async function proceedAfterAuth(userId, greetingName) {
     await loadAndApplyProfile(userId);
     await loadFavorites();
+    await loadFollowedFavoritesMap();
     // On a fresh page load, showApp()'s first-run initAppUI() renders Home after this
     // point anyway, and showApp() itself re-renders Home on every call once started.
     // Favorites has no such call site on the login path, so refresh it explicitly here.
@@ -6297,6 +6400,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     currentUserId = null;
     favoriteIds = new Set();
     favoritedAt = new Map();
+    followedFavoritesByActivity = new Map();
     socialCounts = { followers: 0, following: 0, pending: 0 };
     otherProfileUserId = null;
     followListUserId = null;
@@ -6311,6 +6415,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     userProfile = null;
     favoriteIds = new Set();
     favoritedAt = new Map();
+    followedFavoritesByActivity = new Map();
     socialCounts = { followers: 0, following: 0, pending: 0 };
     otherProfileUserId = null;
     followListUserId = null;
