@@ -560,7 +560,7 @@
   .friends-meta { align-items: center; }
   .mini-avatar-stack { display: flex; flex: none; }
   .mini-avatar-stack .avatar-xs { border-color: var(--surface); }
-  .mini-avatar-stack .avatar-xs + .avatar-xs { margin-inline-start: -6px; }
+  .mini-avatar-stack .avatar-xs + .avatar-xs { margin-inline-start: -8px; }
   /* card-lg-meta sits on the dark photo scrim, not var(--surface) — the ring
      has to match that ground instead, or it reads as a pale halo. */
   .card-lg-meta .mini-avatar-stack .avatar-xs { border-color: hsl(20 30% 4% / 0.85); }
@@ -727,7 +727,7 @@
 
   .avatar-lg { width: 78px; height: 78px; border-radius: 24px; font-size: calc(28px * var(--text-scale)); }
   .avatar-sm { width: 30px; height: 30px; border-radius: 10px; font-size: calc(11px * var(--text-scale)); border-width: 1px; }
-  .avatar-xs { width: 16px; height: 16px; border-radius: 6px; font-size: calc(7.5px * var(--text-scale)); border-width: 1.5px; flex-shrink: 0; }
+  .avatar-xs { width: 19px; height: 19px; border-radius: 7px; font-size: calc(8.5px * var(--text-scale)); border-width: 1.5px; flex-shrink: 0; }
 
   .home-user-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
   .home-user-hi { font-size: calc(12px * var(--text-scale)); font-weight: 600; color: var(--ink-faint); }
@@ -3736,9 +3736,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const users = followedFavoritesFor(activityId);
     if (!users.length) return "";
     const shown = users.slice(0, 3);
+    const names = shown.map(u => bidiIsolate(u.username || "?"));
     return `<p class="${metaClass} friends-meta">
       <span class="mini-avatar-stack">${shown.map(u => `<span class="avatar avatar-xs" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>`).join("")}</span>
-      <span>${L().friendsPinned(users.length)}</span>
+      <span>${L().savedByLine(names, users.length)}</span>
     </p>`;
   }
 
@@ -4594,12 +4595,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!users.length) { el.innerHTML = ""; return; }
     const t = L();
     const shown = users.slice(0, 4);
+    const names = shown.slice(0, 2).map(u => bidiIsolate(u.username || "?"));
     el.innerHTML = `
       <div class="friends-row">
         <span class="friends-stack">${shown.map(u => `
           <span class="avatar avatar-sm" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>
         `).join("")}</span>
-        <span class="friends-text">${t.friendsPinned(users.length)}</span>
+        <span class="friends-text">${t.savedByLine(names, users.length)}</span>
       </div>`;
   }
 
@@ -4718,6 +4720,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   function userAvatarStyle(u) {
     return !u.is_private && u.avatar_url ? `background-image:url('${u.avatar_url}')` : "";
+  }
+
+  // A Latin username dropped into a Hebrew/Arabic sentence with no isolation
+  // is exactly the case the bidi algorithm gets wrong: it can fuse with a
+  // one-letter connector like "ו" on either side and read as one garbled run.
+  // FSI/PDI (U+2068/U+2069) tell the browser "this span owns its own
+  // direction, don't merge it with what's next to it" — fixes it once here
+  // instead of hand-tuning spacing in four languages' STRINGS entries.
+  function bidiIsolate(s) {
+    return `⁨${s}⁩`;
   }
 
   function followBtnHtml(userId, isPrivate, relationship) {
@@ -5147,7 +5159,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "אין מקומות פנויים", ctaCancelled: "הפעילות בוטלה", ctaEnded: "הפעילות הסתיימה", ctaPostponed: "נדחה — לפרטים",
       startsOnLabel: "תקופת הפעילות", deadlineLabel: "מועד אחרון להרשמה",
       sessionsLabel: n => `${n} מפגשים`, accessibleNote: "נגיש לכיסא גלגלים",
-      friendsPinned: n => n === 1 ? "חבר אחד שלך שמר את זה" : `${n} מהחברים שלך שמרו את זה`,
+      // "ו-" with the hyphen, not a bare "ו", is the standard Hebrew form for
+      // joining the conjunction directly onto a Latin word (a username here).
+      savedByLine: (names, total) => total === 1 ? `<b>${names[0]}</b> שמר/ה את זה`
+        : total === 2 ? `<b>${names[0]}</b> ו-<b>${names[1]}</b> שמרו את זה`
+        : `<b>${names[0]}</b> ועוד ${total - 1} שמרו את זה`,
       favCountText: n => n === 1 ? "פעילות אחת" : `${n} פעילויות`,
       favEmptyTitle: "עוד לא שמרת כלום",
       pinnedLabel: "שמורים", myPinnedTitle: "מה ששמרתי",
@@ -5261,7 +5277,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "لا توجد مقاعد", ctaCancelled: "أُلغي النشاط", ctaEnded: "انتهى النشاط", ctaPostponed: "تأجّل — للتفاصيل",
       startsOnLabel: "فترة النشاط", deadlineLabel: "آخر موعد للتسجيل",
       sessionsLabel: n => `${n} لقاءات`, accessibleNote: "مهيّأ لكرسي متحرك",
-      friendsPinned: n => n === 1 ? "صديق واحد حفظ هذا" : `${n} من أصدقائك حفظوا هذا`,
+      // Passive voice sidesteps Arabic's gendered singular verb (حفظ/حفظت).
+      savedByLine: (names, total) => total === 1 ? `تم حفظ هذا بواسطة <b>${names[0]}</b>`
+        : total === 2 ? `تم حفظ هذا بواسطة <b>${names[0]}</b> و<b>${names[1]}</b>`
+        : `تم حفظ هذا بواسطة <b>${names[0]}</b> و${total - 1} آخرين`,
       favCountText: n => n === 1 ? "نشاط واحد" : `${n} أنشطة`,
       favEmptyTitle: "لم تحفظ شيئًا بعد",
       pinnedLabel: "محفوظات", myPinnedTitle: "ما حفظتُه",
@@ -5375,7 +5394,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "No spots left", ctaCancelled: "Cancelled", ctaEnded: "Already over", ctaPostponed: "Postponed — details",
       startsOnLabel: "Runs", deadlineLabel: "Registration closes",
       sessionsLabel: n => `${n} sessions`, accessibleNote: "Wheelchair accessible",
-      friendsPinned: n => n === 1 ? "1 friend saved this" : `${n} friends saved this`,
+      savedByLine: (names, total) => total === 1 ? `<b>${names[0]}</b> saved this`
+        : total === 2 ? `<b>${names[0]}</b> and <b>${names[1]}</b> saved this`
+        : `<b>${names[0]}</b> and ${total - 1} others saved this`,
       favCountText: n => n === 1 ? "1 activity" : `${n} activities`,
       favEmptyTitle: "Nothing saved yet",
       pinnedLabel: "Saved", myPinnedTitle: "What I saved",
@@ -5489,7 +5510,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       ctaFull: "Мест нет", ctaCancelled: "Отменено", ctaEnded: "Уже прошло", ctaPostponed: "Отложено — детали",
       startsOnLabel: "Период", deadlineLabel: "Приём заявок до",
       sessionsLabel: n => `${n} занятий`, accessibleNote: "Доступно для колясок",
-      friendsPinned: n => n === 1 ? "1 друг сохранил это" : `${n} друзей сохранили это`,
+      // "Сохранено:" (passive/noun form) sidesteps the gendered singular past
+      // tense (сохранил/сохранила) — the plural form has no such split.
+      savedByLine: (names, total) => total === 1 ? `Сохранено: <b>${names[0]}</b>`
+        : total === 2 ? `Сохранено: <b>${names[0]}</b> и <b>${names[1]}</b>`
+        : `Сохранено: <b>${names[0]}</b> и ещё ${total - 1}`,
       favCountText: n => n === 1 ? "1 занятие" : `${n} занятий`,
       favEmptyTitle: "Пока ничего не сохранено",
       pinnedLabel: "Сохранено", myPinnedTitle: "Что я сохранил",
