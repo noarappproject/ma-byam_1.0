@@ -104,9 +104,9 @@ Deployment is automatic: push to `master`, GitHub Pages rebuilds from `/docs`. T
 
 ## Database
 
-Schema lives in `supabase/migrations/*.sql`, applied in timestamp order — 12 migrations, local and remote in sync as of 2026-09-22. Several tables were rebuilt after creation, so **read the most recent migration touching a table, not its original `CREATE`.**
+Schema lives in `supabase/migrations/*.sql`, applied in timestamp order — 13 migrations, local and remote in sync as of 2026-09-22. Several tables were rebuilt after creation, so **read the most recent migration touching a table, not its original `CREATE`.**
 
-Tables: `users`, `activities` (48-field model, 18 seeded rows), `favorites`, `follows`, `user_preferences`, `registrations`, `activity_reviews`. Storage bucket `avatars` (public read, owner-only write, `<user_id>/avatar.<ext>` and `<user_id>/banner.<ext>`).
+Tables: `users`, `activities` (48-field model, 22 seeded rows — 18 fictional, 4 real, see below), `favorites`, `follows`, `user_preferences`, `registrations`, `activity_reviews`. Storage bucket `avatars` (public read, owner-only write, `<user_id>/avatar.<ext>` and `<user_id>/banner.<ext>`).
 
 RLS is on everywhere. Notable: `favorites`'s select policy is wider than owner-only — an accepted follower can read a followee's favourites, which is what powers "friends who saved this". `canViewProfile()` is the single visibility rule the UI and that policy implement in parallel.
 
@@ -117,7 +117,9 @@ RLS is on everywhere. Notable: `favorites`'s select policy is wider than owner-o
 ## Open loose ends
 
 - **`registrations` exists but is not wired into the UI.** The register CTA opens the organiser's own `registration_url` in a new tab; the app never writes a registration row, and has no attendance data. Don't fabricate any.
-- **The activities list is a hardcoded demo array**, not a live query — 18 rows mirroring the seeded table, each carrying its real Supabase `id`. Switching to a live query means matching the field names the array already uses.
+- **The activities list is a hardcoded demo array**, not a live query — 22 rows mirroring the seeded table, each carrying its real Supabase `id`. Switching to a live query means matching the field names the array already uses.
+- **4 of the 22 activities are real, scraped from live pages 2026-09-22** (migration `20260922130000_seed_real_jerusalem_youth_activities.sql`) — not a content pipeline, a one-time hand-built batch. The municipality's own events page and its `data.gov.il` mirror are just directories of ~26 youth centers (address/phone/link), not activity listings; the real per-activity data lives on each center's own site. Turning this into an ongoing feed needs real crawling infrastructure (Firecrawl or similar) to visit ~26 differently-structured sites on a schedule — not set up yet, and a real design/safety conversation (re-scrape cadence, dedup against `favorites`/`activity_reviews` on existing rows, what "stale" means for a `start_date` that's passed) before it's automated. This batch is the proof that real per-activity data exists and is extractable; it is not the pipeline.
+- **A Supabase Personal Access Token was pasted directly into a chat session on 2026-09-22** to authenticate the CLI for the above. Same category of exposure as the loose end below — rotate it (https://supabase.com/dashboard/account/tokens) once it's no longer needed for active work, rather than leaving it live indefinitely.
 - **`sector` and `is_accessible`** exist on `activities` but are never surfaced or filterable. Undecided whether they become real features.
 - **Profile-picture privacy is UI-level only** — the `avatars` bucket is public-read regardless of `is_private`. Real hardening needs a private bucket with signed URLs. Known and deliberate.
 - **A Supabase personal access token and the project's `service_role` key appeared in an old conversation transcript.** Rotating them was suggested and, as far as this file knows, never confirmed done. Worth closing out.

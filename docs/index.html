@@ -3508,6 +3508,79 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       registration_required: true, registration_url: "https://example.org/register/gaming-tournament",
       registration_deadline: null, capacity: 40, spots_left: 40,
       source_url: null, source_name: null
+    },
+    // Real activities, not demo data — scraped from live pages 2026-09-22 and
+    // mirrored here with the ids their Supabase rows actually carry (see
+    // migration 20260922130000). Read the migration's own comment before
+    // adding more from the same sources; most of the community center's own
+    // catalog is for kids well under 12 and was deliberately left out.
+    {
+      id: "b9ce02d9-8b9b-4f83-a3e9-d189b999ed3d",
+      item_kind: "activity", schedule_type: "recurring", category: "nature",
+      topics: ["סיורים", "ארכיאולוגיה"],
+      title: "מנהרות הכותל | סיור",
+      short_description: "3000 שנות היסטוריה ברדיוס של 300 מטר",
+      description: "סיור מודרך במנהרות הכותל המערבי, החושף חלקים נסתרים של הכותל ומאפשר להתקרב לאבניו המקוריות מימי בית המקדש השני. הסיור כולל הליכה בחללים תת-קרקעיים עתיקים ומלווה בדגמים וירטואליים. יש להירשם מראש; קבוצות מודרכות מוגבלות ל-35 משתתפים.",
+      organization_name: "מנהרות הכותל",
+      location_name: "הכותל המערבי", neighborhood: "העיר העתיקה",
+      start_date: "2026-09-27", end_date: null, start_time: "09:00", end_time: "21:00",
+      recurrence_freq: "weekly", recurrence_days: [0, 1, 2, 3, 4], sessions_count: null,
+      age_min: 12, age_max: 18, is_accessible: null,
+      price: null, price_period: null,
+      registration_required: true, registration_url: "https://www.jerusalem.muni.il/he/experience/allevents/walltunnels/",
+      registration_deadline: null, capacity: null, spots_left: null,
+      source_url: "https://www.jerusalem.muni.il/he/experience/allevents/walltunnels/", source_name: "עיריית ירושלים"
+    },
+    {
+      id: "166adcec-5618-4e93-807d-5bc174c7a677",
+      item_kind: "activity", schedule_type: "recurring", category: "sport",
+      topics: ["כדורגל"],
+      title: "כדורגל נוער כיתות ט׳-י׳",
+      short_description: "אימוני כדורגל שבועיים לבני נוער בהדרכת רון סעדון",
+      description: "חוג כדורגל לבני נוער בכיתות ט׳-י׳, בהדרכת המאמן רון סעדון. האימונים מתקיימים פעמיים בשבוע במרכז הקהילתי בית הכרם.",
+      organization_name: "מנהל קהילתי בית הכרם",
+      location_name: 'מרכז קהילתי ע"ש זיו ומרקס (בית הכרם)', neighborhood: "בית הכרם",
+      start_date: "2026-09-27", end_date: null, start_time: "19:00", end_time: "20:00",
+      recurrence_freq: "weekly", recurrence_days: [0, 4], sessions_count: null,
+      age_min: 14, age_max: 16, is_accessible: null,
+      price: 255, price_period: "monthly",
+      registration_required: true, registration_url: "http://www.beithakerem.org.il/page.php?type=hug&id=88365",
+      registration_deadline: null, capacity: null, spots_left: null,
+      source_url: "http://www.beithakerem.org.il/page.php?type=hug&id=88365", source_name: "מנהל קהילתי בית הכרם"
+    },
+    {
+      id: "0c0d7257-62c1-40e4-96f7-2d7d2a7751bd",
+      item_kind: "activity", schedule_type: "recurring", category: "sport",
+      topics: ["קראטה", "אומנויות לחימה"],
+      title: "קראטה נוער ומבוגרים",
+      short_description: "חוג קראטה משותף לבני נוער ומבוגרים, בהדרכת יואל יערי",
+      description: "חוג קראטה בהדרכת יואל יערי, פתוח לבני נוער ומבוגרים גם יחד. מתקיים פעמיים בשבוע במרכז הקהילתי בית הכרם.",
+      organization_name: "מנהל קהילתי בית הכרם",
+      location_name: 'מרכז קהילתי ע"ש זיו ומרקס (בית הכרם)', neighborhood: "בית הכרם",
+      start_date: "2026-09-27", end_date: null, start_time: "18:30", end_time: "20:15",
+      recurrence_freq: "weekly", recurrence_days: [0, 3], sessions_count: null,
+      age_min: 13, age_max: null, is_accessible: null,
+      price: 285, price_period: "monthly",
+      registration_required: true, registration_url: "http://www.beithakerem.org.il/page.php?type=hug&id=84551",
+      registration_deadline: null, capacity: null, spots_left: null,
+      source_url: "http://www.beithakerem.org.il/page.php?type=hug&id=84551", source_name: "מנהל קהילתי בית הכרם"
+    },
+    {
+      id: "5dad1ac2-6c44-43f9-b160-520253b9fae1",
+      item_kind: "activity", schedule_type: "recurring", category: "gaming",
+      topics: ["משחקי תפקידים", "מבוכים ודרקונים"],
+      title: "מבוכים ודרקונים לבני נוער",
+      short_description: "משחק תפקידים דמיוני לבני נוער, בהפעלת פגסוס",
+      description: "חוג מבוכים ודרקונים לבני נוער מכיתה ז׳ ומעלה: מסע דמיון, הרפתקאות, עבודת צוות וחשיבה יצירתית, בהפעלת חברת פגסוס.",
+      organization_name: "מנהל קהילתי בית הכרם",
+      location_name: 'מרכז קהילתי ע"ש זיו ומרקס (בית הכרם)', neighborhood: "בית הכרם",
+      start_date: "2026-09-28", end_date: null, start_time: "18:30", end_time: "19:45",
+      recurrence_freq: "weekly", recurrence_days: [1], sessions_count: null,
+      age_min: 12, age_max: null, is_accessible: null,
+      price: 230, price_period: "monthly",
+      registration_required: true, registration_url: "http://www.beithakerem.org.il/page.php?type=hug&id=84573",
+      registration_deadline: null, capacity: null, spots_left: null,
+      source_url: "http://www.beithakerem.org.il/page.php?type=hug&id=84573", source_name: "מנהל קהילתי בית הכרם"
     }
   ];
 

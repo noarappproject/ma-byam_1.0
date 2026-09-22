@@ -12,7 +12,7 @@ Teens aged 12–18 in Jerusalem, using the app themselves rather than through a 
 
 ## Product Purpose
 
-Let teens in Jerusalem discover activities, clubs ("חוגים"), and events that match their interests, age, and area — search and filter a catalog, then follow through to the organizing body's own registration channel. Currently a working prototype: 18 demo activities mirrored from real seeded Supabase rows, not yet a live content pipeline.
+Let teens in Jerusalem discover activities, clubs ("חוגים"), and events that match their interests, age, and area — search and filter a catalog, then follow through to the organizing body's own registration channel. Currently a working prototype: 22 demo activities mirrored from real seeded Supabase rows (4 of them scraped from real, live municipal/community-center listings as of 2026-09-22, not fictional), not yet a live content pipeline.
 
 ## Positioning
 
@@ -34,7 +34,7 @@ Let teens in Jerusalem discover activities, clubs ("חוגים"), and events tha
   - `sector` (general/religious/haredi/arab) exists as a column on `activities` but has no value in the current demo data and is not filterable or displayed anywhere in the UI.
   - `is_accessible` / `accessibility_note` are populated on demo activities but are likewise never displayed or filterable — the in-app "Accessibility" settings screen only controls the viewer's own text size, not activity filtering.
   - Whether these become first-class commitments (e.g. a sector filter, an accessibility badge/filter) or stay dormant fields is not decided by the product owner as of this writing.
-- Demo dataset only (18 sample activities) — not a real content pipeline yet.
+- Demo dataset (22 activities, 18 fictional + 4 real ones scraped from live sources 2026-09-22) — not a real content pipeline yet.
 - No real email is ever sent or received, by design (placeholder emails back Supabase Auth internally).
 
 ## Brand Commitments
@@ -43,7 +43,7 @@ Name: "מה בי״ם" (Mah Ba'im). No other confirmed brand voice, personality, 
 
 ## Evidence on Hand
 
-- 18 real seeded rows in the Supabase `activities` table (mirrored into the frontend's demo array).
+- 22 rows in the Supabase `activities` table (mirrored into the frontend's demo array): 18 fictional seed rows plus 4 real activities scraped from live pages on 2026-09-22 (see CLAUDE.md and migration `20260922130000_seed_real_jerusalem_youth_activities.sql`).
 - Test account: `admin` / `123456`, plus several throwaway test accounts from development — none of these are real users or real usage data.
 - No testimonials, case studies, press coverage, or analytics/usage data exist. Do not fabricate any of these in future work.
 
