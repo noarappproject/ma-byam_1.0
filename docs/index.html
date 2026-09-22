@@ -3663,9 +3663,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return [...set];
   }
 
-  // ---- Recommendations: scored from the quiz's interest_topics plus the
-  // topics/categories of the user's own favorited activities — no separate
-  // search-history tracking (deliberately kept out of scope, see CLAUDE.md). ----
+  // ---- Recommendations: scored from the quiz's interest_topics, the
+  // topics/categories of the user's own favorited activities, and — the
+  // strongest signal, since it's a real person's choice rather than an
+  // inferred topic overlap — how many people you follow saved something you
+  // haven't. No separate search-history tracking (deliberately kept out of
+  // scope, see CLAUDE.md). ----
   function favoritedTopicsAndCategories() {
     const topics = new Set();
     const categories = new Set();
@@ -3676,6 +3679,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return { topics, categories };
   }
 
+  // Only for activities the viewer hasn't saved themselves — once it's
+  // already in their own favorites, the "friends discovered this for you"
+  // push has done its job. Weighted well above a topic match (worth 2 at
+  // most) so it's monotonic: each additional friend who saved it pushes the
+  // card further forward, the way the feature was asked for.
+  const FRIEND_SAVE_WEIGHT = 4;
+  function friendSaveBoost(a) {
+    if (!a.id || favoriteIds.has(a.id)) return 0;
+    return followedFavoritesFor(a.id).length * FRIEND_SAVE_WEIGHT;
+  }
+
   function recommendationScore(a, signal) {
     let score = 0;
     (a.topics || []).forEach(t => {
@@ -3683,12 +3697,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       if (signal.topics.has(t)) score += 1;
     });
     if (signal.categories.has(a.category)) score += 0.5;
+    score += friendSaveBoost(a);
     return score;
   }
 
   function recommendedActivities() {
     const signal = favoritedTopicsAndCategories();
-    const hasSignal = currentInterestTopics.length > 0 || signal.topics.size > 0 || signal.categories.size > 0;
+    const hasFriendSignal = [...followedFavoritesByActivity.keys()].some(id => !favoriteIds.has(id));
+    const hasSignal = currentInterestTopics.length > 0 || signal.topics.size > 0 || signal.categories.size > 0 || hasFriendSignal;
     const sorted = [...activities];
     if (!hasSignal) {
       sorted.sort((a, b) => activityTimestamp(a) - activityTimestamp(b));
