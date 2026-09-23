@@ -58,7 +58,7 @@ Verified against the live site on 2026-09-17, logged in as `testuser_mb1`, reads
 - **Reviews** — a 1–5 star rating and an optional 100-character note on the activity detail sheet. Anyone can read them, including guests; writing needs an account. A review posts under the writer's name unless they tick "anonymously" — anonymity is opt-in, though the database column still defaults to it on purpose (see `CLAUDE.md`). Either way it is enforced in the database, not the UI. Added 2026-09-22: write, edit, delete and a guest write correctly rejected by RLS were verified against the live backend from a local server, and the guest read path was verified again on the deployed Pages site after release.
 - **Favourites, Profile (with channel-style banner), Settings, Accessibility, Social** — all working
 - **Guest mode** — keeps working **while the backend is down**, provided the device has connected successfully once: the activity list is read from the database and the last good copy is stored locally, and guest prefs are localStorage. A device that has *never* connected and hits a paused backend gets a short "server unavailable, try later" card with a retry button — not an empty-looking catalog. (Before 2026-09-23 the list was a hardcoded array, so this worked even on a device's first visit; that array could not follow the scraper, so it was retired.)
-- **i18n** — he / ar / en / ru, 259 keys, all four blocks at parity
+- **i18n** — he / ar / en / ru, 255 keys, all four blocks at parity
 - **PWA** — installable via Add to Home Screen. No service worker, so **no offline support, by design.**
 
 ### Visual identity — settled, don't reopen
