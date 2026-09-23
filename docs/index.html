@@ -765,13 +765,6 @@
     font-weight: 600;
   }
 
-  .detail-source {
-    font-size: calc(12.5px * var(--text-scale));
-    color: var(--ink-faint);
-    line-height: 1.55;
-    margin: 0;
-  }
-  .detail-source a { color: var(--ink-soft); text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
 
   /* Docked CTA: the register action never scrolls out of reach. */
   .detail-dock {
@@ -3552,7 +3545,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (a.schedule_type === "recurring") {
       const days = (a.recurrence_days || []).map(d => L().days[d]).join(", ");
       if (!days) return { main: L().scheduleAtOrganizer, sub: fmtTimeRange(a) };
-      return { main: L().weeklyOn(days), sub: [fmtTimeRange(a), L().noEndDate].filter(Boolean).join(" · ") };
+      return { main: L().weeklyOn(days), sub: [fmtTimeRange(a), a.end_date ? "" : L().noEndDate].filter(Boolean).join(" · ") };
     }
     const range = a.end_date && a.end_date !== a.start_date
       ? `${fmtDate(a.start_date)} – ${fmtDate(a.end_date)}`
@@ -4652,7 +4645,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <div class="rev-block" id="detailReviews"></div>
       <p class="detail-desc">${a.description}</p>
       ${(a.topics || []).length ? `<div class="topic-tags">${a.topics.map(x => `<span class="topic-tag">${x}</span>`).join("")}</div>` : ""}
-      ${a.source_name ? `<p class="detail-source">${t.sourceLabel} ${a.source_url ? `<a href="${a.source_url}" target="_blank" rel="noopener">${a.source_name}</a>` : a.source_name}</p>` : ""}
     `;
 
     detailDockEl.innerHTML = `
@@ -5490,7 +5482,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       seeAll: "לארכיון", messagesLabel: "הודעות", messagesSoon: "ההודעות עוד בפיתוח.",
       stampWeekly: "שבועי", daysShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"],
       allShownMsg: "זה הכל לעכשיו.", saveFailedMsg: "השמירה נכשלה. נסה שוב.",
-      hostedBy: "מאורגן על ידי", sourceLabel: "מקור:", priceLabel: "מחיר",
+      hostedBy: "מאורגן על ידי", priceLabel: "מחיר",
       ctaTickets: "הזמנת כרטיסים", ctaJoinClub: "הרשמה לחוג", ctaRegister: "להרשמה",
       ctaFull: "אין מקומות פנויים", ctaCancelled: "הפעילות בוטלה", ctaEnded: "הפעילות הסתיימה", ctaPostponed: "נדחה — לפרטים",
       startsOnLabel: "תקופת הפעילות", deadlineLabel: "מועד אחרון להרשמה",
@@ -5626,7 +5618,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       seeAll: "الأرشيف", messagesLabel: "الرسائل", messagesSoon: "الرسائل قيد التطوير.",
       stampWeekly: "أسبوعي", daysShort: ["أحد", "اثن", "ثلا", "أرب", "خمي", "جمع", "سبت"],
       allShownMsg: "هذا كل شيء حاليًا.", saveFailedMsg: "فشل الحفظ. حاول مرة أخرى.",
-      hostedBy: "تنظيم", sourceLabel: "المصدر:", priceLabel: "السعر",
+      hostedBy: "تنظيم", priceLabel: "السعر",
       ctaTickets: "حجز التذاكر", ctaJoinClub: "التسجيل في النادي", ctaRegister: "التسجيل",
       ctaFull: "لا توجد مقاعد", ctaCancelled: "أُلغي النشاط", ctaEnded: "انتهى النشاط", ctaPostponed: "تأجّل — للتفاصيل",
       startsOnLabel: "فترة النشاط", deadlineLabel: "آخر موعد للتسجيل",
@@ -5761,7 +5753,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       seeAll: "Archive", messagesLabel: "Messages", messagesSoon: "Messages are still in the works.",
       stampWeekly: "weekly", daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       allShownMsg: "That's everything for now.", saveFailedMsg: "Couldn't save that. Try again.",
-      hostedBy: "Hosted by", sourceLabel: "Source:", priceLabel: "Price",
+      hostedBy: "Hosted by", priceLabel: "Price",
       ctaTickets: "Get tickets", ctaJoinClub: "Join the club", ctaRegister: "Register",
       ctaFull: "No spots left", ctaCancelled: "Cancelled", ctaEnded: "Already over", ctaPostponed: "Postponed — details",
       startsOnLabel: "Runs", deadlineLabel: "Registration closes",
@@ -5895,7 +5887,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       seeAll: "Архив", messagesLabel: "Сообщения", messagesSoon: "Сообщения ещё в разработке.",
       stampWeekly: "еженед.", daysShort: ["вс", "пн", "вт", "ср", "чт", "пт", "сб"],
       allShownMsg: "Это всё на сейчас.", saveFailedMsg: "Не удалось сохранить. Попробуйте снова.",
-      hostedBy: "Организатор:", sourceLabel: "Источник:", priceLabel: "Цена",
+      hostedBy: "Организатор:", priceLabel: "Цена",
       ctaTickets: "Купить билеты", ctaJoinClub: "Записаться в кружок", ctaRegister: "Записаться",
       ctaFull: "Мест нет", ctaCancelled: "Отменено", ctaEnded: "Уже прошло", ctaPostponed: "Отложено — детали",
       startsOnLabel: "Период", deadlineLabel: "Приём заявок до",

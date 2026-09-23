@@ -52,52 +52,8 @@
     "url": "https://www.talpaz.org.il/page.php?type=hugim"
   },
   {
-    "organization": "מנהל קהילתי מיטרים",
-    "neighborhood": "קריית משה",
-    "url": "https://www.meytarim-j.org.il/activities/"
-  },
-  {
-    "organization": "מנהל קהילתי אשכול בגבעה",
-    "neighborhood": "גבעה צרפתית",
-    "url": "https://www.eshkolbagiva.org.il/html5/dbMATENASIM.taf?did=4545&_2=&_3=%F0%E5%F2%F8+%31%33%2D%31%38&sr=",
-    "page_ages": [
-      13,
-      18
-    ]
-  },
-  {
     "organization": "מוזיאון ישראל",
     "neighborhood": null,
     "url": "https://www.imj.org.il/he/courses/%D7%97%D7%95%D7%92%D7%99%D7%9D-%D7%9C%D7%99%D7%9C%D7%93%D7%99%D7%9D"
-  },
-  {
-    "organization": "תיאטרון מחול ירושלים",
-    "neighborhood": null,
-    "url": "https://jdtschool.com/תכניות-הלימוד/"
-  },
-  {
-    "organization": "הקונסרבטוריון של האקדמיה למוסיקה ולמחול",
-    "neighborhood": null,
-    "url": "https://conservatoryjamd.co.il/he/%d7%9e%d7%92%d7%9e%d7%aa-%d7%94%d7%9e%d7%97%d7%95%d7%9c/"
-  },
-  {
-    "organization": "תיאטרון הקרון",
-    "neighborhood": null,
-    "url": "https://www.traintheater.co.il/he/studies"
-  },
-  {
-    "organization": "האוניברסיטה העברית לנוער",
-    "neighborhood": null,
-    "url": "https://community-youth.huji.ac.il/%D7%AA%D7%9C%D7%9E%D7%99%D7%93%D7%99-%D7%97%D7%98%D7%99%D7%91%D7%95%D7%AA-%D7%94%D7%91%D7%99%D7%A0%D7%99%D7%99%D7%9D-%D7%95%D7%94%D7%99%D7%A1%D7%95%D7%93%D7%99"
-  },
-  {
-    "organization": "האוניברסיטה העברית לנוער",
-    "neighborhood": null,
-    "url": "https://community-youth.huji.ac.il/%D7%A7%D7%98%D7%9C%D7%95%D7%92-%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%95%D7%AA-%D7%95%D7%A4%D7%A2%D7%99%D7%9C%D7%95%D7%99%D7%95%D7%AA"
-  },
-  {
-    "organization": "בית הנוער העברי",
-    "neighborhood": null,
-    "url": "https://www.beithanoar.org.il/%D7%A4%D7%A2%D7%99%D7%9C%D7%95%D7%99%D7%95%D7%AA/%D7%A1%D7%A4%D7%95%D7%A8%D7%98-%D7%9C%D7%99%D7%9C%D7%93%D7%99%D7%9D-%D7%95%D7%9C%D7%A0%D7%95%D7%A2%D7%A8/%D7%A9%D7%97%D7%99%D7%99%D7%94/%D7%A9%D7%97%D7%99%D7%99%D7%94-%D7%AA%D7%97%D7%A8%D7%95%D7%AA%D7%99%D7%AA-%D7%94%D7%A4%D7%95%D7%A2%D7%9C-%D7%99%D7%A8%D7%95%D7%A9%D7%9C%D7%99%D7%9D"
   }
 ]
