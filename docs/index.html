@@ -3264,10 +3264,24 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   ].join(",");
   const ACTIVITIES_CACHE_KEY = "mb_activities_v1";
 
+  // Every activity field is now written by the scraper from third-party sites,
+  // and every screen renders it through innerHTML. Escaping once here, where
+  // rows enter the app, covers all of those screens at the seam instead of at
+  // each of a dozen templates. Nothing sets activity text via textContent, so
+  // nothing double-escapes; URLs end up in href/src attributes, where the HTML
+  // parser decodes the entities back.
+  function htmlSafeActivity(a) {
+    const out = {};
+    for (const [k, v] of Object.entries(a)) {
+      out[k] = typeof v === "string" ? escHtml(v) : Array.isArray(v) ? v.map(x => typeof x === "string" ? escHtml(x) : x) : v;
+    }
+    return out;
+  }
+
   function readActivitiesCache() {
     try {
       const parsed = JSON.parse(localStorage.getItem(ACTIVITIES_CACHE_KEY) || "null");
-      return Array.isArray(parsed?.rows) ? parsed.rows : [];
+      return Array.isArray(parsed?.rows) ? parsed.rows.map(htmlSafeActivity) : [];
     } catch { return []; }
   }
 
@@ -3421,7 +3435,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   function plateArtHtml(a, cls) {
     if (a.image_url) {
-      return `<div class="plate-art ${cls || ""}" data-cat="${a.category}"><img src="${a.image_url}" alt="" loading="lazy"></div>`;
+      // The generated plate sits under the photo: a scraped image URL that 404s
+      // or blocks hotlinking removes itself and leaves the plate, not a broken box.
+      return `<div class="plate-art ${cls || ""}" data-cat="${a.category}">${categoryArtSvg(a)}<img src="${a.image_url}" alt="" loading="lazy" onerror="this.remove()"></div>`;
     }
     return `<div class="plate-art ${cls || ""}" data-cat="${a.category}">${categoryArtSvg(a)}</div>`;
   }
@@ -3525,14 +3541,18 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return new Intl.DateTimeFormat(LOCALE_TAG[currentLang] || "he-IL", { day: "numeric", month: "long", year: "numeric" }).format(d);
   }
 
+  // Scraped clubs often list only a name and ages, with days and hours on the
+  // organizer's own page; an unknown time is left out, never shown as "00:00".
   function fmtTimeRange(a) {
+    if (!a.start_time) return "";
     return a.end_time ? `${a.start_time.slice(0,5)}–${a.end_time.slice(0,5)}` : L().startsAt(a.start_time.slice(0,5));
   }
 
   function whenText(a) {
     if (a.schedule_type === "recurring") {
       const days = (a.recurrence_days || []).map(d => L().days[d]).join(", ");
-      return { main: L().weeklyOn(days || "—"), sub: fmtTimeRange(a) + " · " + L().noEndDate };
+      if (!days) return { main: L().scheduleAtOrganizer, sub: fmtTimeRange(a) };
+      return { main: L().weeklyOn(days), sub: [fmtTimeRange(a), L().noEndDate].filter(Boolean).join(" · ") };
     }
     const range = a.end_date && a.end_date !== a.start_date
       ? `${fmtDate(a.start_date)} – ${fmtDate(a.end_date)}`
@@ -3690,6 +3710,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const t = L();
     if (a.schedule_type === "recurring") {
       const day = (a.recurrence_days && a.recurrence_days.length) ? t.daysShort[a.recurrence_days[0]] : null;
+      // No known weekday: no stamp, rather than one that claims "weekly".
+      if (!day) return "";
       return `<div class="date-stamp is-recurring">
         <b>${day || t.stampWeekly}</b><span>${day ? t.stampWeekly : ""}</span>
       </div>`;
@@ -4173,12 +4195,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           .order("created_at", { ascending: true }).order("id", { ascending: true })
       );
       if (error) throw error;
-      const fresh = data || [];
+      const fresh = (data || []).map(htmlSafeActivity);
       const changed = JSON.stringify(fresh) !== JSON.stringify(activities) || activitiesStatus !== "ready";
       activities = fresh;
       activitiesStatus = fresh.length ? "ready" : "empty";
       try {
-        localStorage.setItem(ACTIVITIES_CACHE_KEY, JSON.stringify({ at: new Date().toISOString(), rows: fresh }));
+        localStorage.setItem(ACTIVITIES_CACHE_KEY, JSON.stringify({ at: new Date().toISOString(), rows: data || [] }));
       } catch { /* storage blocked or full: the live copy still serves this session */ }
       if (changed) refreshActivityScreens();
     } catch (err) {
@@ -5495,6 +5517,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyTitle: "עדיין אין פעילויות",
       activitiesEmptyBody: "כרגע לא פורסמו פעילויות. הרשימה מתעדכנת אוטומטית כל בוקר.",
       retryBtn: "נסה שוב",
+      scheduleAtOrganizer: "המועדים באתר המארגן",
       favCountText: n => n === 1 ? "פעילות אחת" : `${n} פעילויות`,
       favEmptyTitle: "עוד לא שמרת כלום",
       pinnedLabel: "שמורים", myPinnedTitle: "מה ששמרתי",
@@ -5629,6 +5652,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyTitle: "لا توجد فعاليات بعد",
       activitiesEmptyBody: "لم تُنشر أي فعاليات حاليًا. تتحدّث القائمة تلقائيًا كل صباح.",
       retryBtn: "حاول مرة أخرى",
+      scheduleAtOrganizer: "المواعيد على موقع الجهة المنظّمة",
       favCountText: n => n === 1 ? "نشاط واحد" : `${n} أنشطة`,
       favEmptyTitle: "لم تحفظ شيئًا بعد",
       pinnedLabel: "محفوظات", myPinnedTitle: "ما حفظتُه",
@@ -5762,6 +5786,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyTitle: "No activities yet",
       activitiesEmptyBody: "Nothing has been published right now. The list updates automatically every morning.",
       retryBtn: "Try again",
+      scheduleAtOrganizer: "Times on the organizer's site",
       favCountText: n => n === 1 ? "1 activity" : `${n} activities`,
       favEmptyTitle: "Nothing saved yet",
       pinnedLabel: "Saved", myPinnedTitle: "What I saved",
@@ -5897,6 +5922,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyTitle: "Пока нет занятий",
       activitiesEmptyBody: "Сейчас ничего не опубликовано. Список обновляется автоматически каждое утро.",
       retryBtn: "Попробовать снова",
+      scheduleAtOrganizer: "Расписание на сайте организатора",
       favCountText: n => n === 1 ? "1 занятие" : `${n} занятий`,
       favEmptyTitle: "Пока ничего не сохранено",
       pinnedLabel: "Сохранено", myPinnedTitle: "Что я сохранил",
