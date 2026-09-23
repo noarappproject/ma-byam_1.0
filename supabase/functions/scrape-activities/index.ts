@@ -151,6 +151,39 @@ function agesFromTitle(t: string): [number | null, number | null] | null {
   return null;
 }
 
+// The title a teen sees. Community-center titles pack the schedule into the
+// name in shorthand — "כדור רגל - כדורגל ט-י א+ה" is grades 9–10 on Sunday and
+// Thursday, not a readable name. The days are already shown in their own row,
+// so they come out; who it is for stays, spelled out. Only after the facts
+// have been read from the original title.
+const DAY_BITS = [
+  /(?<![א-ת])ימים?\s*:?\s*[א-ו]['׳]?(?:\s*[+,\-–]\s*[א-ו]['׳]?)*(?![א-ת])/g,
+  /(?<![א-ת])[א-ו]['׳]?\s*\+\s*[א-ו]['׳]?(?:\s*\+\s*[א-ו]['׳]?)*(?![א-ת])/g,
+  /(?<![א-ת])יום\s+(?:[א-ו]['׳]?|שבת)(?![א-ת])/g,
+  /(?<![א-ת])(?:פעמיים|פעם)(?:\s+ב?שבוע)?(?![א-ת])/g,
+  /(?<![\d])\d[\d,]*\s*(?:₪|ש["״'׳]?ח|ש['׳])(?![א-ת])/g, // a price, shown in its own row
+];
+const gradeName = (tok: string) => {
+  const g = tok.replace(/["״'׳]/g, "");
+  return g.length === 2 ? `${g[0]}"${g[1]}` : `${g}'`;
+};
+function cleanTitle(t: string): string {
+  let s = t;
+  for (const re of DAY_BITS) s = s.replace(re, " ");
+  // "קארטה - קארטה נוער" / "טוקוונדו - טוקוונדו גילאי 11-14": drop the repeated prefix.
+  const parts = s.split(/\s+[-–]\s+/);
+  const bare = (x: string) => x.replace(/["'׳״\s]/g, "");
+  if (parts.length >= 2 && bare(parts[1]).startsWith(bare(parts[0]))) s = parts.slice(1).join(" - ");
+  // A bare grade range reads as letters; say they are grades.
+  s = s.replace(new RegExp(`(?<!כית(?:ה|ות)\\s*)${L}${G}\\s*[-–]\\s*${G}${R}`), (_m, a, b) => {
+    const [x, y] = grade(a) <= grade(b) ? [a, b] : [b, a];
+    return `כיתות ${gradeName(x)}-${gradeName(y)}`;
+  });
+  s = s.replace(new RegExp(`(?<!כית(?:ה|ות)\\s*)${L}${G}\\s*ומעלה`), (_m, a) => `מכיתה ${gradeName(a)} ומעלה`);
+  s = s.replace(/\s+/g, " ").replace(/\s*[-–]\s*$/, "").replace(/^\s*[-–]\s*/, "").replace(/\s+([,.)])/g, "$1").trim();
+  return s || t;
+}
+
 function daysFromTitle(t: string): number[] | null {
   const m = t.match(/(?<![א-ת])([א-ו])['׳]?\s*\+\s*([א-ו])['׳]?(?![א-ת])/);
   if (m) return [DAY[m[1]], DAY[m[2]]].sort((x, y) => x - y);
@@ -430,7 +463,8 @@ function refine(r: Row, pageAges?: [number, number]): { row: Row } | { skip: str
       recurrence_days: recurring ? days : null,
       recurrence_freq: recurring ? "weekly" : "none",
       category: STAGE.test(t) ? "stage" : r.category,
-      description: descFor(r.description, String(r.organization_name ?? ""), t),
+      title: cleanTitle(t),
+      description: descFor(r.description, String(r.organization_name ?? ""), cleanTitle(t)),
       short_description: null,
     } as Row,
   };
