@@ -55,5 +55,18 @@
     "organization": "מוזיאון ישראל",
     "neighborhood": null,
     "url": "https://www.imj.org.il/he/courses/%D7%97%D7%95%D7%92%D7%99%D7%9D-%D7%9C%D7%99%D7%9C%D7%93%D7%99%D7%9D"
+  },
+  {
+    "organization": "מרכז פריזמה",
+    "neighborhood": "קריית היובל",
+    "url": "https://www.coing.co/jlmyouth/jlm_youth_prisma",
+    "page_ages": [
+      12,
+      18
+    ],
+    "coing": {
+      "org": 518,
+      "community": 11419
+    }
   }
 ]

@@ -28,6 +28,9 @@
 // secret. The cron reads it from Vault (never from this repo). Without it, the
 // public anon key alone would let anyone trigger paid Firecrawl extractions.
 //
+// PRISMA is the exception: its programs come from coing.co's public JSON API,
+// read directly (free) — see coingRows().
+//
 // Manual use:  POST ?source=<index>&dry=1       → extract one source, write nothing.
 //              POST ?recheck=1&offset=0&limit=25 → re-read club pages and re-apply the
 //                 gate to stored rows; rows that fail are deleted (add &dry=1 to preview).
@@ -43,7 +46,10 @@ import SOURCES from "./sources.json" with { type: "json" };
 // deno-lint-ignore no-explicit-any
 type Sb = any;
 
-type Source = { organization: string; neighborhood: string | null; url: string; page_ages?: [number, number] };
+type Source = {
+  organization: string; neighborhood: string | null; url: string; page_ages?: [number, number];
+  coing?: { org: number; community: number }; // a coing.co community, read from its API instead of Firecrawl
+};
 
 // Runs are weekly, so an item has to be missing from two runs in a row before it goes.
 const STALE_DAYS = 15;
@@ -575,6 +581,222 @@ const json = (o: unknown, status = 200) =>
 
 const tally = (m: Record<string, number>, k: string) => { m[k] = (m[k] ?? 0) + 1; };
 
+// ---- Sources on coing.co (Prisma) ----
+// מרכז פריזמה publishes its programs on coing.co, whose page loads them from a
+// public JSON API. That API is read here directly — free, no Firecrawl, no model.
+// It has no usable schedule field (startsAt is a placeholder 06:00) and no price
+// field, so both are read from the organizer's own description text, by code,
+// and only when it states them plainly; a program whose text doesn't is skipped
+// like any other. One description often lists several programs as "1. … 2. …";
+// each numbered part is read on its own, so one program's hours are never
+// attached to another.
+type CoingRecord = {
+  resourceId: number; name: string; durationText?: string | null; description?: string | null;
+  paymentText?: string | null; locationText?: string | null; image?: string | null;
+  resourceUrl?: string | null; startsAt?: string | null; endsAt?: string | null;
+};
+const isCoing = (s: Source) => !!s.coing;
+
+async function coingRecords(src: Source, key: string): Promise<CoingRecord[]> {
+  const out: CoingRecord[] = [];
+  // The same two lists the coing page itself asks for: dated events and standing programs.
+  for (const type of ["regular", "checking"]) {
+    const q = `filterBy%5BstartsAt%5D=1672531200&filterBy%5BresourceType%5D%5B0%5D=${type}&pageSize=100&page=1`;
+    out.push(...((await coingJson(`https://api.coing.co/api/v2/organizations/${src.coing!.org}/communities/${src.coing!.community}/resources/published?${q}`, key)).data?.records ?? []));
+  }
+  return out;
+}
+
+// Direct first, as a browser on coing's own page would ask. coing has answered
+// Supabase's servers with 403 while answering a home connection normally, so a
+// refused list is fetched once more through Firecrawl (1 credit), which returns
+// the JSON body as its raw "HTML".
+async function coingJson(url: string, key: string) {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "he-IL,he;q=0.9",
+        "Origin": "https://mng.coing.co",
+        "Referer": "https://mng.coing.co/",
+      },
+      signal: AbortSignal.timeout(20000),
+    });
+    lastFetch = `coing http ${res.status}`;
+    if (res.ok) return await res.json();
+    if (![403, 429, 503].includes(res.status)) throw new Error(`coing ${res.status}`);
+  } catch (err) { if (/^Error: coing \d/.test(String(err))) throw err; lastFetch = `coing fetch failed: ${String(err).slice(0, 80)}`; }
+  const r = await fetch("https://api.firecrawl.dev/v2/scrape", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ url, formats: ["rawHtml"], onlyMainContent: false, timeout: 60000 }),
+    signal: AbortSignal.timeout(70000),
+  });
+  const b = await r.json().catch(() => ({}));
+  const raw = String(b.data?.rawHtml ?? "");
+  const body = decodeHtml(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1));
+  try { lastFetch += " → firecrawl ok"; return JSON.parse(body); }
+  catch { throw new Error(`coing via firecrawl: ${String(b.error ?? raw.slice(0, 120))}`); }
+}
+
+const EMOJI = /[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{1F3FB}-\u{1F3FF}]/gu;
+const SPAN = /(?<!\d)(\d{1,2}):(\d{2})\s*(?:[-–]|עד)\s*(\d{1,2}):(\d{2})(?!\d)/g;
+const WEEKDAY = "(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)";
+// Israeli phone numbers: 02-6441203, 052-880-5710, 058-4962220. Stripped before
+// anything else, because a list item's number is often glued to the phone that
+// ends the previous item ("058-49622202. ארגון נטע" is a phone and item 2).
+const PHONE = /(?<!\d)0\d{1,2}-?\d{3}-?\d{4}/g;
+// "יריב סירקין - רכז המועדון -": who to call, left behind once the number is gone.
+const CONTACT = /[^\s.]*\s+\S+\s*[-–]\s*רכזת?\s+[^-–.]{0,20}[-–]\s*/g;
+
+// The description as one line of text. Through Firecrawl it arrives with its
+// tags already gone and paragraphs glued together, so it is read that way on
+// both paths: the same program yields the same row whichever way it was fetched.
+const flatText = (html: string) => decodeHtml(html.replace(/<img[^>]*>/gi, "").replace(/<[^>]+>/g, ""))
+  .replace(EMOJI, " ").replace(/\\/g, "").replace(PHONE, " ").replace(CONTACT, ". ")
+  // Re-space glued paragraphs ("רובוטיקה.Prismatics") — only next to Hebrew, so links stay whole.
+  .replace(/(?<=[א-ת])([.!?:])(?=[^\s\d.!?:/])|([.!?:])(?=[א-ת])/g, "$1$2 ").replace(/\s+/g, " ").trim();
+const sentences = (t: string) => t.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(Boolean);
+
+// Weekdays named in a stretch of text: "בכל יום רביעי", "בימי שני ורביעי",
+// "ימים ג-ד". A letter range counts only for two neighbouring days — on these
+// sites "א'-ה'" has meant Sunday and Thursday, not the five days between.
+function daysIn(s: string): number[] {
+  const found = new Set<number>();
+  for (const m of s.matchAll(/(?<![א-ת])ב?(?:כל\s+)?(?:יום|ימי|ימים)\s+([^.\n]{0,40})/g)) {
+    for (const d of m[1].matchAll(new RegExp(`(?<![א-ת])(?:ו-?)?${WEEKDAY}(?![א-ת])`, "g"))) found.add(DAY_NAMES[d[1]]);
+    const l = m[1].match(/^([א-ו])['׳]?\s*([-–+])\s*([א-ו])['׳]?(?![א-ת])/);
+    if (l && (l[2] === "+" || DAY[l[3]] - DAY[l[1]] === 1)) { found.add(DAY[l[1]]); found.add(DAY[l[3]]); }
+  }
+  return [...found].sort((a, b) => a - b);
+}
+
+// One weekly schedule in a program's text: a single hours span and the weekdays
+// named just before it. Two different spans means the text describes more than
+// one group, and which group a teen would join can't be told — so none is taken.
+function scheduleIn(t: string): { days: number[]; start: string; end: string } | string {
+  const spans = [...t.matchAll(SPAN)].filter(m => +m[1] < 24 && +m[3] < 24);
+  if (!spans.length) return "no hours";
+  if (new Set(spans.map(m => m.slice(1, 5).join(":"))).size > 1) return "several schedules";
+  const m = spans[0];
+  const days = daysIn(t.slice(Math.max(0, m.index! - 80), m.index));
+  if (!days.length) return "no weekdays";
+  // Another weekday elsewhere in the text, unless offered as an extra ("בנוסף …
+  // בימי שישי"), means the groups meet on different days: the learning kitchen
+  // says "ימי שני ורביעי" and then "קבוצה 1 – ימי ראשון".
+  const elsewhere = daysIn(sentences(t).filter(s => !/בנוסף/.test(s)).join(" "));
+  if (elsewhere.some(d => !days.includes(d))) return "conflicting weekdays";
+  let [start, end] = [two(m[1], m[2]), two(m[3], m[4])];
+  if (start > end) [start, end] = [end, start];
+  return { days, start, end };
+}
+
+// Ages only from a sentence that is about ages or grades — a bare "15–17" in
+// this text is as likely a group size ("קבוצה בת 15–17 חניכים").
+function coingAges(t: string) {
+  for (const s of sentences(t)) {
+    if (/גיל|כית/.test(s)) { const a = agesFromTitle(s.replace(SPAN, " ")); if (a) return a; }
+  }
+  return null;
+}
+
+// "התכניות שלנו: 1. גרעיני אודי … 2. ארגון נטע – …": one program per numbered
+// item, found in sequence (1, then 2 after it, …) so a stray "3." elsewhere in
+// the text doesn't start a program.
+function numberedParts(t: string): string[] {
+  const at: { mark: number; body: number }[] = [];
+  for (let n = 1; ; n++) {
+    const re = new RegExp(`(?:^|[\\s.:,])${n}\\.\\s+(?=[א-תA-Za-z])`, "g");
+    re.lastIndex = at.length ? at[at.length - 1].body : 0;
+    const f = re.exec(t);
+    if (!f) break;
+    at.push({ mark: f.index, body: f.index + f[0].length });
+  }
+  return at.length < 2 ? [] : at.map((p, i) => t.slice(p.body, i + 1 < at.length ? at[i + 1].mark : undefined).trim());
+}
+
+const CATEGORY_WORDS: [RegExp, string][] = [
+  [/רובוט|תכנות|תכנת|טכנולוג|STEM|סייבר|תעופה|טיסנ|מדע|הייטק|טק(?![א-ת])|\bAI\b/i, "tech"],
+  [/מוזיק|להק|נגינ|הלחנה/, "music"],
+  [/צילום|פודקא?סט|עיצוב|יצירה/, "art"],
+  [/מנהיגות|גרעין|תנועת נוער/, "leadership"],
+];
+
+// The coing page itself carries a registration button, so it is the signup link
+// unless the text names a dedicated one ("להרשמה: https://…").
+function coingRows(src: Source, recs: CoingRecord[], today: string) {
+  const kept: Row[] = [];
+  const skipped: Record<string, number> = {};
+  for (const r of recs) {
+    let page: string;
+    try { const u = new URL(r.resourceUrl ?? ""); u.search = ""; page = u.href; } catch { tally(skipped, "no page"); continue; }
+    if (r.endsAt && r.endsAt.slice(0, 10) < today) { tally(skipped, "ended"); continue; }
+    // A start date with no end is a single evening (the reservists' cooking night),
+    // not a weekly program; its weekday must not be read as a weekly one.
+    if (r.startsAt && !r.endsAt) { tally(skipped, r.startsAt.slice(0, 10) < today ? "past event" : "one-off event"); continue; }
+
+    const all = flatText(r.description ?? "");
+    const parts = numberedParts(all);
+    const programs = parts.length
+      // An item's name is what precedes its first dash: "ארגון נטע – סניף נטע…", "אחרייטק- פעמיים…".
+      ? parts.map(p => { const [head, ...rest] = p.split(/\s*[-–]\s+|\s+[-–]\s*/); return { name: head, body: p, prose: rest.join(" - ") }; })
+      : [{ name: r.name, body: all, prose: all }];
+
+    programs.forEach((p, i) => {
+      let title = text(p.name.replace(EMOJI, " ").replace(/!+/g, "").replace(/^\s*הרשמה\s+ל/, "").replace(/\s+נפתחה\s*$/, ""));
+      if (!title || title.length > 60) { tally(skipped, "no title"); return; }
+      if (!parts.length && !/[א-ת]/.test(title) && r.durationText) title = `${title} – ${text(r.durationText)}`;
+
+      const when = scheduleIn(p.body);
+      if (typeof when === "string") { tally(skipped, when); return; }
+      // A price the organizer wrote — in coing's payment field or the text. coing
+      // shows a payment line on every paid program (the reservists' cooking night:
+      // "50 ש"ח כרטיס זוגי"); a program without one is free to join.
+      const priced = `${parts.length ? "" : r.paymentText ?? ""}\n${p.body}`.match(AMOUNT);
+      const signup = p.body.match(/(?:להרשמה|הרשמה)[^.]{0,40}?(https?:\/\/[^\s<>"'֐-׿]+)/);
+      const where = text((r.locationText ?? "").replace(/,\s*(Jerusalem|ירושלים)?,?\s*(Israel|ישראל)\s*$/, ""));
+      // What the program is, without what the app shows in its own rows: the
+      // hours (and the "ימים ג-ד" beside them, which would also read as grades
+      // 3–4 and sink the text), contact and signup lines, links, and an opening
+      // line that repeats the name.
+      const heading = text(r.name.replace(EMOJI, " ").replace(/!+/g, "")) ?? "";
+      const prose = sentences(parts.length ? p.prose : p.prose.replace(heading, ""))
+        .filter(s => s.search(SPAN) < 0 && !/https?:\/\/|לפרטים|להרשמה|וו?א?טסאפ|ווצאפ/.test(s));
+
+      const row = {
+        item_kind: "activity", schedule_type: "recurring",
+        category: CATEGORY_WORDS.find(([re]) => re.test(`${title} ${p.body}`))?.[1] ?? "learning",
+        topics: [], title, short_description: null,
+        description: cleanDescription(prose.join(" "), src.organization) ?? title,
+        organization_name: src.organization,
+        start_date: null, end_date: r.endsAt ? r.endsAt.slice(0, 10) : null,
+        start_time: when.start, end_time: when.end,
+        recurrence_freq: "weekly", recurrence_days: when.days,
+        attendance_mode: "onsite",
+        location_name: where ? `${src.organization}, ${where}` : src.organization,
+        neighborhood: src.neighborhood,
+        age_min: null, age_max: null,
+        price: priced ? amount(priced)! : 0, price_period: null,
+        registration_required: true,
+        registration_url: signup ? signup[1].replace(/[.,)]+$/, "") : page,
+        image_url: r.image ?? null,
+        status: "open", is_published: true,
+        source_url: parts.length ? `${page}#${i + 1}` : page,
+        source_name: src.organization, source_page: src.url,
+        last_seen_at: new Date().toISOString(),
+        _factsFromPage: true,
+      } as Row;
+      const a = coingAges(p.body);
+      if (a) [row.age_min, row.age_max] = a;
+      const res = refine(row, a ? undefined : src.page_ages);
+      if ("skip" in res) tally(skipped, res.skip);
+      else kept.push(res.row);
+    });
+  }
+  return { found: recs.length, kept, skipped };
+}
+
 Deno.serve(async (req) => {
   const secret = Deno.env.get("SCRAPER_SECRET");
   if (!secret || req.headers.get("x-scraper-secret") !== secret) return json({ error: "unauthorized" }, 401);
@@ -606,6 +828,11 @@ Deno.serve(async (req) => {
   const src = sources[index];
   const t0 = Date.now();
   try {
+    if (isCoing(src)) {
+      const c = coingRows(src, await coingRecords(src, key), today);
+      if (dry) return json({ source: index, url: src.url, found: c.found, kept: c.kept, skipped: c.skipped });
+      return json({ source: index, organization: src.organization, ...(await store(sb, src, today, c.found, c.kept, c.skipped)), ms: Date.now() - t0 });
+    }
     const items = await extract(src.url, key);
     const kept = new Map<string, Row>();
     const skipped: Record<string, number> = {};
@@ -626,23 +853,27 @@ Deno.serve(async (req) => {
 
     if (dry) return json({ source: index, url: src.url, found: items.length, club_pages_read: pagesRead, kept: rows, skipped, credits: await credits(key) });
 
-    const { data: existing, error: exErr } = await sb.from("activities")
-      .select("source_url").eq("source_name", src.organization).not("source_url", "is", null);
-    if (exErr) throw exErr;
-    const have = new Set((existing ?? []).map(e => e.source_url as string));
-    const inserted = rows.filter(r => !have.has(r.source_url as string)).length;
-    const updated = rows.length - inserted;
-    if (rows.length) { const { error } = await sb.from("activities").upsert(rows, { onConflict: "source_url" }); if (error) throw error; }
-
-    await sb.from("scrape_runs").upsert({ source_url: src.url, last_run_on: today, last_run_at: new Date().toISOString(),
-      last_status: "ok", found: items.length, kept: rows.length, inserted, updated, skipped, last_error: null });
-    return json({ source: index, organization: src.organization, found: items.length, club_pages_read: pagesRead, inserted, updated, skipped, ms: Date.now() - t0 });
+    return json({ source: index, organization: src.organization, club_pages_read: pagesRead, ...(await store(sb, src, today, items.length, rows, skipped)), ms: Date.now() - t0 });
   } catch (err) {
     if (!dry) await sb.from("scrape_runs").upsert({ source_url: src.url, last_run_on: today, last_run_at: new Date().toISOString(),
       last_status: "error", last_error: String(err).slice(0, 500) });
     return json({ source: index, organization: src.organization, error: String(err), ms: Date.now() - t0 }, 502);
   }
 });
+
+// Upsert one source's rows and record the run.
+async function store(sb: Sb, src: Source, today: string, found: number, rows: Row[], skipped: Record<string, number>) {
+  const { data: existing, error: exErr } = await sb.from("activities")
+    .select("source_url").eq("source_name", src.organization).not("source_url", "is", null);
+  if (exErr) throw exErr;
+  const have = new Set((existing ?? []).map((e: { source_url: string }) => e.source_url));
+  const inserted = rows.filter(r => !have.has(r.source_url as string)).length;
+  const updated = rows.length - inserted;
+  if (rows.length) { const { error } = await sb.from("activities").upsert(rows, { onConflict: "source_url" }); if (error) throw error; }
+  await sb.from("scrape_runs").upsert({ source_url: src.url, last_run_on: today, last_run_at: new Date().toISOString(),
+    last_status: "ok", found, kept: rows.length, inserted, updated, skipped, last_error: null });
+  return { found, inserted, updated, skipped };
+}
 
 // Unpublish rows that a source which succeeded today has not produced for STALE_DAYS.
 async function cleanup(sb: Sb, sources: Source[], today: string) {
@@ -665,12 +896,25 @@ async function recheck(sb: Sb, sources: Source[], offset: number, limit: number,
     .order("id").range(offset, offset + limit - 1);
   if (error) return { error: error.message };
   const out = { offset, checked: 0, updated: 0, deleted: 0, reasons: {} as Record<string, number>, done: (data ?? []).length < limit, removed: [] as string[], kept: [] as string[] };
+  // A coing source is one API read for all its rows, made once per batch.
+  const coingKept = new Map<string, Row[] | null>();
   for (const stored of data ?? []) {
     out.checked++;
     const src = sources.find(s => s.url === stored.source_page);
     let res: { row: Row } | { skip: string };
     if (!src) res = { skip: "source removed" };
-    else {
+    else if (isCoing(src)) {
+      if (!coingKept.has(src.url)) {
+        try { coingKept.set(src.url, coingRows(src, await coingRecords(src, key), new Date().toISOString().slice(0, 10)).kept); }
+        catch { coingKept.set(src.url, null); }
+      }
+      const fresh = coingKept.get(src.url);
+      // As with a club page that is down: an API that didn't answer says nothing about the row.
+      if (!fresh) { tally(out.reasons, "page unavailable, kept"); continue; }
+      lastFetch = "coing api";
+      const row = fresh.find(r => r.source_url === stored.source_url);
+      res = row ? { row } : { skip: "no longer listed with a schedule" };
+    } else {
       const hhmm5 = (v: unknown) => (v ? String(v).slice(0, 5) : null);
       let draft = { ...stored, start_time: hhmm5(stored.start_time), end_time: hhmm5(stored.end_time) } as Row;
       const page = new URL(src.url).href;
