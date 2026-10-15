@@ -264,6 +264,9 @@ type ClubPage = {
   text: string; slots: Slot[]; price?: number; price_period?: string | null;
   start_date?: string; end_date?: string; description?: string; registration_url?: string;
 };
+// A price of 0 is published only when the text says the activity is free, in
+// so many words — never because no price was found.
+const FREE = /(?<![א-ת])(?:ב?חינם|חינמי(?:ת|ים|ות)?|ללא\s+(?:כל\s+)?(?:עלות|תשלום)|אין\s+(?:עלות|תשלום)|הכניסה\s+(?:חופשית|ללא\s+תשלום)|השתתפות\s+חופשית)(?![א-ת])|\bfree of charge\b/i;
 const AMOUNT = /(?:₪\s*(\d[\d,]*(?:\.\d+)?))|(?:(\d[\d,]*(?:\.\d+)?)\s*(?:₪|ש"ח|ש״ח))/;
 const amount = (m: RegExpMatchArray | null) => (m ? Number((m[1] ?? m[2]).replace(/,/g, "")) : undefined);
 
@@ -295,7 +298,7 @@ function parseClubPage(html: string, pageUrl: string, org: string): ClubPage {
     const near = all.slice(Math.max(0, (priced.index ?? 0) - 40), (priced.index ?? 0) + priced[0].length + 40);
     out.price_period = /לחודש|חודשי/.test(near) ? "monthly" : /לשנה|שנתי|לתקופה|לכל התקופה|לקורס|לסדנה/.test(near) ? "total"
       : /למפגש|לשיעור|לכניסה/.test(near) ? "per_session" : null;
-  } else if (/(?:^|\s)(חינם|ללא עלות|ללא תשלום|הכניסה חופשית)(?:\s|$|[.,!])/.test(all)) {
+  } else if (FREE.test(all)) {
     out.price = 0; // stated free — the one case a zero price is published
   }
 
@@ -750,10 +753,11 @@ function coingRows(src: Source, recs: CoingRecord[], today: string) {
 
       const when = scheduleIn(p.body);
       if (typeof when === "string") { tally(skipped, when); return; }
-      // A price the organizer wrote — in coing's payment field or the text. coing
-      // shows a payment line on every paid program (the reservists' cooking night:
-      // "50 ש"ח כרטיס זוגי"); a program without one is free to join.
-      const priced = `${parts.length ? "" : r.paymentText ?? ""}\n${p.body}`.match(AMOUNT);
+      // A price the organizer wrote — in coing's payment field or the text — or
+      // the text saying it is free. A program that says neither has no price and
+      // is skipped like any other: a missing payment line is not a statement.
+      const said = `${parts.length ? "" : r.paymentText ?? ""}\n${p.body}`;
+      const priced = said.match(AMOUNT);
       const signup = p.body.match(/(?:להרשמה|הרשמה)[^.]{0,40}?(https?:\/\/[^\s<>"'֐-׿]+)/);
       const where = text((r.locationText ?? "").replace(/,\s*(Jerusalem|ירושלים)?,?\s*(Israel|ישראל)\s*$/, ""));
       // What the program is, without what the app shows in its own rows: the
@@ -777,7 +781,7 @@ function coingRows(src: Source, recs: CoingRecord[], today: string) {
         location_name: where ? `${src.organization}, ${where}` : src.organization,
         neighborhood: src.neighborhood,
         age_min: null, age_max: null,
-        price: priced ? amount(priced)! : 0, price_period: null,
+        price: priced ? amount(priced)! : FREE.test(said) ? 0 : null, price_period: null,
         registration_required: true,
         registration_url: signup ? signup[1].replace(/[.,)]+$/, "") : page,
         image_url: r.image ?? null,
@@ -913,7 +917,7 @@ async function recheck(sb: Sb, sources: Source[], offset: number, limit: number,
       if (!fresh) { tally(out.reasons, "page unavailable, kept"); continue; }
       lastFetch = "coing api";
       const row = fresh.find(r => r.source_url === stored.source_url);
-      res = row ? { row } : { skip: "no longer listed with a schedule" };
+      res = row ? { row } : { skip: "fails the gate or no longer listed" };
     } else {
       const hhmm5 = (v: unknown) => (v ? String(v).slice(0, 5) : null);
       let draft = { ...stored, start_time: hhmm5(stored.start_time), end_time: hhmm5(stored.end_time) } as Row;
