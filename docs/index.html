@@ -1006,65 +1006,78 @@
   .section-more:hover { color: var(--accent); background: var(--accent-wash); }
   .section-more .ic { width: 15px; height: 15px; stroke-width: 2.4; }
 
-  /* Sideways on home. The archive is the one that scrolls down. */
-  .rail-wrap { position: relative; width: 100%; }
-
-  .rail {
+  /* Home's three sections are posts: one activity at a time, swiped (or picked
+     by its dot) rather than scrolled, compact enough that the search, all three,
+     the filter and the top of the full list share the first screen. */
+  #appRoot { gap: 14px; }
+  .home-post { gap: 7px; }
+  .home-post .section-head h2 { font-size: calc(17px * var(--text-scale)); margin: 0; }
+  .posts { width: 100%; }
+  .posts-track {
     display: flex;
-    gap: 14px;
-    width: calc(100% + 28px);
-    margin-inline: -14px;
-    padding: 2px 14px 6px;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
-    touch-action: pan-x pan-y;
+    border-radius: var(--r-lg);
   }
-  .rail::-webkit-scrollbar { display: none; }
-  .rail > * { scroll-snap-align: start; }
-
-  /* No edge-fade mask and no overlay arrows. A mask cuts translucent bands into
-     the artwork that read as grubby smudges on a light ground, and the arrows
-     covered the very cards they were meant to help browse. The row simply
-     continues past the edge — which is what a scrollable row looks like.
-     Dragging with a mouse is wired up in JS (see wireRail). */
-  .rail.is-dragging {
-    cursor: grabbing;
-    scroll-snap-type: none;
-    user-select: none;
+  .posts-track::-webkit-scrollbar { display: none; }
+  @media (hover: hover) and (pointer: fine) { .posts-track { cursor: grab; user-select: none; } }
+  .post {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 88px;
+    padding: 7px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    cursor: pointer;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .rail { cursor: grab; }
+  .post-art { flex: none; width: 74px; height: 74px; border-radius: var(--r-md); }
+  .post-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .post-title {
+    font-family: var(--font-display);
+    font-size: calc(15px * var(--text-scale));
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--ink);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-
-  /* Where you are in the row. Shown only when the row actually scrolls, so a
-     short list never carries a meter that can't move. */
-  .rail-progress {
-    position: relative;
-    height: 3px;
-    width: 46px;
-    margin: 10px auto 0;
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    min-width: 0;
+    font-size: calc(12px * var(--text-scale));
+    color: var(--ink-soft);
+  }
+  .post-meta .ic { flex: none; width: 13px; height: 13px; stroke-width: 2.2; }
+  .post-meta span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .posts-dots { display: flex; justify-content: center; gap: 6px; margin-top: 7px; min-height: 7px; }
+  .posts-dots button {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: none;
     border-radius: 99px;
-    background: var(--line);
-    opacity: 0;
-    transition: opacity 0.2s var(--ease-out);
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
+    cursor: pointer;
+    transition: width 0.2s var(--ease-out), background 0.2s var(--ease-out);
   }
-  .rail-wrap[data-can-prev="true"] .rail-progress,
-  .rail-wrap[data-can-next="true"] .rail-progress { opacity: 1; }
-
-  .rail-progress-thumb {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    width: 40%;
-    border-radius: 99px;
-    background: var(--accent);
-    transform-origin: left center;
-    will-change: transform;
-  }
+  .posts-dots button[aria-current="true"] { width: 18px; background: var(--accent); }
+  .home-all { gap: 12px; }
 
   /* ---- Activity plate: the ink field. Halftone art carries the category. ---- */
   .plate-art {
@@ -1075,81 +1088,6 @@
   }
   .plate-art svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .plate-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-
-  /* One rounded, clipping box. The scrim used to be a square-cornered layer over
-     rounded art, which pushed dark wedges out past every corner. Clipping on the
-     card means no child can leak past the radius again.
-     Width is proportional so the next card always peeks instead of being sliced
-     at whatever the viewport happens to be. */
-  .card-lg {
-    position: relative;
-    flex: 0 0 auto;
-    width: min(300px, 82%);
-    display: flex;
-    flex-direction: column;
-    border: none;
-    background: none;
-    padding: 0;
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    cursor: pointer;
-    text-align: start;
-    font-family: inherit;
-    color: inherit;
-    transition: transform 0.18s var(--ease-out);
-  }
-  .card-lg:active { transform: scale(0.985); }
-
-  .card-lg .plate-art {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    border-radius: 0;
-  }
-
-  .card-lg-scrim {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(to top, hsl(20 30% 4% / 0.92) 0%, hsl(20 30% 4% / 0.66) 30%, hsl(20 30% 4% / 0.18) 56%, hsl(20 30% 4% / 0) 76%);
-  }
-
-  .card-lg-body {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    padding: 16px 17px 17px;
-  }
-
-  .card-lg-title {
-    font-family: var(--font-display);
-    font-size: calc(18.5px * var(--text-scale));
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.18;
-    color: #FFF8F2;
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-lg-meta {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: calc(12.5px * var(--text-scale));
-    font-weight: 600;
-    color: #F2E4D8;
-    margin: 0;
-    min-width: 0;
-  }
-  .card-lg-meta .ic { width: 14px; height: 14px; stroke-width: 2.3; stroke: #F2E4D8; opacity: 0.75; }
-  .card-lg-meta span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* The date stamp — pressed into the corner of the plate like a print date. */
   .date-stamp {
@@ -1436,7 +1374,8 @@
     justify-content: center;
     min-height: 48px;
   }
-  .auth-top .icon-btn { position: absolute; inset-inline-end: 0; top: 50%; translate: 0 -50%; }
+  .auth-top .icon-btn { position: absolute; inset-inline-start: 0; top: 50%; translate: 0 -50%; width: 38px; height: 38px; border-radius: 12px; }
+  .auth-top .icon-btn .ic { width: 18px; height: 18px; }
   .auth-mark {
     font-family: var(--font-display);
     font-size: calc(40px * var(--text-scale));
@@ -1447,7 +1386,6 @@
   .auth-mark i { font-style: normal; color: var(--gold); }
   .auth-art { align-self: center; max-width: 300px; }
   .auth-copy { text-align: center; }
-  .auth-copy .lede[hidden] { display: none; }
 
   /* Welcome: one centered column. The name is the headline; the skyline says
      which city before any sentence does. */
@@ -3147,7 +3085,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <div class="gate-art auth-art" id="authArt" aria-hidden="true"></div>
       <div class="gate-copy auth-copy">
         <h1 class="display display-lg" id="authTitleText"></h1>
-        <p class="lede" id="authTaglineText"></p>
       </div>
       <form class="auth-form" id="authForm" novalidate>
         <div class="field">
@@ -3190,37 +3127,42 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     <div class="data-notice" id="homeDataNotice" hidden></div>
 
-    <section class="section" id="weekSection">
+    <section class="section home-post" id="recommendedSection">
       <div class="section-head">
-        <h2 class="display display-md" id="weekTitleText"></h2>
-        <button type="button" class="section-more" id="weekArchiveLink"></button>
-      </div>
-      <div class="rail-wrap" id="railWrapWeek">
-        <div class="rail" id="previewWeek"></div>
-        <div class="rail-progress" aria-hidden="true"><span class="rail-progress-thumb"></span></div>
-      </div>
-    </section>
-
-    <section class="section" id="newSection">
-      <div class="section-head">
-        <h2 class="display display-md" id="newTitleText"></h2>
-        <button type="button" class="section-more" id="newArchiveLink"></button>
-      </div>
-      <div class="rail-wrap" id="railWrapNew">
-        <div class="rail" id="previewNew"></div>
-        <div class="rail-progress" aria-hidden="true"><span class="rail-progress-thumb"></span></div>
-      </div>
-    </section>
-
-    <section class="section" id="recommendedSection">
-      <div class="section-head">
-        <h2 class="display display-md" id="recommendedTitleText"></h2>
+        <h2 class="display" id="recommendedTitleText"></h2>
         <button type="button" class="section-more" id="recommendedArchiveLink"></button>
       </div>
-      <div class="rail-wrap" id="railWrapRecommended">
-        <div class="rail" id="previewRecommended"></div>
-        <div class="rail-progress" aria-hidden="true"><span class="rail-progress-thumb"></span></div>
+      <div class="posts" id="postsRecommended">
+        <div class="posts-track" id="previewRecommended"></div>
+        <div class="posts-dots"></div>
       </div>
+    </section>
+
+    <section class="section home-post" id="weekSection">
+      <div class="section-head">
+        <h2 class="display" id="weekTitleText"></h2>
+        <button type="button" class="section-more" id="weekArchiveLink"></button>
+      </div>
+      <div class="posts" id="postsWeek">
+        <div class="posts-track" id="previewWeek"></div>
+        <div class="posts-dots"></div>
+      </div>
+    </section>
+
+    <section class="section home-post" id="newSection">
+      <div class="section-head">
+        <h2 class="display" id="newTitleText"></h2>
+        <button type="button" class="section-more" id="newArchiveLink"></button>
+      </div>
+      <div class="posts" id="postsNew">
+        <div class="posts-track" id="previewNew"></div>
+        <div class="posts-dots"></div>
+      </div>
+    </section>
+
+    <section class="section home-all" id="allSection">
+      <div class="chip-row" id="homeCategoryChips" aria-label="Filter by category"></div>
+      <div class="fav-list" id="homeAllList"></div>
     </section>
   </div>
 
@@ -3600,6 +3542,31 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </svg>`;
   }
 
+  // The login plate: Jerusalem's light rail passing stone houses with arched
+  // windows, two cypresses and a low gold sun. Drawn here from plain shapes.
+  function loginArtSvg() {
+    const house = (x, w, h) => `<rect x="${x}" y="${56 - h}" width="${w}" height="${h}" fill="var(--stone)"/>
+      <path d="M${x + w / 2 - 3} ${56 - h + 14}v-4a3 3 0 0 1 6 0v4z" fill="var(--ink)" opacity=".55"/>`;
+    return `<svg viewBox="0 0 100 80" preserveAspectRatio="xMidYMid slice" role="presentation">
+      <rect width="100" height="80" fill="var(--art-ground)"/>
+      <circle cx="24" cy="22" r="12" fill="var(--gold)" opacity=".55"/>
+      ${house(4, 18, 26)}${house(24, 14, 34)}${house(62, 16, 30)}${house(80, 18, 24)}
+      <path d="M49 56c-4-10-3-26 2-34 5 8 6 24 2 34z" fill="var(--forest)"/>
+      <path d="M57 56c-3-8-2-20 2-27 4 7 5 19 2 27z" fill="var(--cat-wellbeing)"/>
+      <path d="M0 40h100" stroke="var(--ink)" stroke-width=".6"/>
+      <path d="M12 40v16M88 40v16" stroke="var(--ink)" stroke-width="1"/>
+      <rect x="0" y="56" width="100" height="24" fill="var(--forest)" opacity=".22"/>
+      <g>
+        <path d="M14 47h58a6 6 0 0 1 6 6v8H14z" fill="var(--accent)"/>
+        <path d="M44 47l6-7M50 40h6" stroke="var(--ink)" stroke-width=".8" fill="none"/>
+        ${[18, 28, 38, 48, 58].map(x => `<rect x="${x}" y="50" width="7" height="5" rx="1" fill="var(--surface)"/>`).join("")}
+        <rect x="68" y="50" width="6" height="5" rx="1" fill="var(--surface)"/>
+        <circle cx="24" cy="62" r="2.2" fill="var(--ink)"/><circle cx="64" cy="62" r="2.2" fill="var(--ink)"/>
+      </g>
+      <path d="M0 64.5h100" stroke="var(--ink)" stroke-width="1.2"/>
+    </svg>`;
+  }
+
   function kindLabel(a) {
     if (a.item_kind === "event") return L().kindEvent;
     if (a.item_kind === "activity" && a.schedule_type === "recurring") return L().kindClub;
@@ -3654,6 +3621,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   const previewRecommendedEl = document.getElementById("previewRecommended");
   const previewNewEl = document.getElementById("previewNew");
   const previewWeekEl = document.getElementById("previewWeek");
+  const homeCategoryChipsEl = document.getElementById("homeCategoryChips");
+  const homeAllListEl = document.getElementById("homeAllList");
+  const homeState = { category: null };
 
   const archiveScreenEl = document.getElementById("archiveScreen");
   const archiveSearchInputEl = document.getElementById("archiveSearchInput");
@@ -3840,176 +3810,105 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // Cards carry a nested save control, so they are role=button divs — a real
   // <button> inside a <button> gets hoisted out by the parser and breaks both.
   // Recommended register: the ink field owns the card, type sits inside it.
-  function cardLgHtml(a, i) {
+  // One post: the activity's picture, what it is, when and where.
+  function postHtml(a) {
     const when = whenText(a);
     return `
-      <div class="card-lg ink-in" role="button" tabindex="0" data-open-id="${a.id}" data-cat="${a.category}" style="animation-delay:${i * 70}ms">
-        ${plateArtHtml(a)}
-        ${dateStampHtml(a)}
-        ${saveBtnHtml(a, "save-btn")}
-        <span class="card-lg-scrim"></span>
-        <span class="card-lg-body">
-          <h3 class="card-lg-title">${a.title}</h3>
-          <p class="card-lg-meta">${icon("pin")}<span>${a.neighborhood || a.location_name}</span></p>
-          <p class="card-lg-meta">${icon("clock")}<span>${when.sub || when.main}</span></p>
-          ${friendsMetaHtml(a.id, "card-lg-meta")}
-        </span>
+      <div class="post" role="button" tabindex="0" data-open-id="${a.id}" data-cat="${a.category}">
+        ${plateArtHtml(a, "post-art")}
+        <div class="post-body">
+          <span class="card-sm-kind">${kindLabel(a)}</span>
+          <h3 class="post-title">${a.title}</h3>
+          <p class="post-meta">${icon("clock")}<span>${[when.main, when.sub].filter(Boolean).join(" · ")}</span></p>
+          <p class="post-meta">${icon("pin")}<span>${a.neighborhood || a.location_name}</span></p>
+        </div>
+        ${saveBtnHtml(a, "card-sm-save")}
       </div>`;
   }
 
-  // ---- Rail plumbing. scrollLeft is 0 at the inline start and runs negative
-  // in RTL, so every check works off its magnitude and every scroll is signed
-  // by direction — that keeps one implementation correct in both directions. ----
-  function railDirSign() { return LANG_DIR[currentLang] === "rtl" ? -1 : 1; }
+  // ---- Post carousels. One post per view: a swipe or a dot moves exactly one,
+  // and the dot of the post on screen is the cyan one. scrollLeft runs negative
+  // in RTL, so positions are read off its magnitude and written with its sign. ----
+  const POSTS_MAX = 5;
+  const postsDir = () => (LANG_DIR[currentLang] === "rtl" ? -1 : 1);
+  const postIndex = (track) => Math.round(Math.abs(track.scrollLeft) / Math.max(1, track.clientWidth));
 
-  // ---- Rail interaction. Native swipe on touch; click-drag with momentum on a
-  // pointer; a slim meter showing where you are in the row.
-  //
-  // Deliberately NOT hijacking the vertical wheel. Translating vertical intent
-  // sideways means a plain page scroll stops dead whenever the cursor happens to
-  // pass over a rail, which is the single most annoying thing a carousel can do.
-  // Trackpads already send deltaX and the browser handles that natively, so
-  // horizontal wheeling needs no code at all.
-  function updateRailState(wrap) {
-    const rail = wrap.querySelector(".rail");
-    if (!rail) return;
-    const pos = Math.abs(rail.scrollLeft);
-    const max = rail.scrollWidth - rail.clientWidth;
-    const EDGE = 20;
-    wrap.dataset.canPrev = String(pos > EDGE);
-    wrap.dataset.canNext = String(max > EDGE && pos < max - EDGE);
-
-    const thumb = wrap.querySelector(".rail-progress-thumb");
-    if (thumb) {
-      // Thumb length is the visible fraction; its travel is the scrolled fraction.
-      const frac = max > 0 ? Math.min(1, Math.max(0, pos / max)) : 0;
-      const visible = rail.scrollWidth > 0 ? Math.min(1, rail.clientWidth / rail.scrollWidth) : 1;
-      const travel = (1 - visible) * 100;
-      thumb.style.width = (visible * 100) + "%";
-      const dir = LANG_DIR[currentLang] === "rtl" ? -1 : 1;
-      thumb.style.transform = "translateX(" + (dir * frac * travel) + "%)";
-    }
+  function updatePostDots(wrap) {
+    const i = postIndex(wrap.querySelector(".posts-track"));
+    [...wrap.querySelector(".posts-dots").children].forEach((d, k) => d.setAttribute("aria-current", String(k === i)));
   }
 
-  function wireRail(wrap) {
-    const rail = wrap.querySelector(".rail");
-    rail.addEventListener("scroll", () => updateRailState(wrap), { passive: true });
-    new ResizeObserver(() => updateRailState(wrap)).observe(rail);
+  function goToPost(wrap, i) {
+    const track = wrap.querySelector(".posts-track");
+    const n = track.children.length;
+    const to = Math.max(0, Math.min(n - 1, i));
+    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.scrollTo({ left: postsDir() * to * track.clientWidth, behavior: smooth ? "smooth" : "auto" });
+    // The dot follows the choice at once; the scroll listener keeps it right for swipes.
+    [...wrap.querySelector(".posts-dots").children].forEach((d, k) => d.setAttribute("aria-current", String(k === to)));
+  }
 
-    let down = false, dragged = false, startX = 0, startScroll = 0;
-    let lastX = 0, lastT = 0, velocity = 0;
-    let glide = null;
-    const DRAG_MIN = 5;
-    const prevSnap = rail.style.scrollSnapType;
+  function fillPosts(wrap, list) {
+    const track = wrap.querySelector(".posts-track");
+    const dots = wrap.querySelector(".posts-dots");
+    track.innerHTML = list.length ? list.map(postHtml).join("") : `<p class="rail-empty">${L().emptyStateMsg}</p>`;
+    dots.innerHTML = list.length > 1
+      ? list.map((_, k) => `<button type="button" data-i="${k}" aria-label="${k + 1} / ${list.length}"></button>`).join("")
+      : "";
+    track.scrollLeft = 0;
+    updatePostDots(wrap);
+  }
 
-    const stopGlide = () => {
-      if (!glide) return;
-      cancelAnimationFrame(glide.frame);
-      clearTimeout(glide.safety);
-      glide.settle();
-    };
-
-    // Momentum. Friction decay per frame, normalised to ~60fps so a 120Hz screen
-    // does not coast twice as short. The settle is owned by a timer as well as by
-    // the frame loop: requestAnimationFrame is paused in a backgrounded tab, and
-    // without that guarantee the rail would freeze mid-glide with snapping off.
-    const startGlide = (v0) => {
-      const max = rail.scrollWidth - rail.clientWidth;
-      const minScroll = railDirSign() < 0 ? -max : 0;
-      const maxScroll = railDirSign() < 0 ? 0 : max;
-      const g = {
-        frame: 0, safety: 0, done: false,
-        settle() {
-          if (this.done) return;
-          this.done = true;
-          rail.style.scrollSnapType = prevSnap;
-          if (glide === this) glide = null;
-          updateRailState(wrap);
-        }
-      };
-      let v = v0;
-      let last = performance.now();
-      const tick = (now) => {
-        if (g.done) return;
-        const dt = Math.min(50, now - last) || 16.7;
-        last = now;
-        v *= Math.pow(0.94, dt / 16.7);
-        const next = Math.min(maxScroll, Math.max(minScroll, rail.scrollLeft - v * dt));
-        const hitEdge = next === rail.scrollLeft && Math.abs(v) > 0.01;
-        rail.scrollLeft = next;
-        if (Math.abs(v) < 0.02 || hitEdge) { clearTimeout(g.safety); g.settle(); return; }
-        g.frame = requestAnimationFrame(tick);
-      };
-      g.frame = requestAnimationFrame(tick);
-      g.safety = setTimeout(() => g.settle(), 1400);
-      glide = g;
-    };
-
-    rail.addEventListener("pointerdown", (e) => {
-      if (e.pointerType !== "mouse" || e.button !== 0) return;
-      stopGlide();
-      down = true; dragged = false;
-      startX = lastX = e.clientX;
-      lastT = performance.now();
-      velocity = 0;
-      startScroll = rail.scrollLeft;
+  // Touch swipes are native, held to one post by scroll-snap-stop. A mouse
+  // drag moves one post in the direction dragged; the click that ends a drag
+  // must not open the post.
+  function wirePosts(wrap) {
+    const track = wrap.querySelector(".posts-track");
+    track.addEventListener("scroll", () => updatePostDots(wrap), { passive: true });
+    wrap.querySelector(".posts-dots").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-i]");
+      if (b) goToPost(wrap, Number(b.dataset.i));
     });
-
-    rail.addEventListener("pointermove", (e) => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      if (!dragged && Math.abs(dx) < DRAG_MIN) return;
-      if (!dragged) {
-        dragged = true;
-        rail.classList.add("is-dragging");
-        rail.style.scrollSnapType = "none";
-        rail.setPointerCapture(e.pointerId);
-      }
-      const now = performance.now();
-      const dt = now - lastT;
-      if (dt > 0) velocity = (e.clientX - lastX) / dt; // px per ms, cursor space
-      lastX = e.clientX; lastT = now;
-      rail.scrollLeft = startScroll - dx;
-      e.preventDefault();
+    let x0 = null, lastDrag = 0;
+    track.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" && e.button === 0) x0 = e.clientX; });
+    track.addEventListener("pointerup", (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) < 30) return;
+      lastDrag = performance.now();
+      // Dragging toward the inline end brings the next post in.
+      goToPost(wrap, postIndex(track) + (dx * postsDir() < 0 ? 1 : -1));
     });
-
-    // A drag ends with a click event that must not open a card. Handled by a
-    // self-expiring timestamp rather than a one-shot listener: a listener armed
-    // on pointerup waits forever when no click follows (pointer released off the
-    // rail, cancelled gesture) and then eats the user next real tap.
-    let lastDragEnd = 0;
-    rail.addEventListener("click", (e) => {
-      if (performance.now() - lastDragEnd < 250) { e.stopPropagation(); e.preventDefault(); }
+    track.addEventListener("click", (e) => {
+      if (performance.now() - lastDrag < 250) { e.stopPropagation(); e.preventDefault(); }
     }, true);
-
-    const endDrag = (e) => {
-      if (!down) return;
-      down = false;
-      rail.classList.remove("is-dragging");
-      if (rail.hasPointerCapture?.(e.pointerId)) rail.releasePointerCapture(e.pointerId);
-      if (!dragged) return;
-      lastDragEnd = performance.now();
-      const stale = performance.now() - lastT > 90;   // finger stopped before release
-      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce || stale || Math.abs(velocity) < 0.08) {
-        rail.style.scrollSnapType = prevSnap;
-        updateRailState(wrap);
-        return;
-      }
-      startGlide(velocity);
-    };
-    rail.addEventListener("pointerup", endDrag);
-    rail.addEventListener("pointercancel", endDrag);
-    rail.addEventListener("dragstart", (e) => e.preventDefault());
-
-    updateRailState(wrap);
+    track.addEventListener("dragstart", (e) => e.preventDefault());
   }
 
-  // Wired from initAppUI, not here: updateRailState reads LANG_DIR, which is
-  // declared further down the file and would still be in its dead zone.
-  const railWrapRecommendedEl = document.getElementById("railWrapRecommended");
-  const railWrapWeekEl = document.getElementById("railWrapWeek");
-  const railWrapNewEl = document.getElementById("railWrapNew");
+  const postsRecommendedEl = document.getElementById("postsRecommended");
+  const postsWeekEl = document.getElementById("postsWeek");
+  const postsNewEl = document.getElementById("postsNew");
+
+  // The full catalog under the posts, soonest first, narrowed by one category chip.
+  function renderHomeAll() {
+    const t = L();
+    const chips = [{ key: null, label: t.chipAll }, ...categoryOrder().map(c => ({ key: c, label: t.categories[c] || c, color: CATEGORY_COLOR[c] }))];
+    homeCategoryChipsEl.innerHTML = chips.map(c => `
+      <button type="button" class="chip" aria-pressed="${homeState.category === c.key}" data-cat="${c.key ?? ""}"${c.color ? ` style="--chip-color:${c.color}"` : ""}>${c.label}</button>
+    `).join("");
+    const list = activities.filter(a => !homeState.category || a.category === homeState.category)
+      .sort((a, b) => activityTimestamp(a) - activityTimestamp(b));
+    homeAllListEl.innerHTML = list.length ? list.map(a => favRowHtml(a)).join("") : `<p class="rail-empty">${t.emptyStateMsg}</p>`;
+  }
+
+  homeCategoryChipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-cat]");
+    if (!btn) return;
+    const val = btn.dataset.cat || null;
+    homeState.category = homeState.category === val ? null : val;
+    renderHomeAll();
+  });
 
   function renderHome() {
     const t = L();
@@ -4049,17 +3948,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const noticeEl = document.getElementById("homeDataNotice");
     const noData = activitiesStatus !== "ready";
     noticeEl.hidden = !noData;
-    for (const id of ["weekSection", "newSection", "recommendedSection"]) document.getElementById(id).hidden = noData;
+    for (const id of ["recommendedSection", "weekSection", "newSection", "allSection"]) document.getElementById(id).hidden = noData;
     if (noData) { noticeEl.innerHTML = dataNoticeHtml(); return; }
     noticeEl.innerHTML = "";
 
-    const fill = (el, list) => {
-      el.innerHTML = list.length ? list.map(cardLgHtml).join("") : `<p class="rail-empty">${t.emptyStateMsg}</p>`;
-    };
-    fill(previewWeekEl, weekActivities().slice(0, 8));
-    fill(previewNewEl, newestActivities().slice(0, 8));
-    fill(previewRecommendedEl, recommendedActivities().slice(0, 6));
-    [railWrapWeekEl, railWrapNewEl, railWrapRecommendedEl].forEach(updateRailState);
+    fillPosts(postsRecommendedEl, recommendedActivities().slice(0, POSTS_MAX));
+    fillPosts(postsWeekEl, weekActivities().slice(0, POSTS_MAX));
+    fillPosts(postsNewEl, newestActivities().slice(0, POSTS_MAX));
+    renderHomeAll();
   }
 
   function homeCardHandler(e) {
@@ -4077,7 +3973,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     openActivityDetail(card.dataset.openId);
   }
 
-  for (const el of [previewWeekEl, previewNewEl, previewRecommendedEl]) {
+  for (const el of [previewWeekEl, previewNewEl, previewRecommendedEl, homeAllListEl]) {
     el.addEventListener("click", homeCardHandler);
     el.addEventListener("keydown", cardKeyHandler);
   }
@@ -4117,9 +4013,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   }
 
   function initAppUI() {
-    wireRail(railWrapWeekEl);
-    wireRail(railWrapNewEl);
-    wireRail(railWrapRecommendedEl);
+    [postsRecommendedEl, postsWeekEl, postsNewEl].forEach(wirePosts);
     renderHome();
   }
 
@@ -5528,12 +5422,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       welcomeTitle: "כל מה שקורה לנוער בירושלים",
       welcomeLede: "חוגים, סדנאות ואירועים במקום אחד.\nמוצאים, שומרים ונרשמים אצל המארגן.",
       welcomeStart: "בואו נתחיל", welcomeLogin: "כבר יש לי חשבון",
-      signupTitle: "נעים להכיר!", signupLede: "הירשם עם שם משתמש וסיסמה.",
-      loginTitle: "טוב לראות אותך!", loginLede: "התחבר עם שם המשתמש והסיסמה שלך.",
+      signupTitle: "נעים להכיר!",
+      loginTitle: "טוב לראות אותך!",
       signupSubmit: "יצירת חשבון", loginSubmit: "התחברות",
       switchToLogin: 'כבר יש לך חשבון? <b>התחברות</b>', switchToSignup: 'אין לך חשבון? <b>הרשמה</b>',
       backLabel: "חזרה",
-      homeHi: "היי", guestName: "אורח", homeHeadline: "מה קורה השבוע?", homeHeadlineGuest: "מה קורה השבוע?",
+      homeHi: "היי", guestName: "אורח", homeHeadline: "מה קורה בירושלים?", homeHeadlineGuest: "מה קורה בירושלים?",
       seeAll: "לארכיון", messagesLabel: "הודעות", messagesSoon: "ההודעות עוד בפיתוח.",
       stampWeekly: "שבועי", daysShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"],
       saveFailedMsg: "השמירה נכשלה. נסה שוב.",
@@ -5660,12 +5554,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       welcomeTitle: "كل ما يجري للشباب في القدس",
       welcomeLede: "نوادٍ وورشات وفعاليات في مكان واحد.\nتجد، تحفظ، وتسجّل عند المنظِّم.",
       welcomeStart: "لنبدأ", welcomeLogin: "لدي حساب بالفعل",
-      signupTitle: "أهلًا بك!", signupLede: "سجّل باسم مستخدم وكلمة مرور.",
-      loginTitle: "سعيدون بعودتك!", loginLede: "ادخل باسم المستخدم وكلمة المرور الخاصة بك.",
+      signupTitle: "أهلًا بك!",
+      loginTitle: "سعيدون بعودتك!",
       signupSubmit: "إنشاء حساب", loginSubmit: "تسجيل الدخول",
       switchToLogin: 'لديك حساب؟ <b>تسجيل الدخول</b>', switchToSignup: 'ليس لديك حساب؟ <b>إنشاء حساب</b>',
       backLabel: "رجوع",
-      homeHi: "أهلًا", guestName: "زائر", homeHeadline: "ما الذي يجري هذا الأسبوع؟", homeHeadlineGuest: "ما الذي يجري هذا الأسبوع؟",
+      homeHi: "أهلًا", guestName: "زائر", homeHeadline: "ما الذي يجري في القدس؟", homeHeadlineGuest: "ما الذي يجري في القدس؟",
       seeAll: "الأرشيف", messagesLabel: "الرسائل", messagesSoon: "الرسائل قيد التطوير.",
       stampWeekly: "أسبوعي", daysShort: ["أحد", "اثن", "ثلا", "أرب", "خمي", "جمع", "سبت"],
       saveFailedMsg: "فشل الحفظ. حاول مرة أخرى.",
@@ -5791,12 +5685,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       welcomeTitle: "Everything happening for teens in Jerusalem",
       welcomeLede: "Clubs, workshops and events in one place.\nFind, save, and sign up with the organizer.",
       welcomeStart: "Let's start", welcomeLogin: "I already have an account",
-      signupTitle: "Nice to meet you!", signupLede: "Sign up with a username and password.",
-      loginTitle: "Good to see you!", loginLede: "Sign in with your username and password.",
+      signupTitle: "Nice to meet you!",
+      loginTitle: "Good to see you!",
       signupSubmit: "Create account", loginSubmit: "Log in",
       switchToLogin: 'Already have an account? <b>Log in</b>', switchToSignup: 'No account yet? <b>Sign up</b>',
       backLabel: "Back",
-      homeHi: "Hi", guestName: "guest", homeHeadline: "What's on this week?", homeHeadlineGuest: "What's on this week?",
+      homeHi: "Hi", guestName: "guest", homeHeadline: "What's on in Jerusalem?", homeHeadlineGuest: "What's on in Jerusalem?",
       seeAll: "Archive", messagesLabel: "Messages", messagesSoon: "Messages are still in the works.",
       stampWeekly: "weekly", daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       saveFailedMsg: "Couldn't save that. Try again.",
@@ -5921,12 +5815,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       welcomeTitle: "Всё, что происходит для подростков в Иерусалиме",
       welcomeLede: "Кружки, воркшопы и события в одном месте.\nНаходи, сохраняй, записывайся у организатора.",
       welcomeStart: "Начать", welcomeLogin: "У меня уже есть аккаунт",
-      signupTitle: "Приятно познакомиться!", signupLede: "Зарегистрируйтесь с именем пользователя и паролем.",
-      loginTitle: "Рады снова видеть!", loginLede: "Войдите с вашим именем пользователя и паролем.",
+      signupTitle: "Приятно познакомиться!",
+      loginTitle: "Рады снова видеть!",
       signupSubmit: "Создать аккаунт", loginSubmit: "Войти",
       switchToLogin: 'Уже есть аккаунт? <b>Войти</b>', switchToSignup: 'Нет аккаунта? <b>Регистрация</b>',
       backLabel: "Назад",
-      homeHi: "Привет", guestName: "гость", homeHeadline: "Что на этой неделе?", homeHeadlineGuest: "Что на этой неделе?",
+      homeHi: "Привет", guestName: "гость", homeHeadline: "Что происходит в Иерусалиме?", homeHeadlineGuest: "Что происходит в Иерусалиме?",
       seeAll: "Архив", messagesLabel: "Сообщения", messagesSoon: "Сообщения ещё в разработке.",
       stampWeekly: "еженед.", daysShort: ["вс", "пн", "вт", "ср", "чт", "пт", "сб"],
       saveFailedMsg: "Не удалось сохранить. Попробуйте снова.",
@@ -6050,7 +5944,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     document.getElementById("welcomeStartBtn").textContent = t.welcomeStart;
     document.getElementById("welcomeLoginBtn").textContent = t.welcomeLogin;
     document.getElementById("welcomeArt").innerHTML = welcomeArtSvg();
-    document.getElementById("authArt").innerHTML = authArtSvg();
+    document.getElementById("authArt").innerHTML = authMode === "signup" ? authArtSvg() : loginArtSvg();
     const backBtn = document.getElementById("authBackBtn");
     backBtn.innerHTML = icon(rtl ? "chevronBack" : "chevron");
     backBtn.setAttribute("aria-label", t.backLabel);
@@ -6175,9 +6069,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const t = L();
     const signup = mode === "signup";
     document.getElementById("authTitleText").textContent = signup ? t.signupTitle : t.loginTitle;
-    const tagline = signup ? t.signupLede : t.loginLede;
-    document.getElementById("authTaglineText").textContent = tagline;
-    document.getElementById("authTaglineText").hidden = !tagline;
+    document.getElementById("authArt").innerHTML = signup ? authArtSvg() : loginArtSvg();
     authSubmitEl.textContent = signup ? t.signupSubmit : t.loginSubmit;
     authSwitchBtnEl.innerHTML = signup ? t.switchToLogin : t.switchToSignup;
     authPasswordEl.setAttribute("autocomplete", signup ? "new-password" : "current-password");
