@@ -3465,74 +3465,84 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // ---- Gate artwork. Two plates off the same press: the welcome sheet is
   // three inks overprinted wet, the signup sheet is the flyer wall they end
   // up on. Overprint is a real multiply on paper and a screen on black stock. ----
-  // The welcome plate: the Old City of Jerusalem — its crenellated wall and a
-  // gate with a pointed arch, the Tower of David, rooftops with small domes and
-  // a cypress, the Dome of the Rock and a minaret, and the Western Wall plaza in
-  // front. Drawn here from plain shapes, on a sky that stands apart from the page.
+  // The welcome plate: the Western Wall in large laid blocks across the front,
+  // the Dome of the Rock big at the centre with a low gold sun behind it, the
+  // Tower of David on the left, Jaffa Gate standing on the plaza at the right,
+  // cypresses, the Mount of Olives, a lamp and steps. Drawn here from plain
+  // shapes, on a sky that stands apart from the page.
   function welcomeArtSvg() {
-    // Merlons along a wall top: x from a to b, top edge at y.
-    const merlons = (a, b, y, step = 5) => {
+    const merlons = (a, b, y, w = 3, gap = 2) => {
       let m = "";
-      for (let x = a; x < b; x += step) m += `<rect x="${x}" y="${y - 3}" width="${step * 0.55}" height="3"/>`;
+      for (let x = a; x + w <= b; x += w + gap) m += `<rect x="${x}" y="${y - 3}" width="${w}" height="3"/>`;
       return m;
     };
-    // The Western Wall's courses, offset every other row like laid stone.
-    let courses = "";
-    for (let row = 0, y = 54; y < 68; row++, y += 3.5) {
-      courses += `<path d="M66 ${y}H170" stroke="var(--stone-deep)" stroke-width=".7"/>`;
-      for (let x = 69 + (row % 2) * 5; x < 170; x += 10) courses += `<path d="M${x} ${y}v3.5" stroke="var(--stone-deep)" stroke-width=".7"/>`;
+    // The Wall: three courses of big ashlars, every other course offset by half a block.
+    let blocks = "";
+    for (let row = 0; row < 3; row++) {
+      const y = 50 + row * 6.6;
+      for (let x = row % 2 ? -7 : 0; x < 120; x += 14) {
+        blocks += `<rect x="${Math.max(0, x) + .4}" y="${y + .4}" width="${Math.min(14, 120 - Math.max(0, x)) - .8}" height="5.8" rx=".8" fill="var(--stone)" stroke="var(--stone-deep)" stroke-width=".6"/>`;
+      }
     }
-    const tufts = [[80, 57], [101, 61], [123, 56], [146, 62], [162, 58]]
-      .map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.4" ry="1.3" fill="var(--forest)" opacity=".8"/>`).join("");
-    // Old City rooftops: flat stone blocks, a few with small domes.
-    const house = (x, w, h, dome) => `<rect x="${x}" y="${50 - h}" width="${w}" height="${h}" fill="var(--stone)"/>` +
-      (dome ? `<path d="M${x + w / 2 - 4} ${50 - h}a4 4 0 0 1 8 0z" fill="var(--stone-deep)"/>` : "") +
-      `<rect x="${x + w / 2 - 1.5}" y="${50 - h + 4}" width="3" height="4" rx="1.5" fill="var(--ink)" opacity=".45"/>`;
+    const tufts = [[18, 56], [47, 63], [74, 54], [99, 61]]
+      .map(([x, y]) => `<path d="M${x - 3} ${y}q3-3 6 0" stroke="var(--forest)" stroke-width="1.4" fill="none" stroke-linecap="round"/>`).join("");
     return `<svg viewBox="0 0 170 80" preserveAspectRatio="xMidYMid slice" role="presentation">
       <rect width="170" height="80" fill="var(--sky)"/>
-      <path d="M100 30Q124 20 146 25T170 24V50H100z" fill="var(--cat-wellbeing)" opacity=".45"/>
-      <circle cx="152" cy="15" r="8" fill="var(--gold)" opacity=".55"/>
+      <rect y="34" width="170" height="16" fill="var(--art-ground)" opacity=".7"/>
+      <circle cx="86" cy="27" r="24" fill="var(--gold)" opacity=".3"/>
+      <path d="M0 42Q30 32 60 38T120 34T170 38V52H0z" fill="var(--cat-wellbeing)" opacity=".4"/>
 
-      ${house(112, 14, 16, true)}${house(127, 12, 12, false)}${house(140, 16, 18, true)}${house(157, 13, 13, false)}
-      <path d="M135 50c-3-8-2-19 2-24 4 5 5 16 2 24z" fill="var(--forest)"/>
-
-      <rect x="80" y="30" width="40" height="17" fill="var(--accent)"/>
-      <path d="M83 35h34" stroke="var(--surface)" stroke-width="1.2" stroke-dasharray="3 2.2"/>
-      <rect x="88" y="23" width="24" height="8" fill="var(--accent)"/>
-      <path d="M87 24a13 12 0 0 1 26 0z" fill="var(--gold)"/>
-      <path d="M100 12v-3" stroke="var(--ink)" stroke-width=".9"/>
+      <g fill="var(--accent)">
+        <rect x="62" y="29" width="48" height="21"/>
+        <rect x="72" y="20" width="28" height="10"/>
+      </g>
+      <g fill="var(--surface)">
+        ${[66, 74, 82, 90, 98].map(x => `<path d="M${x} 40v-4a2.2 2.2 0 0 1 4.4 0v4z"/>`).join("")}
+        ${[76, 83, 90].map(x => `<rect x="${x}" y="23" width="3.6" height="3.6" rx="1.8"/>`).join("")}
+      </g>
+      <path d="M71 21a15 14 0 0 1 30 0z" fill="var(--gold)"/>
+      <path d="M86 7.5v-4" stroke="var(--ink)" stroke-width=".9"/>
+      <circle cx="86" cy="3" r=".9" fill="var(--ink)"/>
 
       <g fill="var(--stone-deep)">
-        <rect x="71" y="18" width="7" height="32"/>
-        <rect x="70" y="16" width="9" height="3"/>
-        <path d="M72 16l2.5-4 2.5 4z"/>
+        <rect x="2" y="34" width="40" height="16"/>
+        ${merlons(2, 42, 34)}
+        <rect x="18" y="12" width="10" height="24"/>
+        <rect x="16.5" y="19" width="13" height="2.2"/>
+        <rect x="19.5" y="7" width="7" height="6"/>
+        <path d="M19.5 7a3.5 3.5 0 0 1 7 0z"/>
       </g>
-      <rect x="73.2" y="24" width="2.6" height="4" rx="1.3" fill="var(--surface)"/>
+      <g fill="var(--ink)" opacity=".45">
+        <rect x="21.8" y="25" width="2.4" height="4" rx="1.2"/><rect x="8" y="40" width="2.2" height="4" rx="1.1"/><rect x="33" y="40" width="2.2" height="4" rx="1.1"/>
+      </g>
 
-      <g fill="var(--stone-deep)">
-        <rect x="34" y="16" width="14" height="38"/>
-        ${merlons(34, 48, 16, 3.5)}
+      <g fill="var(--forest)">
+        <path d="M113 50c-3-9-2-20 2-26 4 6 5 17 2 26z"/>
+        <path d="M120 50c-2-7-1-15 1.6-19 2.6 4 3.6 12 1.6 19z"/>
       </g>
-      <rect x="39" y="22" width="4" height="6" rx="2" fill="var(--ink)" opacity=".5"/>
+
+      ${blocks}${tufts}
 
       <g fill="var(--stone)">
-        <rect x="0" y="36" width="66" height="44"/>
-        ${merlons(0, 66, 36)}
-        <rect x="12" y="26" width="26" height="12"/>
-        ${merlons(12, 38, 26, 4.4)}
+        <rect x="128" y="24" width="38" height="46"/>
+        ${merlons(128, 166, 24, 3.4, 2.2)}
       </g>
-      <path d="M19 80V58q0-11 6-15 6 4 6 15v22z" fill="var(--ink)" opacity=".78"/>
-      <path d="M15 80V58q0-13 10-19 10 6 10 19v22" fill="none" stroke="var(--stone-deep)" stroke-width="1.6"/>
+      <path d="M128 24h38" stroke="var(--stone-deep)" stroke-width=".8"/>
+      <path d="M141 70V52q0-9 6-12 6 3 6 12v18z" fill="var(--ink)" opacity=".8"/>
+      <path d="M138 70V52q0-11 9-15 9 4 9 15v18" fill="none" stroke="var(--stone-deep)" stroke-width="1.4"/>
       <g fill="var(--ink)" opacity=".45">
-        <rect x="4" y="44" width="2.4" height="6" rx="1.2"/><rect x="46" y="44" width="2.4" height="6" rx="1.2"/>
-        <rect x="57" y="44" width="2.4" height="6" rx="1.2"/><rect x="23.8" y="30" width="2.4" height="5" rx="1.2"/>
+        <rect x="133" y="31" width="2.4" height="5" rx="1.2"/><rect x="145.8" y="29" width="2.4" height="5" rx="1.2"/><rect x="158.6" y="31" width="2.4" height="5" rx="1.2"/>
       </g>
+      <rect x="166" y="40" width="4" height="30" fill="var(--stone-deep)"/>
 
-      <rect x="66" y="50" width="104" height="18" fill="var(--stone)"/>
-      ${courses}${tufts}
-      <rect x="66" y="68" width="104" height="12" fill="var(--surface)"/>
-      <path d="M66 68H170" stroke="var(--stone-deep)" stroke-width="1"/>
-      <path d="M118 71v9" stroke="var(--stone-deep)" stroke-width="1.2"/>
+      <rect x="0" y="70" width="170" height="10" fill="var(--surface)"/>
+      <path d="M0 70H170" stroke="var(--stone-deep)" stroke-width=".9"/>
+      <g stroke="var(--stone-deep)" stroke-width=".8"><path d="M120 73h48M118 76.5h52"/></g>
+      <path d="M60 70V58" stroke="var(--ink)" stroke-width="1"/>
+      <path d="M57.6 58h4.8l-.8-3.6h-3.2z" fill="var(--gold)" stroke="var(--ink)" stroke-width=".6"/>
+      <g stroke="var(--ink)" stroke-width=".8" fill="none" stroke-linecap="round">
+        <path d="M44 14q2-2 4 0 2-2 4 0"/><path d="M118 10q1.6-1.6 3.2 0 1.6-1.6 3.2 0"/>
+      </g>
     </svg>`;
   }
 
