@@ -38,6 +38,8 @@
     --gold: #B8912A;
     --forest: #2E6B3A;
     --stone: #E3CB8F;
+    --stone-deep: #C7A963;
+    --sky: #BFE3EE;
     --line: #EADB9E;
     --line-strong: #111111;
     --chip-bg: #FBEDB4;
@@ -87,6 +89,8 @@
       --gold: #D4B04A;
       --forest: #6FB27A;
       --stone: #8C7440;
+      --stone-deep: #6F5A31;
+      --sky: #17323C;
       --line: #2E3226;
       --line-strong: #4A4F3E;
       --chip-bg: #262A20;
@@ -126,6 +130,8 @@
     --gold: #D4B04A;
     --forest: #6FB27A;
     --stone: #8C7440;
+    --stone-deep: #6F5A31;
+    --sky: #17323C;
     --line: #2E3226;
     --line-strong: #4A4F3E;
     --chip-bg: #262A20;
@@ -355,7 +361,16 @@
     transition: color 0.16s var(--ease-out);
   }
 
-  .bottom-nav-btn .ic { width: 23px; height: 23px; stroke-width: 1.9; }
+  .bottom-nav-btn .ic { width: 25px; height: 25px; stroke-width: 1.9; }
+  /* Icons only: the tab's name stays in the button for screen readers. */
+  .bottom-nav-btn span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .bottom-nav-btn:hover { color: var(--ink-soft); }
   .bottom-nav-btn[aria-current="true"] { color: var(--accent); }
   .bottom-nav-btn[aria-current="true"] .ic { stroke-width: 2.5; }
@@ -1423,19 +1438,13 @@
     width: 100%;
     max-width: 340px;
     aspect-ratio: 17 / 8;
-    margin: 22px 0 18px;
+    margin: 22px 0 28px;
     overflow: hidden;
     border-radius: var(--r-lg);
+    border: 1.5px solid var(--line-strong);
   }
 
   .welcome-art svg { width: 100%; height: 100%; display: block; }
-
-  .welcome-lede {
-    max-width: 40ch;
-    white-space: pre-line;
-    margin: 0 auto 26px;
-    text-wrap: pretty;
-  }
 
   .welcome-actions {
     width: 100%;
@@ -3067,7 +3076,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <h1 class="welcome-mark">מה בי<i>״</i>ם</h1>
       <p class="welcome-title" id="welcomeTitle"></p>
       <div class="welcome-art" id="welcomeArt" aria-hidden="true"></div>
-      <p class="lede welcome-lede" id="welcomeLede"></p>
       <div class="welcome-actions">
         <button type="button" class="plate-btn" id="welcomeStartBtn"></button>
         <button type="button" class="outline-btn" id="welcomeLoginBtn"></button>
@@ -3457,37 +3465,53 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // ---- Gate artwork. Two plates off the same press: the welcome sheet is
   // three inks overprinted wet, the signup sheet is the flyer wall they end
   // up on. Overprint is a real multiply on paper and a screen on black stock. ----
-  // The welcome plate is Jerusalem, pulled in the app's inks: the Old City wall
-  // and its gate, the Tower of David, the golden dome, and the Chords Bridge for
-  // the modern city — overprinted, with a sun behind them.
+  // The welcome plate: the Western Wall plaza with the Dome of the Rock behind
+  // it, the minaret at the corner and trees toward the Mount of Olives — drawn
+  // here from plain shapes, on a sky that stands apart from the page.
   function welcomeArtSvg() {
-    // Crenellations along the top of the wall, one merlon every 8 units.
-    let merlons = "";
-    for (let x = 2; x < 170; x += 8) merlons += `<rect x="${x}" y="51" width="4.5" height="5"/>`;
+    // Courses of the wall, and the green that grows from its joints.
+    let courses = "";
+    for (let row = 0, y = 48; y < 66; row++, y += 4) {
+      courses += `<path d="M44 ${y}H170" stroke="var(--stone-deep)" stroke-width=".8"/>`;
+      for (let x = 48 + (row % 2) * 6; x < 170; x += 12) courses += `<path d="M${x} ${y}v4" stroke="var(--stone-deep)" stroke-width=".8"/>`;
+    }
+    const tufts = [[58, 52], [77, 56], [96, 50], [118, 58], [139, 53], [157, 60]]
+      .map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.4" fill="var(--forest)" opacity=".8"/>`).join("");
     return `<svg viewBox="0 0 170 80" preserveAspectRatio="xMidYMid slice" role="presentation">
-      <rect width="170" height="80" fill="var(--art-ground)"/>
-      <circle cx="120" cy="30" r="21" fill="var(--gold)" opacity=".55"/>
-      <g fill="var(--accent)">
-        <rect x="26" y="20" width="15" height="38"/>
-        <rect x="29" y="12" width="9" height="9"/>
-        <circle cx="33.5" cy="11.5" r="4.5"/>
-        <rect x="32.6" y="3" width="1.8" height="5"/>
+      <rect width="170" height="80" fill="var(--sky)"/>
+      <path d="M86 34Q110 18 136 24T170 22V46H86z" fill="var(--cat-wellbeing)" opacity=".5"/>
+      <g fill="var(--forest)">
+        <ellipse cx="122" cy="38" rx="11" ry="7"/><ellipse cx="139" cy="35" rx="10" ry="8"/>
+        <ellipse cx="156" cy="38" rx="12" ry="7"/><ellipse cx="112" cy="43" rx="8" ry="4.5"/>
+        <path d="M146 44c-2-6-1-14 2-18 3 4 4 12 2 18z"/>
       </g>
-      <g fill="var(--gold)">
-        <rect x="78" y="40" width="30" height="16"/>
-        <path d="M80 41a13 13 0 0 1 26 0z"/>
-        <rect x="92.2" y="24" width="1.6" height="5"/>
+      <rect x="56" y="27" width="56" height="18" fill="var(--accent)"/>
+      <path d="M60 32h48" stroke="var(--surface)" stroke-width="1.4" stroke-dasharray="3.4 2.4"/>
+      <rect x="67" y="19" width="34" height="9" fill="var(--accent)"/>
+      <path d="M71 22h26" stroke="var(--surface)" stroke-width="1" stroke-dasharray="2.4 2"/>
+      <path d="M66 20a18 16 0 0 1 36 0z" fill="var(--gold)"/>
+      <path d="M84 4v-3" stroke="var(--ink)" stroke-width="1"/>
+      <circle cx="46" cy="41" r="5" fill="var(--cat-gaming)"/>
+      <rect x="41" y="41" width="10" height="5" fill="var(--stone-deep)"/>
+      <g fill="var(--stone-deep)">
+        <rect x="17" y="14" width="11" height="34"/>
+        <rect x="19" y="8" width="7" height="7"/>
+        <path d="M19 8l3.5-4 3.5 4z"/>
       </g>
+      <g fill="var(--surface)"><rect x="20.5" y="20" width="4" height="5" rx="2"/><rect x="20.5" y="31" width="4" height="5" rx="2"/></g>
+      <rect x="44" y="45" width="126" height="21" fill="var(--stone)"/>
+      ${courses}${tufts}
       <g fill="var(--stone)">
-        <rect x="0" y="55" width="170" height="25"/>
-        ${merlons}
+        <rect x="0" y="44" width="44" height="36"/>
+        <rect x="6" y="38" width="20" height="8"/>
       </g>
-      <path d="M58 80v-13a7 7 0 0 1 14 0v13z" fill="var(--forest)"/>
-      <g stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round" fill="none" opacity=".85">
-        <path d="M152 12l-3 44"/>
-        <path d="M151.5 18l-24 34M151 24l-17 28M150.6 30l-10 22M151.6 18l14 34M151 24l9 28"/>
-        <path d="M122 54h48" stroke-width="1.6"/>
+      <g fill="var(--stone-deep)">
+        <path d="M6 80v-12a5 5 0 0 1 10 0v12z"/><path d="M22 80v-12a5 5 0 0 1 10 0v12z"/>
+        <rect x="4" y="52" width="36" height="2"/>
       </g>
+      <rect x="44" y="66" width="126" height="14" fill="var(--surface)"/>
+      <path d="M44 66H170" stroke="var(--stone-deep)" stroke-width="1"/>
+      <path d="M108 70v10" stroke="var(--stone-deep)" stroke-width="1.2"/>
     </svg>`;
   }
 
@@ -4590,11 +4614,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <h1 class="display display-xl" style="margin-top:14px">${a.title}</h1>
         ${a.organization_name ? `<p class="detail-host">${t.hostedBy} <b>${a.organization_name}</b></p>` : ""}
       </div>
+      ${a.description && a.description !== a.title ? `<p class="detail-desc">${a.description}</p>` : ""}
       ${a.short_description ? `<p class="lede" style="max-width:none">${a.short_description}</p>` : ""}
       <div class="fact-list">${factRowsFor(a)}</div>
       <div id="detailFriends"></div>
       <div class="rev-block" id="detailReviews"></div>
-      <p class="detail-desc">${a.description}</p>
       ${(a.topics || []).length ? `<div class="topic-tags">${a.topics.map(x => `<span class="topic-tag">${x}</span>`).join("")}</div>` : ""}
     `;
 
@@ -5420,7 +5444,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       emptyStateMsg: "לא נמצאו פעילויות התואמות לחיפוש.", clearFiltersBtn: "איפוס סינון",
       recommendedSectionTitle: "המלצות עבורך", weekSectionTitle: "פעילויות השבוע", newSectionTitle: "חדש",
       welcomeTitle: "כל מה שקורה לנוער בירושלים",
-      welcomeLede: "חוגים, סדנאות ואירועים במקום אחד.\nמוצאים, שומרים ונרשמים אצל המארגן.",
       welcomeStart: "בואו נתחיל", welcomeLogin: "כבר יש לי חשבון",
       signupTitle: "נעים להכיר!",
       loginTitle: "טוב לראות אותך!",
@@ -5552,7 +5575,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       emptyStateMsg: "لم يتم العثور على أنشطة مطابقة للبحث.", clearFiltersBtn: "إعادة ضبط الفلتر",
       recommendedSectionTitle: "موصى بها لك", weekSectionTitle: "أنشطة هذا الأسبوع", newSectionTitle: "جديد",
       welcomeTitle: "كل ما يجري للشباب في القدس",
-      welcomeLede: "نوادٍ وورشات وفعاليات في مكان واحد.\nتجد، تحفظ، وتسجّل عند المنظِّم.",
       welcomeStart: "لنبدأ", welcomeLogin: "لدي حساب بالفعل",
       signupTitle: "أهلًا بك!",
       loginTitle: "سعيدون بعودتك!",
@@ -5683,7 +5705,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       emptyStateMsg: "No activities match your search.", clearFiltersBtn: "Clear filters",
       recommendedSectionTitle: "Recommended for you", weekSectionTitle: "This week", newSectionTitle: "New",
       welcomeTitle: "Everything happening for teens in Jerusalem",
-      welcomeLede: "Clubs, workshops and events in one place.\nFind, save, and sign up with the organizer.",
       welcomeStart: "Let's start", welcomeLogin: "I already have an account",
       signupTitle: "Nice to meet you!",
       loginTitle: "Good to see you!",
@@ -5813,7 +5834,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       emptyStateMsg: "Не найдено занятий, соответствующих поиску.", clearFiltersBtn: "Сбросить фильтры",
       recommendedSectionTitle: "Рекомендуем вам", weekSectionTitle: "На этой неделе", newSectionTitle: "Новое",
       welcomeTitle: "Всё, что происходит для подростков в Иерусалиме",
-      welcomeLede: "Кружки, воркшопы и события в одном месте.\nНаходи, сохраняй, записывайся у организатора.",
       welcomeStart: "Начать", welcomeLogin: "У меня уже есть аккаунт",
       signupTitle: "Приятно познакомиться!",
       loginTitle: "Рады снова видеть!",
@@ -5940,7 +5960,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const t = L();
     const rtl = LANG_DIR[currentLang] === "rtl";
     document.getElementById("welcomeTitle").textContent = t.welcomeTitle;
-    document.getElementById("welcomeLede").textContent = t.welcomeLede;
     document.getElementById("welcomeStartBtn").textContent = t.welcomeStart;
     document.getElementById("welcomeLoginBtn").textContent = t.welcomeLogin;
     document.getElementById("welcomeArt").innerHTML = welcomeArtSvg();
