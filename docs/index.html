@@ -1493,7 +1493,8 @@
   .welcome-art svg { width: 100%; height: 100%; display: block; }
 
   .welcome-lede {
-    max-width: 32ch;
+    max-width: 40ch;
+    white-space: pre-line;
     margin: 0 auto 26px;
     text-wrap: pretty;
   }
@@ -3134,7 +3135,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <button type="button" class="outline-btn" id="welcomeLoginBtn"></button>
         <button type="button" class="text-link welcome-guest" id="guestBtn"></button>
       </div>
-      <p class="gate-note" id="welcomeGuestNote"></p>
     </main>
   </div>
 
@@ -3190,13 +3190,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     <div class="data-notice" id="homeDataNotice" hidden></div>
 
-    <section class="section" id="recommendedSection">
+    <section class="section" id="weekSection">
       <div class="section-head">
-        <h2 class="display display-md" id="recommendedTitleText"></h2>
-        <button type="button" class="section-more" id="recommendedArchiveLink"></button>
+        <h2 class="display display-md" id="weekTitleText"></h2>
+        <button type="button" class="section-more" id="weekArchiveLink"></button>
       </div>
-      <div class="rail-wrap" id="railWrapRecommended">
-        <div class="rail" id="previewRecommended"></div>
+      <div class="rail-wrap" id="railWrapWeek">
+        <div class="rail" id="previewWeek"></div>
         <div class="rail-progress" aria-hidden="true"><span class="rail-progress-thumb"></span></div>
       </div>
     </section>
@@ -3206,9 +3206,21 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <h2 class="display display-md" id="newTitleText"></h2>
         <button type="button" class="section-more" id="newArchiveLink"></button>
       </div>
-      <div class="stack" id="previewNew"></div>
-      <div id="newSentinel" aria-hidden="true"></div>
-      <p class="rail-empty" id="newAllShown" hidden></p>
+      <div class="rail-wrap" id="railWrapNew">
+        <div class="rail" id="previewNew"></div>
+        <div class="rail-progress" aria-hidden="true"><span class="rail-progress-thumb"></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="recommendedSection">
+      <div class="section-head">
+        <h2 class="display display-md" id="recommendedTitleText"></h2>
+        <button type="button" class="section-more" id="recommendedArchiveLink"></button>
+      </div>
+      <div class="rail-wrap" id="railWrapRecommended">
+        <div class="rail" id="previewRecommended"></div>
+        <div class="rail-progress" aria-hidden="true"><span class="rail-progress-thumb"></span></div>
+      </div>
     </section>
   </div>
 
@@ -3641,6 +3653,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   const searchInput = document.getElementById("searchInput");
   const previewRecommendedEl = document.getElementById("previewRecommended");
   const previewNewEl = document.getElementById("previewNew");
+  const previewWeekEl = document.getElementById("previewWeek");
 
   const archiveScreenEl = document.getElementById("archiveScreen");
   const archiveSearchInputEl = document.getElementById("archiveSearchInput");
@@ -3755,6 +3768,28 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return sorted;
   }
 
+  // What meets between today and Saturday and can still be joined: open
+  // activities whose weekday falls in what is left of this week inside their
+  // season, and one-offs dated in it. Soonest first.
+  function weekActivities() {
+    const ymdLocal = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const days = [];
+    for (let d = new Date(today); d.getDay() !== 0 || days.length === 0; d.setDate(d.getDate() + 1)) {
+      days.push({ dow: d.getDay(), iso: ymdLocal(d), at: d.getTime() });
+      if (d.getDay() === 6) break;
+    }
+    const hits = [];
+    for (const a of activities) {
+      if ((a.status || "open") !== "open") continue;
+      const hit = a.schedule_type === "recurring"
+        ? days.find(d => (a.recurrence_days || []).includes(d.dow) && (!a.start_date || a.start_date <= d.iso) && (!a.end_date || a.end_date >= d.iso))
+        : days.find(d => a.start_date === d.iso);
+      if (hit) hits.push({ a, at: hit.at });
+    }
+    return hits.sort((x, y) => x.at - y.at || String(x.a.start_time || "").localeCompare(String(y.a.start_time || ""))).map(h => h.a);
+  }
+
   function newestActivities() {
     return [...activities].sort((a, b) => {
       if (a.created_at && b.created_at) return new Date(b.created_at) - new Date(a.created_at);
@@ -3822,28 +3857,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </div>`;
   }
 
-  // New register: smaller, quieter, and it keeps going downward.
-  function cardSmHtml(a, i) {
-    const when = whenText(a);
-    return `
-      <div class="card-sm ink-in" role="button" tabindex="0" data-open-id="${a.id}" data-cat="${a.category}" style="animation-delay:${i * 55}ms">
-        ${plateArtHtml(a)}
-        <span class="card-sm-body">
-          <span class="card-sm-kind">${kindLabel(a)}</span>
-          <h3 class="card-sm-title">${a.title}</h3>
-          <p class="card-sm-meta">${icon("calendar")}<span>${when.main}</span></p>
-          ${friendsMetaHtml(a.id, "card-sm-meta")}
-        </span>
-        ${saveBtnHtml(a, "card-sm-save")}
-      </div>`;
-  }
-
   // ---- Rail plumbing. scrollLeft is 0 at the inline start and runs negative
   // in RTL, so every check works off its magnitude and every scroll is signed
   // by direction — that keeps one implementation correct in both directions. ----
-  const HOME_NEW_STEP = 4;
-  const homeState = { newShown: HOME_NEW_STEP };
-
   function railDirSign() { return LANG_DIR[currentLang] === "rtl" ? -1 : 1; }
 
   // ---- Rail interaction. Native swipe on touch; click-drag with momentum on a
@@ -3992,31 +4008,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // Wired from initAppUI, not here: updateRailState reads LANG_DIR, which is
   // declared further down the file and would still be in its dead zone.
   const railWrapRecommendedEl = document.getElementById("railWrapRecommended");
-
-  // The new-activities stack keeps going down: it grows as the user reaches
-  // its end, up to the full catalog, then says so instead of ending silently.
-  const newSentinelEl = document.getElementById("newSentinel");
-  const newAllShownEl = document.getElementById("newAllShown");
-
-  function appendMoreNew() {
-    const all = newestActivities();
-    if (homeState.newShown >= all.length) return;
-    const from = homeState.newShown;
-    homeState.newShown = Math.min(all.length, from + HOME_NEW_STEP);
-    const slice = all.slice(from, homeState.newShown);
-    previewNewEl.insertAdjacentHTML("beforeend", slice.map((a, i) => cardSmHtml(a, i)).join(""));
-    updateNewFooter(all.length);
-  }
-
-  function updateNewFooter(total) {
-    const done = homeState.newShown >= total;
-    newAllShownEl.hidden = !done;
-    newAllShownEl.textContent = done ? L().allShownMsg : "";
-  }
-
-  new IntersectionObserver((entries) => {
-    if (entries.some(e => e.isIntersecting) && !appRootEl.hidden) appendMoreNew();
-  }, { rootMargin: "300px" }).observe(newSentinelEl);
+  const railWrapWeekEl = document.getElementById("railWrapWeek");
+  const railWrapNewEl = document.getElementById("railWrapNew");
 
   function renderHome() {
     const t = L();
@@ -4043,34 +4036,30 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     msgBtn.setAttribute("aria-label", t.messagesLabel);
     msgBtn.hidden = guest;
 
-    document.getElementById("recommendedTitleText").textContent = guest ? t.generalSectionTitle : t.recommendedSectionTitle;
+    document.getElementById("weekTitleText").textContent = t.weekSectionTitle;
+    document.getElementById("recommendedTitleText").textContent = t.recommendedSectionTitle;
     document.getElementById("newTitleText").textContent = t.newSectionTitle;
-    document.getElementById("recommendedArchiveLink").innerHTML = `${t.seeAll}${icon("chevron")}`;
-    document.getElementById("newArchiveLink").innerHTML = `${t.seeAll}${icon("chevron")}`;
+    for (const id of ["weekArchiveLink", "newArchiveLink", "recommendedArchiveLink"]) {
+      document.getElementById(id).innerHTML = `${t.seeAll}${icon("chevron")}`;
+    }
 
-    // With nothing to show, two empty rails each saying "no matching results"
-    // would read as a search that came up dry. Replace both with one notice
+    // With nothing to show, three empty rails each saying "no matching results"
+    // would read as a search that came up dry. Replace them with one notice
     // that says what actually happened.
     const noticeEl = document.getElementById("homeDataNotice");
     const noData = activitiesStatus !== "ready";
     noticeEl.hidden = !noData;
-    document.getElementById("recommendedSection").hidden = noData;
-    document.getElementById("newSection").hidden = noData;
+    for (const id of ["weekSection", "newSection", "recommendedSection"]) document.getElementById(id).hidden = noData;
     if (noData) { noticeEl.innerHTML = dataNoticeHtml(); return; }
     noticeEl.innerHTML = "";
 
-    const recommended = recommendedActivities().slice(0, 6);
-    const allNew = newestActivities();
-    homeState.newShown = Math.min(allNew.length, Math.max(HOME_NEW_STEP, homeState.newShown));
-    const newest = allNew.slice(0, homeState.newShown);
-    previewRecommendedEl.innerHTML = recommended.length
-      ? recommended.map(cardLgHtml).join("")
-      : `<p class="rail-empty">${t.emptyStateMsg}</p>`;
-    previewNewEl.innerHTML = newest.length
-      ? newest.map(cardSmHtml).join("")
-      : `<p class="rail-empty">${t.emptyStateMsg}</p>`;
-    updateNewFooter(allNew.length);
-    updateRailState(railWrapRecommendedEl);
+    const fill = (el, list) => {
+      el.innerHTML = list.length ? list.map(cardLgHtml).join("") : `<p class="rail-empty">${t.emptyStateMsg}</p>`;
+    };
+    fill(previewWeekEl, weekActivities().slice(0, 8));
+    fill(previewNewEl, newestActivities().slice(0, 8));
+    fill(previewRecommendedEl, recommendedActivities().slice(0, 6));
+    [railWrapWeekEl, railWrapNewEl, railWrapRecommendedEl].forEach(updateRailState);
   }
 
   function homeCardHandler(e) {
@@ -4088,10 +4077,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     openActivityDetail(card.dataset.openId);
   }
 
-  previewRecommendedEl.addEventListener("click", homeCardHandler);
-  previewNewEl.addEventListener("click", homeCardHandler);
-  previewRecommendedEl.addEventListener("keydown", cardKeyHandler);
-  previewNewEl.addEventListener("keydown", cardKeyHandler);
+  for (const el of [previewWeekEl, previewNewEl, previewRecommendedEl]) {
+    el.addEventListener("click", homeCardHandler);
+    el.addEventListener("keydown", cardKeyHandler);
+  }
 
   document.getElementById("homeUserBtn").addEventListener("click", () => {
     if (isGuestMode()) showSettings(); else showProfile();
@@ -4103,6 +4092,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   document.getElementById("recommendedArchiveLink").addEventListener("click", () => showArchive("all"));
   document.getElementById("newArchiveLink").addEventListener("click", () => showArchive("new"));
+  document.getElementById("weekArchiveLink").addEventListener("click", () => showArchive("week"));
 
   searchInput.addEventListener("input", (e) => {
     const q = e.target.value.trim();
@@ -4127,13 +4117,15 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   }
 
   function initAppUI() {
+    wireRail(railWrapWeekEl);
+    wireRail(railWrapNewEl);
     wireRail(railWrapRecommendedEl);
     renderHome();
   }
 
   // ---- Archive (full, searchable catalog reached from Home's section links) ----
   function visibleArchiveList() {
-    const base = archiveState.mode === "new" ? newestActivities() : recommendedActivities();
+    const base = archiveState.mode === "new" ? newestActivities() : archiveState.mode === "week" ? weekActivities() : recommendedActivities();
     return base.filter(a =>
       matchesQuery(a, archiveState.q) &&
       (!archiveState.category || a.category === archiveState.category) &&
@@ -4149,7 +4141,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   function renderArchive() {
     const t = L();
-    document.getElementById("archiveTitleText").textContent = archiveState.mode === "new" ? t.newSectionTitle : (isGuestMode() ? t.generalSectionTitle : t.recommendedSectionTitle);
+    document.getElementById("archiveTitleText").textContent = archiveState.mode === "new" ? t.newSectionTitle
+      : archiveState.mode === "week" ? t.weekSectionTitle : t.recommendedSectionTitle;
     archiveSearchInputEl.placeholder = t.searchPlaceholder;
 
     const catChips = [{ key: null, label: t.chipAll }, ...categoryOrder().map(c => ({ key: c, label: t.categories[c] || c, color: CATEGORY_COLOR[c] }))];
@@ -5531,20 +5524,19 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favoriteLabel: "הוספה למועדפים", unfavoriteLabel: "הסרה מהמועדפים", favDetailCloseLabel: "סגירה",
       guestGreeting: "היי, אורח 👋", greeting: n => `היי, ${n} 👋`,
       emptyStateMsg: "לא נמצאו פעילויות התואמות לחיפוש.", clearFiltersBtn: "איפוס סינון",
-      recommendedSectionTitle: "מומלצות עבורך", generalSectionTitle: "פעילויות", newSectionTitle: "חדש",
+      recommendedSectionTitle: "המלצות עבורך", weekSectionTitle: "פעילויות השבוע", newSectionTitle: "חדש",
       welcomeTitle: "כל מה שקורה לנוער בירושלים",
-      welcomeLede: "חוגים, סדנאות ואירועים במקום אחד. מוצאים משהו, שומרים, ונרשמים ישירות אצל המארגן.",
+      welcomeLede: "חוגים, סדנאות ואירועים במקום אחד.\nמוצאים, שומרים ונרשמים אצל המארגן.",
       welcomeStart: "בואו נתחיל", welcomeLogin: "כבר יש לי חשבון",
-      welcomeGuestNote: "שמירת מועדפים ומעקב אחרי חברים דורשים חשבון.",
-      signupTitle: "נעים להכיר!", signupLede: "",
-      loginTitle: "טוב לראות אותך", loginLede: "התחבר עם שם המשתמש והסיסמה שלך.",
+      signupTitle: "נעים להכיר!", signupLede: "הירשם עם שם משתמש וסיסמה.",
+      loginTitle: "טוב לראות אותך!", loginLede: "התחבר עם שם המשתמש והסיסמה שלך.",
       signupSubmit: "יצירת חשבון", loginSubmit: "התחברות",
       switchToLogin: 'כבר יש לך חשבון? <b>התחברות</b>', switchToSignup: 'אין לך חשבון? <b>הרשמה</b>',
       backLabel: "חזרה",
       homeHi: "היי", guestName: "אורח", homeHeadline: "מה קורה השבוע?", homeHeadlineGuest: "מה קורה השבוע?",
       seeAll: "לארכיון", messagesLabel: "הודעות", messagesSoon: "ההודעות עוד בפיתוח.",
       stampWeekly: "שבועי", daysShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"],
-      allShownMsg: "זה הכל לעכשיו.", saveFailedMsg: "השמירה נכשלה. נסה שוב.",
+      saveFailedMsg: "השמירה נכשלה. נסה שוב.",
       hostedBy: "מאורגן על ידי", priceLabel: "מחיר",
       ctaTickets: "הזמנת כרטיסים", ctaJoinClub: "הרשמה לחוג", ctaRegister: "להרשמה",
       ctaFull: "אין מקומות פנויים", ctaCancelled: "הפעילות בוטלה", ctaEnded: "הפעילות הסתיימה", ctaPostponed: "נדחה — לפרטים",
@@ -5664,20 +5656,19 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favoriteLabel: "إضافة إلى المفضلة", unfavoriteLabel: "إزالة من المفضلة", favDetailCloseLabel: "إغلاق",
       guestGreeting: "أهلًا، زائر 👋", greeting: n => `أهلًا، ${n} 👋`,
       emptyStateMsg: "لم يتم العثور على أنشطة مطابقة للبحث.", clearFiltersBtn: "إعادة ضبط الفلتر",
-      recommendedSectionTitle: "موصى بها لك", generalSectionTitle: "أنشطة", newSectionTitle: "جديد",
+      recommendedSectionTitle: "موصى بها لك", weekSectionTitle: "أنشطة هذا الأسبوع", newSectionTitle: "جديد",
       welcomeTitle: "كل ما يجري للشباب في القدس",
-      welcomeLede: "نوادٍ وورشات وفعاليات في مكان واحد. تجد شيئًا، تحفظه، وتسجّل مباشرة عند الجهة المنظِّمة.",
+      welcomeLede: "نوادٍ وورشات وفعاليات في مكان واحد.\nتجد، تحفظ، وتسجّل عند المنظِّم.",
       welcomeStart: "لنبدأ", welcomeLogin: "لدي حساب بالفعل",
-      welcomeGuestNote: "حفظ المفضّلة ومتابعة الأصدقاء يتطلّبان حسابًا.",
-      signupTitle: "أهلًا بك!", signupLede: "",
-      loginTitle: "سعيدون بعودتك", loginLede: "ادخل باسم المستخدم وكلمة المرور الخاصة بك.",
+      signupTitle: "أهلًا بك!", signupLede: "سجّل باسم مستخدم وكلمة مرور.",
+      loginTitle: "سعيدون بعودتك!", loginLede: "ادخل باسم المستخدم وكلمة المرور الخاصة بك.",
       signupSubmit: "إنشاء حساب", loginSubmit: "تسجيل الدخول",
       switchToLogin: 'لديك حساب؟ <b>تسجيل الدخول</b>', switchToSignup: 'ليس لديك حساب؟ <b>إنشاء حساب</b>',
       backLabel: "رجوع",
       homeHi: "أهلًا", guestName: "زائر", homeHeadline: "ما الذي يجري هذا الأسبوع؟", homeHeadlineGuest: "ما الذي يجري هذا الأسبوع؟",
       seeAll: "الأرشيف", messagesLabel: "الرسائل", messagesSoon: "الرسائل قيد التطوير.",
       stampWeekly: "أسبوعي", daysShort: ["أحد", "اثن", "ثلا", "أرب", "خمي", "جمع", "سبت"],
-      allShownMsg: "هذا كل شيء حاليًا.", saveFailedMsg: "فشل الحفظ. حاول مرة أخرى.",
+      saveFailedMsg: "فشل الحفظ. حاول مرة أخرى.",
       hostedBy: "تنظيم", priceLabel: "السعر",
       ctaTickets: "حجز التذاكر", ctaJoinClub: "التسجيل في النادي", ctaRegister: "التسجيل",
       ctaFull: "لا توجد مقاعد", ctaCancelled: "أُلغي النشاط", ctaEnded: "انتهى النشاط", ctaPostponed: "تأجّل — للتفاصيل",
@@ -5796,20 +5787,19 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favoriteLabel: "Add to favorites", unfavoriteLabel: "Remove from favorites", favDetailCloseLabel: "Close",
       guestGreeting: "Hi, guest 👋", greeting: n => `Hi, ${n} 👋`,
       emptyStateMsg: "No activities match your search.", clearFiltersBtn: "Clear filters",
-      recommendedSectionTitle: "Recommended for you", generalSectionTitle: "Activities", newSectionTitle: "New",
+      recommendedSectionTitle: "Recommended for you", weekSectionTitle: "This week", newSectionTitle: "New",
       welcomeTitle: "Everything happening for teens in Jerusalem",
-      welcomeLede: "Clubs, workshops and events in one place. Find something, save it, and sign up directly with the organizer.",
+      welcomeLede: "Clubs, workshops and events in one place.\nFind, save, and sign up with the organizer.",
       welcomeStart: "Let's start", welcomeLogin: "I already have an account",
-      welcomeGuestNote: "Saving favourites and following friends need an account.",
-      signupTitle: "Nice to meet you!", signupLede: "",
-      loginTitle: "Good to see you", loginLede: "Sign in with your username and password.",
+      signupTitle: "Nice to meet you!", signupLede: "Sign up with a username and password.",
+      loginTitle: "Good to see you!", loginLede: "Sign in with your username and password.",
       signupSubmit: "Create account", loginSubmit: "Log in",
       switchToLogin: 'Already have an account? <b>Log in</b>', switchToSignup: 'No account yet? <b>Sign up</b>',
       backLabel: "Back",
       homeHi: "Hi", guestName: "guest", homeHeadline: "What's on this week?", homeHeadlineGuest: "What's on this week?",
       seeAll: "Archive", messagesLabel: "Messages", messagesSoon: "Messages are still in the works.",
       stampWeekly: "weekly", daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-      allShownMsg: "That's everything for now.", saveFailedMsg: "Couldn't save that. Try again.",
+      saveFailedMsg: "Couldn't save that. Try again.",
       hostedBy: "Hosted by", priceLabel: "Price",
       ctaTickets: "Get tickets", ctaJoinClub: "Join the club", ctaRegister: "Register",
       ctaFull: "No spots left", ctaCancelled: "Cancelled", ctaEnded: "Already over", ctaPostponed: "Postponed — details",
@@ -5927,20 +5917,19 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favoriteLabel: "Добавить в избранное", unfavoriteLabel: "Убрать из избранного", favDetailCloseLabel: "Закрыть",
       guestGreeting: "Привет, гость 👋", greeting: n => `Привет, ${n} 👋`,
       emptyStateMsg: "Не найдено занятий, соответствующих поиску.", clearFiltersBtn: "Сбросить фильтры",
-      recommendedSectionTitle: "Рекомендуем вам", generalSectionTitle: "Занятия", newSectionTitle: "Новое",
+      recommendedSectionTitle: "Рекомендуем вам", weekSectionTitle: "На этой неделе", newSectionTitle: "Новое",
       welcomeTitle: "Всё, что происходит для подростков в Иерусалиме",
-      welcomeLede: "Кружки, воркшопы и события в одном месте. Находишь, сохраняешь и записываешься напрямую у организатора.",
+      welcomeLede: "Кружки, воркшопы и события в одном месте.\nНаходи, сохраняй, записывайся у организатора.",
       welcomeStart: "Начать", welcomeLogin: "У меня уже есть аккаунт",
-      welcomeGuestNote: "Для избранного и подписок на друзей нужен аккаунт.",
-      signupTitle: "Приятно познакомиться!", signupLede: "",
-      loginTitle: "Рады снова видеть", loginLede: "Войдите с вашим именем пользователя и паролем.",
+      signupTitle: "Приятно познакомиться!", signupLede: "Зарегистрируйтесь с именем пользователя и паролем.",
+      loginTitle: "Рады снова видеть!", loginLede: "Войдите с вашим именем пользователя и паролем.",
       signupSubmit: "Создать аккаунт", loginSubmit: "Войти",
       switchToLogin: 'Уже есть аккаунт? <b>Войти</b>', switchToSignup: 'Нет аккаунта? <b>Регистрация</b>',
       backLabel: "Назад",
       homeHi: "Привет", guestName: "гость", homeHeadline: "Что на этой неделе?", homeHeadlineGuest: "Что на этой неделе?",
       seeAll: "Архив", messagesLabel: "Сообщения", messagesSoon: "Сообщения ещё в разработке.",
       stampWeekly: "еженед.", daysShort: ["вс", "пн", "вт", "ср", "чт", "пт", "сб"],
-      allShownMsg: "Это всё на сейчас.", saveFailedMsg: "Не удалось сохранить. Попробуйте снова.",
+      saveFailedMsg: "Не удалось сохранить. Попробуйте снова.",
       hostedBy: "Организатор:", priceLabel: "Цена",
       ctaTickets: "Купить билеты", ctaJoinClub: "Записаться в кружок", ctaRegister: "Записаться",
       ctaFull: "Мест нет", ctaCancelled: "Отменено", ctaEnded: "Уже прошло", ctaPostponed: "Отложено — детали",
@@ -6060,7 +6049,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     document.getElementById("welcomeLede").textContent = t.welcomeLede;
     document.getElementById("welcomeStartBtn").textContent = t.welcomeStart;
     document.getElementById("welcomeLoginBtn").textContent = t.welcomeLogin;
-    document.getElementById("welcomeGuestNote").textContent = t.welcomeGuestNote;
     document.getElementById("welcomeArt").innerHTML = welcomeArtSvg();
     document.getElementById("authArt").innerHTML = authArtSvg();
     const backBtn = document.getElementById("authBackBtn");
