@@ -3465,53 +3465,74 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // ---- Gate artwork. Two plates off the same press: the welcome sheet is
   // three inks overprinted wet, the signup sheet is the flyer wall they end
   // up on. Overprint is a real multiply on paper and a screen on black stock. ----
-  // The welcome plate: the Western Wall plaza with the Dome of the Rock behind
-  // it, the minaret at the corner and trees toward the Mount of Olives — drawn
-  // here from plain shapes, on a sky that stands apart from the page.
+  // The welcome plate: the Old City of Jerusalem — its crenellated wall and a
+  // gate with a pointed arch, the Tower of David, rooftops with small domes and
+  // a cypress, the Dome of the Rock and a minaret, and the Western Wall plaza in
+  // front. Drawn here from plain shapes, on a sky that stands apart from the page.
   function welcomeArtSvg() {
-    // Courses of the wall, and the green that grows from its joints.
+    // Merlons along a wall top: x from a to b, top edge at y.
+    const merlons = (a, b, y, step = 5) => {
+      let m = "";
+      for (let x = a; x < b; x += step) m += `<rect x="${x}" y="${y - 3}" width="${step * 0.55}" height="3"/>`;
+      return m;
+    };
+    // The Western Wall's courses, offset every other row like laid stone.
     let courses = "";
-    for (let row = 0, y = 48; y < 66; row++, y += 4) {
-      courses += `<path d="M44 ${y}H170" stroke="var(--stone-deep)" stroke-width=".8"/>`;
-      for (let x = 48 + (row % 2) * 6; x < 170; x += 12) courses += `<path d="M${x} ${y}v4" stroke="var(--stone-deep)" stroke-width=".8"/>`;
+    for (let row = 0, y = 54; y < 68; row++, y += 3.5) {
+      courses += `<path d="M66 ${y}H170" stroke="var(--stone-deep)" stroke-width=".7"/>`;
+      for (let x = 69 + (row % 2) * 5; x < 170; x += 10) courses += `<path d="M${x} ${y}v3.5" stroke="var(--stone-deep)" stroke-width=".7"/>`;
     }
-    const tufts = [[58, 52], [77, 56], [96, 50], [118, 58], [139, 53], [157, 60]]
-      .map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.4" fill="var(--forest)" opacity=".8"/>`).join("");
+    const tufts = [[80, 57], [101, 61], [123, 56], [146, 62], [162, 58]]
+      .map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.4" ry="1.3" fill="var(--forest)" opacity=".8"/>`).join("");
+    // Old City rooftops: flat stone blocks, a few with small domes.
+    const house = (x, w, h, dome) => `<rect x="${x}" y="${50 - h}" width="${w}" height="${h}" fill="var(--stone)"/>` +
+      (dome ? `<path d="M${x + w / 2 - 4} ${50 - h}a4 4 0 0 1 8 0z" fill="var(--stone-deep)"/>` : "") +
+      `<rect x="${x + w / 2 - 1.5}" y="${50 - h + 4}" width="3" height="4" rx="1.5" fill="var(--ink)" opacity=".45"/>`;
     return `<svg viewBox="0 0 170 80" preserveAspectRatio="xMidYMid slice" role="presentation">
       <rect width="170" height="80" fill="var(--sky)"/>
-      <path d="M86 34Q110 18 136 24T170 22V46H86z" fill="var(--cat-wellbeing)" opacity=".5"/>
-      <g fill="var(--forest)">
-        <ellipse cx="122" cy="38" rx="11" ry="7"/><ellipse cx="139" cy="35" rx="10" ry="8"/>
-        <ellipse cx="156" cy="38" rx="12" ry="7"/><ellipse cx="112" cy="43" rx="8" ry="4.5"/>
-        <path d="M146 44c-2-6-1-14 2-18 3 4 4 12 2 18z"/>
-      </g>
-      <rect x="56" y="27" width="56" height="18" fill="var(--accent)"/>
-      <path d="M60 32h48" stroke="var(--surface)" stroke-width="1.4" stroke-dasharray="3.4 2.4"/>
-      <rect x="67" y="19" width="34" height="9" fill="var(--accent)"/>
-      <path d="M71 22h26" stroke="var(--surface)" stroke-width="1" stroke-dasharray="2.4 2"/>
-      <path d="M66 20a18 16 0 0 1 36 0z" fill="var(--gold)"/>
-      <path d="M84 4v-3" stroke="var(--ink)" stroke-width="1"/>
-      <circle cx="46" cy="41" r="5" fill="var(--cat-gaming)"/>
-      <rect x="41" y="41" width="10" height="5" fill="var(--stone-deep)"/>
+      <path d="M100 30Q124 20 146 25T170 24V50H100z" fill="var(--cat-wellbeing)" opacity=".45"/>
+      <circle cx="152" cy="15" r="8" fill="var(--gold)" opacity=".55"/>
+
+      ${house(112, 14, 16, true)}${house(127, 12, 12, false)}${house(140, 16, 18, true)}${house(157, 13, 13, false)}
+      <path d="M135 50c-3-8-2-19 2-24 4 5 5 16 2 24z" fill="var(--forest)"/>
+
+      <rect x="80" y="30" width="40" height="17" fill="var(--accent)"/>
+      <path d="M83 35h34" stroke="var(--surface)" stroke-width="1.2" stroke-dasharray="3 2.2"/>
+      <rect x="88" y="23" width="24" height="8" fill="var(--accent)"/>
+      <path d="M87 24a13 12 0 0 1 26 0z" fill="var(--gold)"/>
+      <path d="M100 12v-3" stroke="var(--ink)" stroke-width=".9"/>
+
       <g fill="var(--stone-deep)">
-        <rect x="17" y="14" width="11" height="34"/>
-        <rect x="19" y="8" width="7" height="7"/>
-        <path d="M19 8l3.5-4 3.5 4z"/>
+        <rect x="71" y="18" width="7" height="32"/>
+        <rect x="70" y="16" width="9" height="3"/>
+        <path d="M72 16l2.5-4 2.5 4z"/>
       </g>
-      <g fill="var(--surface)"><rect x="20.5" y="20" width="4" height="5" rx="2"/><rect x="20.5" y="31" width="4" height="5" rx="2"/></g>
-      <rect x="44" y="45" width="126" height="21" fill="var(--stone)"/>
-      ${courses}${tufts}
+      <rect x="73.2" y="24" width="2.6" height="4" rx="1.3" fill="var(--surface)"/>
+
+      <g fill="var(--stone-deep)">
+        <rect x="34" y="16" width="14" height="38"/>
+        ${merlons(34, 48, 16, 3.5)}
+      </g>
+      <rect x="39" y="22" width="4" height="6" rx="2" fill="var(--ink)" opacity=".5"/>
+
       <g fill="var(--stone)">
-        <rect x="0" y="44" width="44" height="36"/>
-        <rect x="6" y="38" width="20" height="8"/>
+        <rect x="0" y="36" width="66" height="44"/>
+        ${merlons(0, 66, 36)}
+        <rect x="12" y="26" width="26" height="12"/>
+        ${merlons(12, 38, 26, 4.4)}
       </g>
-      <g fill="var(--stone-deep)">
-        <path d="M6 80v-12a5 5 0 0 1 10 0v12z"/><path d="M22 80v-12a5 5 0 0 1 10 0v12z"/>
-        <rect x="4" y="52" width="36" height="2"/>
+      <path d="M19 80V58q0-11 6-15 6 4 6 15v22z" fill="var(--ink)" opacity=".78"/>
+      <path d="M15 80V58q0-13 10-19 10 6 10 19v22" fill="none" stroke="var(--stone-deep)" stroke-width="1.6"/>
+      <g fill="var(--ink)" opacity=".45">
+        <rect x="4" y="44" width="2.4" height="6" rx="1.2"/><rect x="46" y="44" width="2.4" height="6" rx="1.2"/>
+        <rect x="57" y="44" width="2.4" height="6" rx="1.2"/><rect x="23.8" y="30" width="2.4" height="5" rx="1.2"/>
       </g>
-      <rect x="44" y="66" width="126" height="14" fill="var(--surface)"/>
-      <path d="M44 66H170" stroke="var(--stone-deep)" stroke-width="1"/>
-      <path d="M108 70v10" stroke="var(--stone-deep)" stroke-width="1.2"/>
+
+      <rect x="66" y="50" width="104" height="18" fill="var(--stone)"/>
+      ${courses}${tufts}
+      <rect x="66" y="68" width="104" height="12" fill="var(--surface)"/>
+      <path d="M66 68H170" stroke="var(--stone-deep)" stroke-width="1"/>
+      <path d="M118 71v9" stroke="var(--stone-deep)" stroke-width="1.2"/>
     </svg>`;
   }
 
