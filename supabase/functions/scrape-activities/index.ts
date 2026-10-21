@@ -266,6 +266,7 @@ type Slot = { day: number; start: string; end: string; ages: [number | null, num
 type ClubPage = {
   text: string; slots: Slot[]; price?: number; price_period?: string | null;
   start_date?: string; end_date?: string; description?: string; registration_url?: string;
+  images: string[];
 };
 // A price of 0 is published only when the text says the activity is free, in
 // so many words — never because no price was found.
@@ -276,7 +277,11 @@ const amount = (m: RegExpMatchArray | null) => (m ? Number((m[1] ?? m[2]).replac
 function parseClubPage(html: string, pageUrl: string, org: string): ClubPage {
   const lines = htmlLines(html);
   const all = lines.join("\n");
-  const out: ClubPage = { text: all, slots: [] };
+  // Every picture the page itself shows, as absolute URLs: a row's image is kept
+  // only if it is one of these, never a URL the listing extraction supplied.
+  const images = [...html.matchAll(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)]
+    .map(m => { try { return new URL(decodeHtml(m[1]), pageUrl).href; } catch { return ""; } }).filter(Boolean);
+  const out: ClubPage = { text: all, slots: [], images };
 
   // Only full day names, each paired with hours on the same line or the next.
   // The abbreviated "ימים: א'-ה'" summary is ignored: it is written as a range
@@ -419,6 +424,7 @@ function withClubPage(d: Row, p: ClubPage, pageAges?: [number, number]): Row {
     end_date: p.end_date ?? d.end_date,
     description: p.description ?? d.description,
     registration_url: p.registration_url ?? d.registration_url,
+    image_url: d.image_url && p.images.includes(String(d.image_url)) ? d.image_url : null,
     _factsFromPage: slots.length > 0,
   };
 }
