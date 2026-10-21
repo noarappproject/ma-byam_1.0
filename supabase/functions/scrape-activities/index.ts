@@ -174,7 +174,10 @@ const gradeName = (tok: string) => {
   return g.length === 2 ? `${g[0]}"${g[1]}` : `${g}'`;
 };
 function cleanTitle(t: string): string {
-  let s = t;
+  // Some community-center titles carry a control character (U+0014, U+001E) where
+  // the separator dash belongs — "כדור סל \u0014 נבחרת…" — which renders as an
+  // empty box. It stands for the dash, so it becomes one before anything else.
+  let s = t.replace(/\s*[\u0000-\u001F\u007F]+\s*/g, " - ");
   for (const re of DAY_BITS) s = s.replace(re, " ");
   // "קארטה - קארטה נוער" / "טוקוונדו - טוקוונדו גילאי 11-14": drop the repeated prefix.
   const parts = s.split(/\s+[-–]\s+/);
@@ -246,7 +249,7 @@ function cleanDescription(s: string, org: string) {
 // short ("חוג תפירה לתלמידים בכיתות ז-ט"), but replaced by the title when it is
 // about young children or says nothing once schedule and price are removed.
 function descFor(raw: unknown, org: string, title: string) {
-  const s = String(raw ?? "");
+  const s = String(raw ?? "").replace(/[\u0000-\u0009\u000B-\u001F\u007F]/g, " ");
   const full = cleanDescription(s, org);
   if (full) return full;
   const short = s.split(/(?<=[.!?])\s+|\n/).filter(x => !HOURS.test(x) && !/תקנון/.test(x)).join(" ")

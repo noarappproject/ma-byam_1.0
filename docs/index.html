@@ -1434,6 +1434,65 @@
 
   .gate-art svg { width: 100%; height: 100%; display: block; }
 
+  /* Welcome: one centered column. The name is the headline; the skyline says
+     which city before any sentence does. */
+  .welcome {
+    align-items: center;
+    text-align: center;
+    min-height: min(100dvh - 48px, 760px);
+    justify-content: center;
+    padding: 12px 0 20px;
+  }
+
+  .welcome-mark {
+    font-family: var(--font-display);
+    font-size: calc(64px * var(--text-scale));
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: .95;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .welcome-mark i { font-style: normal; color: var(--accent); }
+
+  .welcome-title {
+    font-family: var(--font-display);
+    font-size: calc(19px * var(--text-scale));
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 12px 0 0;
+    text-wrap: balance;
+  }
+
+  .welcome-art {
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 17 / 8;
+    margin: 22px 0 18px;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+  }
+
+  .welcome-art svg { width: 100%; height: 100%; display: block; }
+
+  .welcome-lede {
+    max-width: 32ch;
+    margin: 0 auto 26px;
+    text-wrap: pretty;
+  }
+
+  .welcome-actions {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .welcome-guest { align-self: center; margin-top: 6px; }
+
   .gate-copy {
     display: flex;
     flex-direction: column;
@@ -3046,26 +3105,20 @@ FORM: risograph event-flyer press; candidate 7 of 7; seed 1e429d4b.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
   review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
 -->
-  <!-- Front door: wordmark, plate art, then the three ways in. -->
+  <!-- Front door, centered: the name large, the city under it, one line on
+       what this is, then three plainly labelled ways in. -->
   <div class="frame" id="welcomeScreen" hidden>
-    <main class="gate">
-      <div class="wordmark">
-        <span class="wordmark-type">מה בי<i>״</i>ם</span>
-      </div>
-      <div class="gate-art" id="welcomeArt" aria-hidden="true"></div>
-      <div class="gate-copy">
-        <h1 class="display display-xl" id="welcomeTitle"></h1>
-        <p class="lede" id="welcomeLede"></p>
-      </div>
-      <div class="gate-actions">
+    <main class="gate welcome">
+      <h1 class="welcome-mark">מה בי<i>״</i>ם</h1>
+      <p class="welcome-title" id="welcomeTitle"></p>
+      <div class="welcome-art" id="welcomeArt" aria-hidden="true"></div>
+      <p class="lede welcome-lede" id="welcomeLede"></p>
+      <div class="welcome-actions">
         <button type="button" class="plate-btn" id="welcomeStartBtn"></button>
-        <button type="button" class="text-link gate-switch" id="welcomeLoginBtn"></button>
+        <button type="button" class="outline-btn" id="welcomeLoginBtn"></button>
+        <button type="button" class="text-link welcome-guest" id="guestBtn"></button>
       </div>
-      <hr class="gate-rule">
-      <div class="gate-actions">
-        <button type="button" class="outline-btn" id="guestBtn"></button>
-        <p class="gate-note" id="welcomeGuestNote"></p>
-      </div>
+      <p class="gate-note" id="welcomeGuestNote"></p>
     </main>
   </div>
 
@@ -3263,10 +3316,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // each of a dozen templates. Nothing sets activity text via textContent, so
   // nothing double-escapes; URLs end up in href/src attributes, where the HTML
   // parser decodes the entities back.
+  // Control characters in scraped text render as empty boxes. The scraper turns
+  // them into the dash they stand for; this catches a row stored before it did.
+  const stripControl = s => s.replace(/\s*[\u0000-\u0009\u000B-\u001F\u007F]+\s*/g, " - ");
+
   function htmlSafeActivity(a) {
     const out = {};
     for (const [k, v] of Object.entries(a)) {
-      out[k] = typeof v === "string" ? escHtml(v) : Array.isArray(v) ? v.map(x => typeof x === "string" ? escHtml(x) : x) : v;
+      out[k] = typeof v === "string" ? escHtml(stripControl(v)) : Array.isArray(v) ? v.map(x => typeof x === "string" ? escHtml(stripControl(x)) : x) : v;
     }
     return out;
   }
@@ -3446,27 +3503,40 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </pattern>`;
   }
 
+  // The welcome plate is Jerusalem, pulled in the app's inks: the Old City wall
+  // and its gate, the Tower of David, the golden dome, and the Chords Bridge for
+  // the modern city — overprinted, with a sun behind them.
   function welcomeArtSvg() {
     const ink = 'style="mix-blend-mode:var(--art-blend)"';
-    return `<svg viewBox="0 0 100 80" preserveAspectRatio="xMidYMid slice" role="presentation">
+    // Crenellations along the top of the wall, one merlon every 8 units.
+    let merlons = "";
+    for (let x = 2; x < 170; x += 8) merlons += `<rect x="${x}" y="51" width="4.5" height="5"/>`;
+    return `<svg viewBox="0 0 170 80" preserveAspectRatio="xMidYMid slice" role="presentation">
       <defs>${halftonePattern("w", 2.5)}</defs>
-      <rect width="100" height="80" fill="var(--art-ground)"/>
-      <circle cx="34" cy="33" r="25" fill="var(--cat-leadership)" ${ink}/>
-      <circle cx="63" cy="45" r="29" fill="var(--accent)" ${ink}/>
-      <circle cx="45" cy="52" r="19" fill="var(--cat-tech)" ${ink}/>
-      <rect width="100" height="80" fill="url(#htw)" opacity=".13"/>
-      <g stroke-linecap="round" stroke-width="2.6" fill="none">
-        <path d="M14 14l4.5-3.5" stroke="var(--cat-nature)"/>
-        <path d="M84 11l-3.5 4.5" stroke="var(--cat-art)"/>
-        <path d="M90 28l4.5 1" stroke="var(--cat-tech)"/>
-        <path d="M9 44l-4.5 2" stroke="var(--accent)"/>
-        <path d="M21 70l3 3.5" stroke="var(--cat-gaming)"/>
-        <path d="M79 71l4.5-2" stroke="var(--cat-leadership)"/>
-        <path d="M52 7l1-4.5" stroke="var(--cat-volunteer)"/>
-        <path d="M94 60l-4.5 3" stroke="var(--cat-nature)"/>
-        <path d="M6 24l4.5 1.5" stroke="var(--cat-gaming)"/>
-        <path d="M70 4l1.5 4" stroke="var(--cat-tech)"/>
+      <rect width="170" height="80" fill="var(--art-ground)"/>
+      <circle cx="120" cy="30" r="21" fill="var(--accent)" ${ink}/>
+      <g fill="var(--cat-tech)" ${ink}>
+        <rect x="26" y="20" width="15" height="38"/>
+        <rect x="29" y="12" width="9" height="9"/>
+        <circle cx="33.5" cy="11.5" r="4.5"/>
+        <rect x="32.6" y="3" width="1.8" height="5"/>
       </g>
+      <g fill="var(--star)" ${ink}>
+        <rect x="78" y="40" width="30" height="16"/>
+        <path d="M80 41a13 13 0 0 1 26 0z"/>
+        <rect x="92.2" y="24" width="1.6" height="5"/>
+      </g>
+      <g fill="var(--cat-leadership)" ${ink}>
+        <rect x="0" y="55" width="170" height="25"/>
+        ${merlons}
+      </g>
+      <path d="M58 80v-13a7 7 0 0 1 14 0v13z" fill="var(--art-ground)"/>
+      <g stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round" fill="none" opacity=".85">
+        <path d="M152 12l-3 44"/>
+        <path d="M151.5 18l-24 34M151 24l-17 28M150.6 30l-10 22M151.6 18l14 34M151 24l9 28"/>
+        <path d="M122 54h48" stroke-width="1.6"/>
+      </g>
+      <rect width="170" height="80" fill="url(#htw)" opacity=".13"/>
     </svg>`;
   }
 
@@ -5469,7 +5539,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       recommendedSectionTitle: "מומלצות עבורך", generalSectionTitle: "פעילויות", newSectionTitle: "חדש",
       welcomeTitle: "כל מה שקורה לנוער בירושלים",
       welcomeLede: "חוגים, סדנאות ואירועים במקום אחד. מוצאים משהו, שומרים, ונרשמים ישירות אצל המארגן.",
-      welcomeStart: "בואו נתחיל",
+      welcomeStart: "בואו נתחיל", welcomeLogin: "כבר יש לי חשבון",
       welcomeGuestNote: "שמירת מועדפים ומעקב אחרי חברים דורשים חשבון.",
       signupTitle: "נעים להכיר", signupLede: "שם משתמש וסיסמה, וזה הכל. אין צורך באימייל.",
       loginTitle: "טוב לראות אותך", loginLede: "התחבר עם שם המשתמש והסיסמה שלך.",
@@ -5602,7 +5672,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       recommendedSectionTitle: "موصى بها لك", generalSectionTitle: "أنشطة", newSectionTitle: "جديد",
       welcomeTitle: "كل ما يجري للشباب في القدس",
       welcomeLede: "نوادٍ وورشات وفعاليات في مكان واحد. تجد شيئًا، تحفظه، وتسجّل مباشرة عند الجهة المنظِّمة.",
-      welcomeStart: "لنبدأ",
+      welcomeStart: "لنبدأ", welcomeLogin: "لدي حساب بالفعل",
       welcomeGuestNote: "حفظ المفضّلة ومتابعة الأصدقاء يتطلّبان حسابًا.",
       signupTitle: "أهلًا بك", signupLede: "اسم مستخدم وكلمة مرور، وهذا كل شيء. لا حاجة لبريد إلكتروني.",
       loginTitle: "سعيدون بعودتك", loginLede: "ادخل باسم المستخدم وكلمة المرور الخاصة بك.",
@@ -5734,7 +5804,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       recommendedSectionTitle: "Recommended for you", generalSectionTitle: "Activities", newSectionTitle: "New",
       welcomeTitle: "Everything happening for teens in Jerusalem",
       welcomeLede: "Clubs, workshops and events in one place. Find something, save it, and sign up directly with the organizer.",
-      welcomeStart: "Let's start",
+      welcomeStart: "Let's start", welcomeLogin: "I already have an account",
       welcomeGuestNote: "Saving favourites and following friends need an account.",
       signupTitle: "Nice to meet you", signupLede: "A username and a password, that's it. No email needed.",
       loginTitle: "Good to see you", loginLede: "Sign in with your username and password.",
@@ -5865,7 +5935,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       recommendedSectionTitle: "Рекомендуем вам", generalSectionTitle: "Занятия", newSectionTitle: "Новое",
       welcomeTitle: "Всё, что происходит для подростков в Иерусалиме",
       welcomeLede: "Кружки, воркшопы и события в одном месте. Находишь, сохраняешь и записываешься напрямую у организатора.",
-      welcomeStart: "Начать",
+      welcomeStart: "Начать", welcomeLogin: "У меня уже есть аккаунт",
       welcomeGuestNote: "Для избранного и подписок на друзей нужен аккаунт.",
       signupTitle: "Приятно познакомиться", signupLede: "Имя пользователя и пароль — и всё. Email не нужен.",
       loginTitle: "Рады снова видеть", loginLede: "Войдите с вашим именем пользователя и паролем.",
@@ -5994,7 +6064,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     document.getElementById("welcomeTitle").textContent = t.welcomeTitle;
     document.getElementById("welcomeLede").textContent = t.welcomeLede;
     document.getElementById("welcomeStartBtn").textContent = t.welcomeStart;
-    document.getElementById("welcomeLoginBtn").innerHTML = t.switchToLogin;
+    document.getElementById("welcomeLoginBtn").textContent = t.welcomeLogin;
     document.getElementById("welcomeGuestNote").textContent = t.welcomeGuestNote;
     document.getElementById("welcomeArt").innerHTML = welcomeArtSvg();
     document.getElementById("authArt").innerHTML = authArtSvg();
