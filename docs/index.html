@@ -3476,69 +3476,34 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // ---- Gate artwork. Two plates off the same press: the welcome sheet is
   // three inks overprinted wet, the signup sheet is the flyer wall they end
   // up on. Overprint is a real multiply on paper and a screen on black stock. ----
-  // The welcome plate, in the manner of the login and signup plates: the
-  // Western Wall at its real proportions — seven courses, four large ones below
-  // and three smaller above, stones of uneven length, the joints in a deeper
-  // stone (nothing left white) and plants in a few of them — with the Dome of
-  // the Rock above it, the minaret at its corner, an Old City gate, trees and
-  // hills behind, a gold sun. Drawn here from plain shapes.
+  // The welcome plate: the Chords Bridge at the entrance to Jerusalem, in the
+  // manner of the login and signup plates — a slanted cyan pylon, cables fanned
+  // evenly to a curved deck, a few stone houses on the hills behind, a gold sun
+  // and green ground. Drawn here from plain shapes.
   function welcomeArtSvg() {
-    const WALL_X = 31, WALL_TOP = 41;
-    const courses = [2.9, 2.9, 3.1, 4.1, 4.3, 4.5, 4.7]; // top to bottom
-    let stones = "", y = WALL_TOP;
-    courses.forEach((h, row) => {
-      // Uneven but fixed stone lengths, so the wall is the same on every render.
-      let x = WALL_X - (row % 2 ? 3 : 0), k = row * 7;
-      while (x < 100) {
-        const len = (h > 3 ? 8 : 5.5) + ((k * 37) % 7) * (h > 3 ? 0.7 : 0.5);
-        const x0 = Math.max(WALL_X, x), x1 = Math.min(100, x + len);
-        if (x1 - x0 > 1) stones += `<rect x="${(x0 + .3).toFixed(2)}" y="${(y + .3).toFixed(2)}" width="${(x1 - x0 - .6).toFixed(2)}" height="${(h - .6).toFixed(2)}" rx=".5"/>`;
-        x += len; k++;
-      }
-      y += h;
-    });
-    const wallBottom = y;
-    const plants = [[44, 44.4], [63, 47.3], [79, 44.4], [92, 50.3], [55, 54.4]]
-      .map(([cx, cy], i) => `<ellipse cx="${cx}" cy="${cy}" rx="2.2" ry="1.1" fill="var(--${i % 2 ? "cat-wellbeing" : "forest"})"/>`).join("");
+    // The pylon leans back from its foot (64, 60) to its top (73, 8).
+    const TOP = [73, 8], FOOT = [64.5, 60];
+    const onPylon = t => [TOP[0] + (FOOT[0] - TOP[0]) * t, TOP[1] + (FOOT[1] - TOP[1]) * t];
+    // The deck's upper edge: a gentle curve from x=4 to x=98.
+    const deckY = x => 57 - 2.6 * Math.sin(Math.PI * (x - 4) / 94);
+    const cable = (t, x) => { const [px, py] = onPylon(t); return `M${px.toFixed(2)} ${py.toFixed(2)}L${x} ${deckY(x).toFixed(2)}`; };
+    const span = [10, 17, 24, 31, 38, 45, 52].map((x, i) => cable(0.06 + i * 0.07, x)).join("");
+    const back = [80, 86, 92].map((x, i) => cable(0.1 + i * 0.12, x)).join("");
+    const house = (x, w, h, base) => `<rect x="${x}" y="${base - h}" width="${w}" height="${h}" fill="var(--stone)"/>
+      <path d="M${x + w / 2 - 1.6} ${base - h + 7}v-2.6a1.6 1.6 0 0 1 3.2 0v2.6z" fill="var(--ink)" opacity=".5"/>`;
     return `<svg viewBox="0 0 100 80" preserveAspectRatio="xMidYMid slice" role="presentation">
       <rect width="100" height="80" fill="var(--art-ground)"/>
-      <circle cx="80" cy="19" r="12" fill="var(--gold)" opacity=".55"/>
-      <path d="M0 36Q24 27 50 32T100 28V46H0z" fill="var(--cat-wellbeing)" opacity=".45"/>
-
-      <g fill="var(--forest)">
-        <ellipse cx="74" cy="38" rx="9" ry="6"/><ellipse cx="88" cy="36" rx="8" ry="7"/>
-        <ellipse cx="98" cy="39" rx="6" ry="5"/>
+      <circle cx="27" cy="22" r="13" fill="var(--gold)" opacity=".55"/>
+      <path d="M0 50Q24 38 50 45T100 41V80H0z" fill="var(--cat-wellbeing)" opacity=".55"/>
+      ${house(8, 9, 10, 47)}${house(18.5, 7, 13, 46)}${house(84, 9, 11, 44)}
+      <path d="M0 60Q30 52 58 58T100 55V80H0z" fill="var(--forest)"/>
+      <g stroke="var(--ink)" stroke-width=".55" stroke-linecap="round" fill="none"><path d="${span}${back}"/></g>
+      <path d="M${TOP[0] - 1.4} ${TOP[1]}L${TOP[0] + 1.4} ${TOP[1]}L${FOOT[0] + 2} ${FOOT[1]}L${FOOT[0] - 2} ${FOOT[1]}z" fill="var(--accent)"/>
+      <path d="M4 ${deckY(4)}Q51 ${(57 - 5.2).toFixed(2)} 98 ${deckY(98)}V${(deckY(98) + 2.6).toFixed(2)}Q51 ${(57 - 2.6).toFixed(2)} 4 ${(deckY(4) + 2.6).toFixed(2)}z" fill="var(--ink)"/>
+      <g fill="var(--ink)"><rect x="21" y="58" width="1.8" height="6"/><rect x="43" y="56.5" width="1.8" height="7"/><rect x="86" y="57" width="1.8" height="6"/></g>
+      <g stroke="var(--ink)" stroke-width=".9" fill="none" stroke-linecap="round">
+        <path d="M44 18q2-2 4 0 2-2 4 0"/><path d="M53 12q1.5-1.5 3 0 1.5-1.5 3 0"/>
       </g>
-      <ellipse cx="81" cy="40" rx="6" ry="3.5" fill="var(--cat-wellbeing)"/>
-
-      <rect x="38" y="31" width="28" height="11" fill="var(--accent)"/>
-      <rect x="44" y="26" width="16" height="5.5" fill="var(--accent)"/>
-      <path d="M43 27a9 8.5 0 0 1 18 0z" fill="var(--gold)"/>
-      <path d="M52 18.5v-3" stroke="var(--ink)" stroke-width=".7"/>
-      ${[41, 46.5, 52, 57.5, 62].map(x => `<rect x="${x - 1}" y="34" width="2.4" height="4" rx="1.2" fill="var(--surface)"/>`).join("")}
-      <path d="M30 41a3.4 3.4 0 0 1 6.8 0z" fill="var(--cat-gaming)"/>
-
-      <g fill="var(--stone)">
-        <rect x="21" y="16" width="7" height="30"/>
-        <rect x="22.5" y="10" width="4" height="6"/>
-      </g>
-      <rect x="20" y="20" width="9" height="1.6" fill="var(--stone-deep)"/>
-      <path d="M22.5 10a2 2 0 0 1 4 0z" fill="var(--stone-deep)"/>
-      <path d="M23.3 30v-3a1.2 1.2 0 0 1 2.4 0v3z" fill="var(--ink)" opacity=".55"/>
-
-      <rect x="${WALL_X}" y="${WALL_TOP}" width="${100 - WALL_X}" height="${(wallBottom - WALL_TOP).toFixed(2)}" fill="var(--stone-deep)"/>
-      <g fill="var(--stone)">${stones}</g>
-      ${plants}
-
-      <g fill="var(--stone)">
-        <rect x="0" y="40" width="31" height="${(wallBottom - 40).toFixed(2)}"/>
-        ${[0, 5, 10, 15, 20, 25].map(x => `<rect x="${x + .5}" y="37" width="3" height="3"/>`).join("")}
-      </g>
-      <path d="M9 ${wallBottom.toFixed(2)}V55q0-7 5-10 5 3 5 10v${(wallBottom - 55).toFixed(2)}z" fill="var(--ink)" opacity=".55"/>
-      <path d="M24.5 50v-3a1.3 1.3 0 0 1 2.6 0v3z" fill="var(--ink)" opacity=".55"/>
-      <path d="M2.6 50v-3a1.3 1.3 0 0 1 2.6 0v3z" fill="var(--ink)" opacity=".55"/>
-
-      <rect x="0" y="${wallBottom.toFixed(2)}" width="100" height="${(80 - wallBottom).toFixed(2)}" fill="var(--forest)" opacity=".22"/>
     </svg>`;
   }
 
