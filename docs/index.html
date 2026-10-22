@@ -3477,10 +3477,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // three inks overprinted wet, the signup sheet is the flyer wall they end
   // up on. Overprint is a real multiply on paper and a screen on black stock. ----
   // The welcome plate: the Western Wall, in the manner of the login and signup
-  // plates — a gold sun, a curved hill with trees behind, the Wall's courses of
-  // rounded stones (smaller above, large Herodian ones below, each course offset
-  // from the next) with plants hanging from a few joints, curved green ground in
-  // front. Drawn here from plain shapes.
+  // plates. The Tower of David rises on the left and the Dome of the Rock on the
+  // right, with the gold sun between them; none of the three touches another
+  // or a tree. In front, two bands of grass — the forest one and a lighter,
+  // concave one — with three small stone houses on them. The Wall's courses are
+  // rounded stones, smaller above and large below, each course offset from the
+  // next, with plants hanging from a few joints. Drawn here from plain shapes.
   function welcomeArtSvg() {
     const TOP = 31;
     const courses = [3, 3, 3.2, 4.6, 4.8, 4.8, 5, 5]; // top to bottom
@@ -3500,22 +3502,43 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const BOTTOM = y;
     // Plants growing out of the joints, hanging a little.
     const plant = (cx, cy, r) => `<path d="M${cx - r} ${cy}q${r} ${-r * 1.1} ${r * 2} 0q${-r * .3} ${r * 1.2} ${-r} ${r * 1.3}q${-r * .7} ${-r * .1} ${-r} ${-r * 1.3}z"/>`;
+    // A small stone house standing on the grass: flat roof or a little dome, an arched door.
+    const house = (x, w, h, base, dome) => `<rect x="${x}" y="${base - h}" width="${w}" height="${h}" rx=".6" fill="var(--stone)"/>` +
+      (dome ? `<path d="M${x + w / 2 - 2.6} ${base - h}a2.6 2.4 0 0 1 5.2 0z" fill="var(--stone-deep)"/>` : "") +
+      `<path d="M${x + w / 2 - 1.2} ${base}v-2.6a1.2 1.2 0 0 1 2.4 0v2.6z" fill="var(--ink)" opacity=".55"/>`;
     return `<svg viewBox="0 0 100 80" preserveAspectRatio="xMidYMid slice" role="presentation">
       <rect width="100" height="80" fill="var(--art-ground)"/>
-      <circle cx="74" cy="17" r="11" fill="var(--gold)" opacity=".55"/>
-      <path d="M0 34Q22 21 46 27T100 24V40H0z" fill="var(--cat-wellbeing)" opacity=".55"/>
-      <g fill="var(--forest)">
-        <ellipse cx="14" cy="30" rx="8" ry="5.5"/><ellipse cx="27" cy="31" rx="6" ry="4"/>
-        <ellipse cx="86" cy="29" rx="9" ry="6"/>
+      <circle cx="44" cy="15" r="9" fill="var(--gold)" opacity=".55"/>
+      <path d="M0 34Q22 23 46 28T100 25V40H0z" fill="var(--cat-wellbeing)" opacity=".55"/>
+
+      <g fill="var(--stone)">
+        <rect x="7" y="12" width="10" height="20"/>
+        <rect x="9" y="7" width="6" height="6"/>
       </g>
-      <path d="M58 33c-2-6-1-14 2-18 3 4 4 12 2 18z" fill="var(--forest)"/>
+      <rect x="6" y="16" width="12" height="1.8" fill="var(--stone-deep)"/>
+      <path d="M9 7a3 3 0 0 1 6 0z" fill="var(--stone-deep)"/>
+      <path d="M10.8 26v-3.4a1.2 1.2 0 0 1 2.4 0V26z" fill="var(--ink)" opacity=".55"/>
+
+      <path d="M27 31c-2-6-1.4-13 2-17 3.4 4 4 11 2 17z" fill="var(--forest)"/>
+      <ellipse cx="60" cy="29" rx="6" ry="4" fill="var(--forest)"/>
+
+      <rect x="70" y="22" width="24" height="10" fill="var(--accent)"/>
+      <rect x="75" y="17.5" width="14" height="5" fill="var(--accent)"/>
+      <path d="M74 18a8 7.5 0 0 1 16 0z" fill="var(--gold)"/>
+      <path d="M82 10.5v-2.5" stroke="var(--ink)" stroke-width=".6"/>
+      ${[72.6, 77.6, 82.6, 87.6].map(x => `<rect x="${x}" y="24.6" width="2" height="3.4" rx="1" fill="var(--surface)"/>`).join("")}
+
       <path d="M0 ${TOP}H100V${BOTTOM.toFixed(2)}H0z" fill="var(--stone-deep)"/>
       <g fill="var(--stone)">${stones}</g>
       <g fill="var(--forest)">${plant(18, 34.6, 2)}${plant(47, 37.6, 1.8)}${plant(71, 34.6, 2.2)}${plant(33, 45.4, 1.7)}${plant(88, 50, 1.9)}</g>
       <g fill="var(--cat-wellbeing)">${plant(62, 40.8, 1.5)}${plant(9, 50.2, 1.5)}</g>
+
       <path d="M0 ${(BOTTOM - 2).toFixed(2)}Q28 ${(BOTTOM - 6).toFixed(2)} 54 ${(BOTTOM - 3).toFixed(2)}T100 ${(BOTTOM - 4).toFixed(2)}V80H0z" fill="var(--forest)"/>
+      ${house(14, 7, 6, 68.5, false)}${house(45, 9, 7.5, 70, true)}${house(79, 7, 6, 68, false)}
+      <path d="M0 68.5Q46 77 100 67.5V80H0z" fill="var(--cat-wellbeing)"/>
+
       <g stroke="var(--ink)" stroke-width=".9" fill="none" stroke-linecap="round">
-        <path d="M30 13q2-2 4 0 2-2 4 0"/><path d="M40 8q1.5-1.5 3 0 1.5-1.5 3 0"/>
+        <path d="M56 10q1.6-1.6 3.2 0 1.6-1.6 3.2 0"/><path d="M63 6q1.3-1.3 2.6 0 1.3-1.3 2.6 0"/>
       </g>
     </svg>`;
   }
