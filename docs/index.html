@@ -155,6 +155,67 @@
     --cat-wellbeing: #9CC473;
   }
 
+
+  /* ---- Colour themes. The app's (html[data-palette], from Settings) and a
+     profile's (data-ppal on the profile, its owner's choice). Each swaps the
+     ground and the surfaces and keeps the inks; dark mode keeps its own
+     near-black ground, so these apply in light mode only. ---- */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) #profileContent[data-ppal="butter"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="butter"] { --bg: #FFF4C7; --surface: #FFFDF3; --surface-raised: #FFF9E0; --chip-bg: #FBEDB4; --line: #EADB9E; --art-ground: #FFEFB3; }
+    :root[data-palette="sky"]:not([data-theme="dark"]) { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
+    :root:not([data-theme="dark"]) #profileContent[data-ppal="sky"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="sky"] { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
+    :root[data-palette="sage"]:not([data-theme="dark"]) { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
+    :root:not([data-theme="dark"]) #profileContent[data-ppal="sage"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="sage"] { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
+    :root[data-palette="sand"]:not([data-theme="dark"]) { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
+    :root:not([data-theme="dark"]) #profileContent[data-ppal="sand"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="sand"] { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
+    :root[data-palette="rose"]:not([data-theme="dark"]) { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
+    :root:not([data-theme="dark"]) #profileContent[data-ppal="rose"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="rose"] { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
+  }
+  :root[data-theme="light"] #profileContent[data-ppal="butter"], :root[data-theme="light"] #otherProfileContent[data-ppal="butter"] { --bg: #FFF4C7; --surface: #FFFDF3; --surface-raised: #FFF9E0; --chip-bg: #FBEDB4; --line: #EADB9E; --art-ground: #FFEFB3; }
+  :root[data-palette="sky"][data-theme="light"] { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
+  :root[data-theme="light"] #profileContent[data-ppal="sky"], :root[data-theme="light"] #otherProfileContent[data-ppal="sky"] { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
+  :root[data-palette="sage"][data-theme="light"] { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
+  :root[data-theme="light"] #profileContent[data-ppal="sage"], :root[data-theme="light"] #otherProfileContent[data-ppal="sage"] { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
+  :root[data-palette="sand"][data-theme="light"] { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
+  :root[data-theme="light"] #profileContent[data-ppal="sand"], :root[data-theme="light"] #otherProfileContent[data-ppal="sand"] { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
+  :root[data-palette="rose"][data-theme="light"] { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
+  :root[data-theme="light"] #profileContent[data-ppal="rose"], :root[data-theme="light"] #otherProfileContent[data-ppal="rose"] { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
+
+  /* A themed profile paints its ground across the whole viewport while open. */
+  #profileContent[data-ppal], #otherProfileContent[data-ppal] { position: relative; isolation: isolate; }
+  #profileContent[data-ppal]::before, #otherProfileContent[data-ppal]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--bg);
+  }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding-block: 6px;
+    padding-inline: 7px 12px;
+    border-radius: 99px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: calc(13px * var(--text-scale));
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .swatch[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .swatch-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 99px;
+    border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  }
+  .swatch--default .swatch-dot { background: conic-gradient(#FFF4C7 0 25%, #D2E9F1 0 50%, #D8E6CB 0 75%, #F0D6D2 0); }
+
   /* Catch-all first: these are all attribute selectors at equal specificity,
      so a trailing catch-all would silently win over every named category. */
   [data-cat] { --cat: var(--accent); }
@@ -863,6 +924,77 @@
     transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out);
   }
   .toast.is-on { opacity: 1; transform: translateY(0); }
+
+  /* ---- Top notice: slides down from the top edge, black in both themes. ---- */
+  .top-notice {
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top));
+    inset-inline: 14px;
+    max-width: 420px;
+    margin-inline: auto;
+    z-index: 400;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 12px 12px;
+    border-radius: var(--r-lg);
+    background: #111111;
+    color: #FFF4C7;
+    box-shadow: 0 14px 34px rgb(0 0 0 / 0.3);
+    transform: translateY(calc(-100% - 24px));
+    opacity: 0;
+    cursor: pointer;
+    transition: transform 0.34s var(--ease-out), opacity 0.2s var(--ease-out);
+  }
+  .top-notice.is-on { transform: translateY(0); opacity: 1; }
+  .top-notice-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .top-notice-text b {
+    font-family: var(--font-display);
+    font-size: calc(15px * var(--text-scale));
+    font-weight: 800;
+    line-height: 1.3;
+  }
+  .top-notice-text span { font-size: calc(13px * var(--text-scale)); line-height: 1.45; color: #E9DFB5; }
+  .notice-ic {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgb(255 244 199 / 0.12);
+  }
+  .notice-ic .ic { width: 22px; height: 22px; stroke: #FFF4C7; }
+  @media (prefers-reduced-motion: reduce) {
+    .top-notice { transform: none; transition: opacity 0.2s linear; }
+  }
+
+  /* ---- Achievement badge: a rounded hexagon in the achievement's ink. ---- */
+  .ach-badge {
+    position: relative;
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 50px;
+    height: 54px;
+    color: var(--ach, var(--accent));
+  }
+  .ach-hex {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 5;
+    stroke-linejoin: round;
+  }
+  .ach-badge .ach-ic { position: relative; width: 22px; height: 22px; stroke: var(--bg); stroke-width: 2.1; }
+  .ach-badge.is-locked { color: color-mix(in srgb, var(--ink) 13%, var(--surface)); }
+  .ach-badge.is-locked .ach-ic { stroke: var(--ink-faint); width: 19px; height: 19px; }
+  .ach-badge--sm { width: 40px; height: 43px; }
+  .ach-badge--sm .ach-ic { width: 18px; height: 18px; }
+  .top-notice .ach-badge .ach-ic { stroke: #111111; }
 
   /* ---- Home: identity strip, one headline, search, then two rails. ---- */
   .home-top {
@@ -1839,6 +1971,97 @@
   }
   .stat span { font-size: calc(11.5px * var(--text-scale)); font-weight: 600; color: var(--ink-faint); }
   .stat-divider { width: 1px; height: 26px; background: var(--line); flex: none; }
+
+  /* The page: name, a details pill, then plain blocks — interests, favourites,
+     achievements — each one title and its content. */
+  .profile-name {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .profile-name .lock-mark .ic { width: 18px; height: 18px; }
+  .profile-top--start { justify-content: flex-start; }
+  .pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 99px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: calc(13px * var(--text-scale));
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.14s var(--ease-out);
+  }
+  .pill-btn:hover { background: var(--chip-bg); }
+  .pill-btn .ic { width: 16px; height: 16px; stroke-width: 2.2; }
+  .profile-id .pill-btn { margin-top: 4px; }
+  .profile-block { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .profile-block-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: calc(17px * var(--text-scale));
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .profile-empty { margin: 0; font-size: calc(13.5px * var(--text-scale)); color: var(--ink-faint); }
+  .profile-btn-count {
+    min-width: 26px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    background: var(--chip-bg);
+    font-size: calc(12.5px * var(--text-scale));
+    font-weight: 800;
+  }
+  .ach-mini-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px 4px; }
+  .ach-mini { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-width: 0; }
+  .ach-mini span {
+    font-size: calc(11px * var(--text-scale));
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink-soft);
+  }
+  .details-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+  .details-head h1 { margin: 0; }
+  .details-stats { align-self: center; margin: 0; }
+  .details-card { padding: 2px 16px; }
+  .details-card .profile-view-item:last-child { border-bottom: none; }
+  .locked-profile .ic-lg { width: 30px; height: 30px; color: var(--ink-faint); margin-bottom: 8px; }
+
+  /* Achievements page: rows of five, each its mark, name and condition. */
+  .ach-hero { width: 100%; height: 92px; border-radius: var(--r-lg); overflow: hidden; }
+  .ach-hero svg { width: 100%; height: 100%; display: block; }
+  .ach-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; width: 100%; }
+  .ach-head h1 { margin: 0; }
+  .ach-progress { margin: 0; font-size: calc(13px * var(--text-scale)); font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+  .ach-rows { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .ach-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    padding: 12px 6px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+  }
+  .ach-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; min-width: 0; }
+  .ach-cell b {
+    margin-top: 2px;
+    font-family: var(--font-display);
+    font-size: calc(11px * var(--text-scale));
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .ach-cell span { font-size: calc(9.5px * var(--text-scale)); line-height: 1.3; color: var(--ink-faint); }
+  .ach-cell.is-locked b { color: var(--ink-soft); }
 
   /* ---- Edit mode ------------------------------------------------------------
      A press form. The previous version stacked four identical bordered boxes and
@@ -3252,7 +3475,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <span id="navFavoritesLabel"></span>
       </button>
       <button type="button" class="bottom-nav-btn" id="navSocial" data-tab="social">
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.2" cy="8" r="3.4"/><path d="M2.8 20c0-3.7 2.9-6.1 6.4-6.1s6.4 2.4 6.4 6.1"/><path d="M16.4 4.9a3.2 3.2 0 0 1 0 6.2M18.2 14.4c2 .7 3 2.5 3 5.6"/></svg>
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.4" cy="10.4" r="6.6"/><path d="m15.3 15.3 5.2 5.2"/></svg>
         <span id="navSocialLabel"></span>
       </button>
       <button type="button" class="bottom-nav-btn" id="navProfile" data-tab="profile">
@@ -3372,7 +3595,24 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     eye: '<path d="M2.2 12S5.9 5.8 12 5.8 21.8 12 21.8 12 18.1 18.2 12 18.2 2.2 12 2.2 12z"/><circle cx="12" cy="12" r="3.1"/>',
     eyeOff: '<path d="M4.2 4.2 19.8 19.8"/><path d="M9.6 9.7A3.1 3.1 0 0 0 12 15.1c.86 0 1.64-.35 2.2-.92"/><path d="M6.5 6.7C3.9 8.3 2.2 12 2.2 12s3.7 6.2 9.8 6.2c1.7 0 3.2-.48 4.5-1.2M17.9 15A13 13 0 0 0 21.8 12S18.1 5.8 12 5.8c-.83 0-1.6.11-2.33.31"/>',
     plus: '<path d="M12 5.6v12.8M5.6 12h12.8"/>',
-    star: '<path d="M12 3.6l2.63 5.52 5.97.85-4.32 4.3 1.02 6.13L12 17.5l-5.3 2.9 1.02-6.13-4.32-4.3 5.97-.85z"/>'
+    star: '<path d="M12 3.6l2.63 5.52 5.97.85-4.32 4.3 1.02 6.13L12 17.5l-5.3 2.9 1.02-6.13-4.32-4.3 5.97-.85z"/>',
+    // Achievement marks. Drawn to the same 24-unit stroke grammar as the rest.
+    trophy: '<path d="M7.4 4h9.2v4.6a4.6 4.6 0 0 1-9.2 0z"/><path d="M7.4 6H4.6a2.8 2.8 0 0 0 2.9 3.6M16.6 6h2.8a2.8 2.8 0 0 1-2.9 3.6M12 13.2v3.4M8.6 20.4h6.8M10 20.4l.5-3.8h3l.5 3.8"/>',
+    clipboard: '<rect x="5.4" y="4.6" width="13.2" height="16.4" rx="2.2"/><path d="M9.2 4.6V3.4h5.6v1.2M8.8 11.2l2 2 4-4.2M8.8 17h6.4"/>',
+    compass: '<circle cx="12" cy="12" r="8.6"/><path d="m15.6 8.4-2.4 4.8-4.8 2.4 2.4-4.8z"/>',
+    exit: '<path d="M10.4 4.4H6.4a1.8 1.8 0 0 0-1.8 1.8v11.6a1.8 1.8 0 0 0 1.8 1.8h4"/><path d="m14.6 8 4 4-4 4M18.6 12H9.8"/>',
+    layers: '<path d="m12 3.8 8.4 4.3L12 12.4 3.6 8.1z"/><path d="m3.6 12.1 8.4 4.3 8.4-4.3M3.6 16.1l8.4 4.3 8.4-4.3"/>',
+    bolt: '<path d="M13.4 2.8 5.8 13.2h5.6l-.9 8 7.7-10.4h-5.7z"/>',
+    hourglass: '<path d="M6.6 3.4h10.8M6.6 20.6h10.8M7.8 3.4c0 4.6 4.2 6.1 4.2 8.6s-4.2 4-4.2 8.6M16.2 3.4c0 4.6-4.2 6.1-4.2 8.6s4.2 4 4.2 8.6"/>',
+    sort: '<path d="M4.4 6.6h15.2M7.2 12h9.6M10 17.4h4"/>',
+    tag: '<path d="M3.8 12.4V4.8a1 1 0 0 1 1-1h7.6l7.8 7.8a1.4 1.4 0 0 1 0 2l-6.6 6.6a1.4 1.4 0 0 1-2 0z"/><circle cx="8.4" cy="8.4" r="1.6"/>',
+    sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4 7 7M17 17l1.6 1.6M5.4 18.6 7 17M17 7l1.6-1.6"/>',
+    userPlus: '<circle cx="9.6" cy="8" r="3.6"/><path d="M3 20.2c0-3.8 3-6.2 6.6-6.2s6.6 2.4 6.6 6.2M18.8 8.2v5.4M16.1 10.9h5.4"/>',
+    door: '<path d="M3.6 21h16.8M6.2 21V3.8h11.6V21"/><path d="M6.2 3.8l6.6 2.6V21"/><path d="M10.6 12.4v.8"/>',
+    orbit: '<circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="8.6" stroke-dasharray="3.2 2.6"/>',
+    hearts: '<path d="M9.4 18.4S3.8 14.9 3.8 10.9a3 3 0 0 1 5.6-1.6 3 3 0 0 1 5.6 1.6"/><path d="M15.6 20.6s-4.8-3-4.8-6.4a2.6 2.6 0 0 1 4.8-1.4 2.6 2.6 0 0 1 4.8 1.4c0 3.4-4.8 6.4-4.8 6.4z"/>',
+    globe: '<circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2M12 3.4c2.6 2.4 3.8 5.4 3.8 8.6s-1.2 6.2-3.8 8.6c-2.6-2.4-3.8-5.4-3.8-8.6s1.2-6.2 3.8-8.6z"/>',
+    user: '<circle cx="12" cy="8.2" r="3.7"/><path d="M4.8 20.4c0-4 3.2-6.6 7.2-6.6s7.2 2.6 7.2 6.6"/>'
   };
 
   function icon(name, cls) {
@@ -3964,6 +4204,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!btn) return;
     const val = btn.dataset.cat || null;
     homeState.category = homeState.category === val ? null : val;
+    if (homeState.category) logUserEvent("filter");
     renderHomeAll();
   });
 
@@ -4049,8 +4290,290 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   searchInput.addEventListener("input", (e) => {
     const q = e.target.value.trim();
-    if (q) { searchInput.value = ""; showArchive("all", q); }
+    if (q) { logUserEvent("search"); searchInput.value = ""; showArchive("all", q); }
   });
+
+
+  // ---- Top notice: news from the top edge on black, in both themes — an
+  // achievement just earned, an image that is too large. One at a time; the
+  // rest wait their turn. A tap dismisses it. ----
+  const noticeQueue = [];
+  let noticeShowing = false;
+  let noticeTimer = 0;
+
+  function noticeIconHtml(name) {
+    return `<span class="notice-ic">${icon(name)}</span>`;
+  }
+
+  function showNotice(n) {
+    noticeQueue.push(n);
+    if (!noticeShowing) nextNotice();
+  }
+
+  function nextNotice() {
+    const n = noticeQueue.shift();
+    if (!n) { noticeShowing = false; return; }
+    noticeShowing = true;
+    let el = document.getElementById("topNotice");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "topNotice";
+      el.className = "top-notice";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      el.addEventListener("click", hideNotice);
+      document.body.appendChild(el);
+    }
+    el.innerHTML = `${n.badge || ""}<span class="top-notice-text"><b>${n.title}</b>${n.body ? `<span>${n.body}</span>` : ""}</span>`;
+    void el.offsetWidth; // let the slide-in start from the top every time
+    el.classList.add("is-on");
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(hideNotice, n.ms || 4400);
+  }
+
+  function hideNotice() {
+    clearTimeout(noticeTimer);
+    const el = document.getElementById("topNotice");
+    if (!el || !el.classList.contains("is-on")) return;
+    el.classList.remove("is-on");
+    setTimeout(nextNotice, 340);
+  }
+
+  // ---- Achievements. Each is earned once and recorded in user_achievements.
+  // Most are read off data the app already holds — favourites, follows, the
+  // questionnaire — and are re-checked whenever that data changes; a few are a
+  // moment (sorting the favourites, approving a request) and are awarded where
+  // it happens. Names and conditions are in STRINGS.achievements, in an order
+  // of five per row on the achievements page. ----
+  const ACHIEVEMENTS = [
+    { key: "first_save", icon: "heart", ink: "--accent" },
+    { key: "face_to_name", icon: "camera", ink: "--forest" },
+    { key: "full_picture", icon: "clipboard", ink: "--forest" },
+    { key: "changed", icon: "repeat", ink: "--forest" },
+    { key: "curious", icon: "compass", ink: "--accent" },
+    { key: "outside_comfort", icon: "exit", ink: "--accent" },
+    { key: "deep_dive", icon: "layers", ink: "--accent" },
+    { key: "city_walk", icon: "pin", ink: "--accent" },
+    { key: "quick", icon: "bolt", ink: "--gold" },
+    { key: "last_minute", icon: "hourglass", ink: "--gold" },
+    { key: "three_in_week", icon: "calendar", ink: "--gold" },
+    { key: "organized", icon: "sort", ink: "--cat-volunteer" },
+    { key: "bargain", icon: "tag", ink: "--cat-music" },
+    { key: "know_place", icon: "search", ink: "--cat-volunteer" },
+    { key: "daily", icon: "sun", ink: "--cat-volunteer" },
+    { key: "not_alone", icon: "userPlus", ink: "--cat-stage" },
+    { key: "open_door", icon: "door", ink: "--cat-stage" },
+    { key: "crew", icon: "users", ink: "--cat-stage" },
+    { key: "widen_circle", icon: "orbit", ink: "--cat-stage" },
+    { key: "same_mind", icon: "hearts", ink: "--cat-stage" },
+    { key: "beyond_bubble", icon: "globe", ink: "--cat-stage" }
+  ];
+  const ACH_BY_KEY = Object.fromEntries(ACHIEVEMENTS.map(a => [a.key, a]));
+
+  // A rounded hexagon in the achievement's ink, its mark in the page colour on
+  // top; locked, the same shape in a faint ink with a lock.
+  function achBadgeHtml(def, earned, size) {
+    return `<span class="ach-badge${earned ? "" : " is-locked"}${size ? " ach-badge--" + size : ""}" style="--ach: var(${def.ink})" aria-hidden="true">
+      <svg class="ach-hex" viewBox="0 0 48 52"><path d="M24 5 41.3 15v22L24 47 6.7 37V15z"/></svg>
+      ${icon(earned ? def.icon : "lock", "ach-ic")}
+    </span>`;
+  }
+
+  let earnedAchievements = new Map(); // key -> earned_at, for the signed-in account
+  let achievementsLoaded = false;
+  let myPrefs = null;                 // the account's own questionnaire row
+  let myEventKinds = new Set();
+  let myOpenDays = new Set();
+  let socialFactsCache = null;
+
+  function resetAchievementState() {
+    earnedAchievements = new Map();
+    achievementsLoaded = false;
+    myPrefs = null;
+    myEventKinds = new Set();
+    myOpenDays = new Set();
+    socialFactsCache = null;
+  }
+
+  async function loadAchievementState() {
+    resetAchievementState();
+    if (!currentUserId || isGuestMode()) return;
+    const [ach, ev, prefs] = await Promise.all([
+      sb.from("user_achievements").select("key, earned_at").eq("user_id", currentUserId),
+      sb.from("user_events").select("kind, day").eq("user_id", currentUserId),
+      sb.from("user_preferences").select("*").eq("user_id", currentUserId).maybeSingle()
+    ]);
+    // A schema without the table (the page can be newer than the database)
+    // simply has no achievements yet, rather than a broken screen.
+    if (ach.error) { console.warn("achievements unavailable:", ach.error.message); return; }
+    (ach.data || []).forEach(row => earnedAchievements.set(row.key, row.earned_at));
+    (ev.data || []).forEach(row => {
+      myEventKinds.add(row.kind);
+      if (row.kind === "open") myOpenDays.add(row.day);
+    });
+    myPrefs = prefs.data || null;
+    achievementsLoaded = true;
+  }
+
+  function localISODate(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  // Days the app is opened, and the first use of search and of a filter: one
+  // row per kind per day, written only the first time.
+  async function logUserEvent(kind) {
+    if (!achievementsLoaded || !currentUserId) return;
+    const day = localISODate(new Date());
+    const known = kind === "open" ? myOpenDays.has(day) : myEventKinds.has(kind);
+    myEventKinds.add(kind);
+    if (kind === "open") myOpenDays.add(day);
+    if (!known) {
+      const { error } = await sb.from("user_events")
+        .upsert({ user_id: currentUserId, kind, day }, { onConflict: "user_id,kind,day", ignoreDuplicates: true });
+      if (error) console.warn(error.message);
+    }
+    checkAchievements();
+  }
+
+  function awardAchievements(keys) {
+    if (!achievementsLoaded || !currentUserId) return;
+    const fresh = keys.filter(k => ACH_BY_KEY[k] && !earnedAchievements.has(k));
+    if (!fresh.length) return;
+    const now = new Date().toISOString();
+    fresh.forEach(k => earnedAchievements.set(k, now));
+    sb.from("user_achievements")
+      .upsert(fresh.map(key => ({ user_id: currentUserId, key })), { onConflict: "user_id,key", ignoreDuplicates: true })
+      .then(({ error }) => { if (error) console.warn("achievement not recorded:", error.message); });
+    const t = L();
+    fresh.forEach(k => {
+      const [name, desc] = t.achievements[k];
+      showNotice({ title: t.achievementEarned(name), body: desc, badge: achBadgeHtml(ACH_BY_KEY[k], true, "sm") });
+    });
+    if (profileState && !profileScreenEl.hidden && profileMode !== "edit") renderProfile();
+  }
+
+  // The questionnaire's topics map to the app's categories by position — the
+  // four languages list them in the same order. A topic the user typed has no
+  // category and is left out.
+  const TOPIC_CATEGORIES = [["sport"], ["art"], ["tech"], ["music"], ["learning", "wellbeing"],
+    ["tech", "learning"], ["art", "stage"], ["leadership", "learning"], ["volunteer", "leadership"]];
+
+  function interestCategories(topics) {
+    const out = new Set();
+    for (const lang of Object.keys(STRINGS)) {
+      STRINGS[lang].topicOptions.forEach((opt, i) => {
+        if (topics.includes(opt)) (TOPIC_CATEGORIES[i] || []).forEach(c => out.add(c));
+      });
+    }
+    return out;
+  }
+
+  function prefsComplete(p) {
+    return !!(p && p.first_name && p.last_name && p.age_range && p.grade && p.area
+      && (p.interest_topics || []).length && (p.activity_types || []).length);
+  }
+
+  // Does the activity meet on some day in [from, from + days)? Weekly ones by
+  // weekday inside their season, one-offs by their date.
+  function occursWithin(a, from, days) {
+    for (let i = 0; i < days; i++) {
+      const d = new Date(from);
+      d.setDate(from.getDate() + i);
+      const iso = localISODate(d);
+      if (a.schedule_type === "recurring") {
+        if ((a.recurrence_days || []).includes(d.getDay())
+          && (!a.start_date || a.start_date <= iso) && (!a.end_date || a.end_date >= iso)) return true;
+      } else if (a.start_date === iso) return true;
+    }
+    return false;
+  }
+
+  // Three saved activities in one week — this week or any of the next seven.
+  function threeInSameWeek(favs) {
+    const sunday = new Date();
+    sunday.setHours(0, 0, 0, 0);
+    sunday.setDate(sunday.getDate() - sunday.getDay());
+    for (let w = 0; w < 8; w++) {
+      const from = new Date(sunday);
+      from.setDate(sunday.getDate() + w * 7);
+      if (favs.filter(a => occursWithin(a, from, 7)).length >= 3) return true;
+    }
+    return false;
+  }
+
+  function sameLocalDay(a, b) {
+    return !!(a && b) && localISODate(new Date(a)) === localISODate(new Date(b));
+  }
+
+  // The last day to register: the published deadline, or for a one-off the
+  // day it happens. A weekly club with no deadline has no last day.
+  function savedOnLastDay(a) {
+    const saved = favoritedAt.get(a.id);
+    if (!saved) return false;
+    const last = a.registration_deadline ? localISODate(new Date(a.registration_deadline))
+      : (a.schedule_type !== "recurring" ? a.start_date : null);
+    return !!last && localISODate(new Date(saved)) === last;
+  }
+
+  async function socialAchievementFacts() {
+    if (socialFactsCache) return socialFactsCache;
+    const [out, inc] = await Promise.all([
+      sb.from("follows").select("followee_id, status").eq("follower_id", currentUserId),
+      sb.from("follows").select("follower_id").eq("followee_id", currentUserId).eq("status", "accepted")
+    ]);
+    const outgoing = out.data || [];
+    const acceptedOut = new Set(outgoing.filter(row => row.status === "accepted").map(row => row.followee_id));
+    socialFactsCache = {
+      followingAny: outgoing.length > 0,
+      mutual: (inc.data || []).filter(row => acceptedOut.has(row.follower_id)).length
+    };
+    return socialFactsCache;
+  }
+
+  let achCheckTimer = 0;
+  function checkAchievements() {
+    clearTimeout(achCheckTimer);
+    achCheckTimer = setTimeout(runAchievementCheck, 350);
+  }
+
+  async function runAchievementCheck() {
+    if (!achievementsLoaded || !currentUserId) return;
+    const favs = activities.filter(a => a.id && favoriteIds.has(a.id));
+    const earned = [];
+    if (favoriteIds.size >= 1) earned.push("first_save");
+    if (userProfile?.avatar_url && userProfile?.banner_url) earned.push("face_to_name");
+    if (prefsComplete(myPrefs)) earned.push("full_picture");
+    const perCategory = new Map();
+    favs.forEach(a => perCategory.set(a.category, (perCategory.get(a.category) || 0) + 1));
+    if (perCategory.size >= 3) earned.push("curious");
+    if ([...perCategory.values()].some(n => n >= 3)) earned.push("deep_dive");
+    const mine = interestCategories(currentInterestTopics);
+    if (mine.size && favs.some(a => !mine.has(a.category))) earned.push("outside_comfort");
+    const places = new Set(favs.map(a => (a.neighborhood || a.location_name || "").trim()).filter(Boolean));
+    if (places.size >= 3) earned.push("city_walk");
+    if (favs.some(a => sameLocalDay(favoritedAt.get(a.id), a.created_at))) earned.push("quick");
+    if (favs.some(savedOnLastDay)) earned.push("last_minute");
+    if (threeInSameWeek(favs)) earned.push("three_in_week");
+    if (favs.filter(a => Number(a.price) === 0).length >= 3) earned.push("bargain");
+    if (myEventKinds.has("search") && myEventKinds.has("filter")) earned.push("know_place");
+    if (myOpenDays.size >= 5) earned.push("daily");
+    if (favs.some(a => followedFavoritesFor(a.id).length)) earned.push("same_mind");
+    try {
+      const social = await socialAchievementFacts();
+      if (social.followingAny) earned.push("not_alone");
+      if (social.mutual >= 5) earned.push("crew");
+    } catch (err) { console.warn(err); }
+    awardAchievements(earned);
+  }
+
+  // Following someone who shares none of your interests. Only the count of
+  // shared topics comes back from the server, never the other person's topics.
+  async function checkBeyondBubble(otherUserId) {
+    if (!achievementsLoaded || earnedAchievements.has("beyond_bubble") || !currentInterestTopics.length) return;
+    const { data, error } = await sb.rpc("shared_interest_counts", { p_users: [otherUserId] });
+    if (error || !data || !data[0]) return;
+    if (data[0].has_interests && data[0].shared === 0) awardAchievements(["beyond_bubble"]);
+  }
 
   // ---- Toast: for the one thing that has no screen yet. ----
   let toastTimer = null;
@@ -4133,6 +4656,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   archiveSearchInputEl.addEventListener("input", (e) => {
     archiveState.q = e.target.value.trim();
+    if (archiveState.q) logUserEvent("search");
     renderArchive();
   });
 
@@ -4142,6 +4666,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const val = btn.dataset.cat || null;
     archiveState.category = archiveState.category === val ? null : val;
     archiveState.topic = null;
+    if (archiveState.category) logUserEvent("filter");
     renderArchive();
   });
 
@@ -4150,6 +4675,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!btn) return;
     const val = btn.dataset.topic || null;
     archiveState.topic = archiveState.topic === val ? null : val;
+    if (archiveState.topic) logUserEvent("filter");
     renderArchive();
   });
 
@@ -4295,6 +4821,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         ? await sb.from("favorites").delete().eq("user_id", currentUserId).eq("activity_id", activityId)
         : await sb.from("favorites").insert({ user_id: currentUserId, activity_id: activityId });
       if (error) throw error;
+      if (!wasFav) checkAchievements();
     } catch (err) {
       if (wasFav) { favoriteIds.add(activityId); favoritedAt.set(activityId, new Date().toISOString()); }
       else { favoriteIds.delete(activityId); favoritedAt.delete(activityId); }
@@ -4471,6 +4998,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
   favSearchInputEl.addEventListener("input", (e) => {
     favState.q = e.target.value.trim();
+    if (favState.q) logUserEvent("search");
     renderFavorites();
   });
 
@@ -4480,6 +5008,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const val = btn.dataset.cat || null;
     favState.category = favState.category === val ? null : val;
     favState.topic = null;
+    if (favState.category) logUserEvent("filter");
     renderFavorites();
   });
 
@@ -4488,12 +5017,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!btn) return;
     const val = btn.dataset.topic || null;
     favState.topic = favState.topic === val ? null : val;
+    if (favState.topic) logUserEvent("filter");
     renderFavorites();
   });
 
   favSortRowEl.addEventListener("change", (e) => {
     if (e.target.id !== "favSortSelect") return;
     favState.sort = e.target.value;
+    awardAchievements(["organized"]);
     renderFavorites();
   });
 
@@ -4984,14 +5515,18 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // approveRequest/denyOrRemove don't, because those touch who follows *you*,
   // not who you follow.
   async function followUser(otherUserId, otherIsPrivate) {
-    if (!currentUserId) return;
+    if (!currentUserId) return false;
     const { error } = await sb.from("follows").insert({
       follower_id: currentUserId,
       followee_id: otherUserId,
       status: otherIsPrivate ? "pending" : "accepted"
     });
-    if (error) { console.error(error); return; }
+    if (error) { console.error(error); return false; }
     if (!otherIsPrivate) await loadFollowedFavoritesMap();
+    socialFactsCache = null;
+    checkAchievements();
+    checkBeyondBubble(otherUserId);
+    return true;
   }
 
   async function unfollowOrCancel(otherUserId) {
@@ -4999,6 +5534,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const { error } = await sb.from("follows").delete()
       .eq("follower_id", currentUserId).eq("followee_id", otherUserId);
     if (error) { console.error(error); return; }
+    socialFactsCache = null;
     await loadFollowedFavoritesMap();
   }
 
@@ -5006,7 +5542,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!currentUserId) return;
     const { error } = await sb.from("follows").update({ status: "accepted" })
       .eq("follower_id", followerId).eq("followee_id", currentUserId);
-    if (error) console.error(error);
+    if (error) { console.error(error); return; }
+    socialFactsCache = null;
+    awardAchievements(["open_door"]);
+    checkAchievements();
   }
 
   async function denyOrRemove(followerId) {
@@ -5014,6 +5553,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const { error } = await sb.from("follows").delete()
       .eq("follower_id", followerId).eq("followee_id", currentUserId);
     if (error) console.error(error);
+    socialFactsCache = null;
   }
 
   function canViewProfile(targetUser, relationship) {
@@ -5112,47 +5652,58 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     renderOtherProfile();
   }
 
+  // Someone else's profile: their name, interests, favourites and the
+  // achievements they've earned — nothing from their details. A private
+  // profile shows only the name and the way to ask to follow.
   async function renderOtherProfile() {
     const t = L();
     const userId = otherProfileUserId;
     otherProfileContentEl.innerHTML = `<p class="quiz-subtitle">…</p>`;
-    const [{ data: targetUser }, relationship, counts] = await Promise.all([
-      sb.from("users").select("id, username, avatar_url, is_private").eq("id", userId).maybeSingle(),
-      getRelationship(userId),
-      loadSocialCounts(userId)
-    ]);
+    let res = await sb.from("users").select("id, username, avatar_url, banner_url, is_private, profile_theme").eq("id", userId).maybeSingle();
+    if (res.error) res = await sb.from("users").select("id, username, avatar_url, is_private").eq("id", userId).maybeSingle();
+    const targetUser = res.data;
+    const relationship = await getRelationship(userId);
     if (otherProfileUserId !== userId) return; // navigated away while loading
     if (!targetUser) { otherProfileContentEl.innerHTML = `<p class="quiz-subtitle">${t.noUsersFoundMsg}</p>`; return; }
     const visible = canViewProfile(targetUser, relationship);
-    const avatarStyle = visible && targetUser.avatar_url ? `background-image:url('${targetUser.avatar_url}')` : "";
 
-    let bodyHtml;
+    let interests = [], favs = [], earnedKeys = new Set();
     if (visible) {
-      const favs = await loadFavoritesFor(userId);
+      const [interestRes, favList, achRes] = await Promise.all([
+        sb.rpc("profile_interests", { p_user: userId }),
+        loadFavoritesFor(userId),
+        sb.from("user_achievements").select("key").eq("user_id", userId)
+      ]);
       if (otherProfileUserId !== userId) return;
-      bodyHtml = `
-        <p class="quiz-section-label">${t.favoritesOfUser(targetUser.username)}</p>
-        ${favs.length ? favs.map(a => favRowHtml(a, { readOnly: true })).join("") : `<p class="quiz-subtitle">${t.noFavoritesForUserMsg}</p>`}
-      `;
-    } else {
-      bodyHtml = `<div class="locked-profile"><span class="lock-emoji">🔒</span><p>${t.lockedProfileMsg}</p></div>`;
+      interests = interestRes.error ? [] : (interestRes.data || []);
+      favs = favList;
+      earnedKeys = new Set((achRes.error ? [] : achRes.data || []).map(row => row.key));
     }
 
+    const name = targetUser.username || "";
+    const avatarStyle = visible && targetUser.avatar_url ? `background-image:url('${targetUser.avatar_url}')` : "";
+    const rtl = LANG_DIR[currentLang] === "rtl";
+    setProfilePalette(otherProfileContentEl, targetUser.profile_theme);
     otherProfileContentEl.innerHTML = `
-      <button type="button" class="settings-back" id="opBack">${LANG_DIR[currentLang] === "rtl" ? "› " + t.profileTitle : "‹ " + t.profileTitle}</button>
-      <div class="profile-avatar-row">
-        <div class="profile-avatar" style="${avatarStyle}"></div>
-        <div class="profile-username">${targetUser.username}${targetUser.is_private ? `<span class="lock-mark" aria-label="${t.privateOn}">${icon("lock")}</span>` : ""}</div>
-        <div class="profile-stats-row">
-          ${visible
-            ? `<button type="button" class="profile-stat" data-open-follow-list="followers"><b>${counts.followers}</b><span>${t.followersLabel}</span></button>
-               <button type="button" class="profile-stat" data-open-follow-list="following"><b>${counts.following}</b><span>${t.followingLabel}</span></button>`
-            : `<span class="profile-stat"><b>${counts.followers}</b><span>${t.followersLabel}</span></span>
-               <span class="profile-stat"><b>${counts.following}</b><span>${t.followingLabel}</span></span>`}
-        </div>
+      <div class="profile-banner">${bannerHtml(name, visible ? targetUser.banner_url : null)}</div>
+      <div class="profile-top profile-top--start">
+        <button type="button" class="icon-btn" id="opBack" aria-label="${t.backLabel}">${icon(rtl ? "chevronBack" : "chevron")}</button>
+      </div>
+      <div class="profile-id">
+        <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((name || "?").charAt(0).toUpperCase())}</span>
+        <h1 class="display display-lg profile-name">${escHtml(name)}${targetUser.is_private ? `<span class="lock-mark" aria-label="${t.privateOn}">${icon("lock")}</span>` : ""}</h1>
         ${followBtnHtml(targetUser.id, targetUser.is_private, relationship)}
       </div>
-      ${bodyHtml}
+      ${visible ? `
+        ${interestsBlockHtml(interests, t.noInterestsOther)}
+        <section class="profile-block">
+          <h2 class="profile-block-title">${t.favoritesBtn}</h2>
+          ${favs.length
+            ? `<div class="stack">${favs.map(a => favRowHtml(a, { readOnly: true })).join("")}</div>`
+            : `<p class="profile-empty">${t.noFavoritesForUserMsg}</p>`}
+        </section>
+        ${achievementsBlockHtml(ACHIEVEMENTS.filter(a => earnedKeys.has(a.key)), t.achievementsTitle, t.noAchievementsOther)}
+      ` : `<div class="locked-profile">${icon("lock", "ic-lg")}<p>${t.lockedProfileMsg}</p></div>`}
     `;
     document.getElementById("opBack").addEventListener("click", () => { otherProfileUserId = null; (returnToScreen || showProfile)(); });
   }
@@ -5262,9 +5813,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const pool = (candidates || []).filter(u => !excluded.has(u.id) && !dismissedRecommendedUsers.has(u.id));
     if (!pool.length) return [];
     const ids = pool.map(u => u.id);
-    const { data: prefs } = await sb.from("user_preferences").select("user_id, interest_topics").in("user_id", ids);
-    const topicsByUser = new Map((prefs || []).map(p => [p.user_id, new Set(p.interest_topics || [])]));
-    const scored = pool.map(u => ({ ...u, score: currentInterestTopics.filter(t => (topicsByUser.get(u.id) || new Set()).has(t)).length }));
+    const { data: shared, error: sharedError } = await sb.rpc("shared_interest_counts", { p_users: ids });
+    const sharedByUser = new Map((sharedError ? [] : shared || []).map(row => [row.user_id, row.shared]));
+    const scored = pool.map(u => ({ ...u, score: sharedByUser.get(u.id) || 0 }));
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, 8);
   }
@@ -5294,7 +5845,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialContentEl.innerHTML = `
       <header class="screen-head">
         <h1 class="display display-lg">${t.socialTab}</h1>
-        <p class="screen-head-count label num" id="socialFollowingCount"></p>
       </header>
       <div class="searchbar">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.2"/><path d="m20.5 20.5-4.1-4.1"/></svg>
@@ -5313,18 +5863,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <div class="user-list" id="socialRecommended"><p class="rail-empty">…</p></div>
       </section>
     `;
-    // Counts are loaded on the Profile screen; Social can be the first screen
-    // the user opens, so it fetches its own rather than showing a stale zero.
-    const countEl = document.getElementById("socialFollowingCount");
-    countEl.textContent = "";
-    if (currentUserId) {
-      loadSocialCounts(currentUserId).then(c => {
-        socialCounts = c;
-        if (!socialScreenEl.hidden && document.getElementById("socialFollowingCount") === countEl) {
-          countEl.textContent = L().followingCountText(c.following);
-        }
-      });
-    }
     document.getElementById("socialSearchInput").addEventListener("input", async (e) => {
       const q = e.target.value.trim();
       userSearchState.q = q;
@@ -5395,7 +5933,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   socialContentEl.addEventListener("click", async (e) => {
     const followBtn = e.target.closest("[data-follow]");
     if (followBtn) {
-      await followUser(followBtn.dataset.follow, followBtn.dataset.private === "true");
+      const fromSuggestions = !!followBtn.closest("#socialRecommended");
+      const ok = await followUser(followBtn.dataset.follow, followBtn.dataset.private === "true");
+      if (ok && fromSuggestions) awardAchievements(["widen_circle"]);
       renderSocialSearchResults(await searchUsers(userSearchState.q));
       renderSocialRecommended();
       return;
@@ -5459,13 +5999,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     he: {
       appTitle: "מה בי״ם", appTagline: "פעילות, חוגים ואירועים לבני נוער",
       tabLogin: "התחברות", tabSignup: "הרשמה", usernameLabel: "שם משתמש", passwordLabel: "סיסמה",
-      or: "או", guestBtn: "המשך כאורח", guestExitBtn: "יציאה ממצב אורח",
+      or: "או", guestBtn: "כניסה בלי חשבון", guestExitBtn: "התחברות או הרשמה",
       errUsernameFormat: "שם המשתמש: 3–20 תווים באנגלית — אותיות, ספרות והסימנים ⁦! @ # _. -⁩ (לפחות אות אחת).",
       errPasswordLength: "הסיסמה: 6–10 תווים — אותיות באנגלית, ספרות וסימנים פשוטים כמו ⁦! @ # $ _⁩.",
-      errUsernameTaken: "שם המשתמש הזה תפוס, נסה שם אחר.", usernameAvailable: "שם המשתמש פנוי ✓",
-      errSignupNeedsVerification: "ההרשמה בוצעה, אך נדרש עוד אימות. פנה למנהל המערכת.",
-      errServerDown: "השרת לא זמין כרגע. אפשר להמשיך כאורח, ולנסות להתחבר שוב בהמשך.",
-      errLoginFailed: "שם משתמש או סיסמה שגויים.", errSignupFailed: "ההרשמה נכשלה. נסה שם משתמש אחר או סיסמה אחרת.",
+      errUsernameTaken: "שם המשתמש הזה תפוס. אפשר לבחור שם אחר.", usernameAvailable: "שם המשתמש פנוי ✓",
+      errSignupNeedsVerification: "ההרשמה בוצעה, אבל נדרש עוד אימות. צריך לפנות לצוות האפליקציה.",
+      errServerDown: "השרת לא זמין כרגע. אפשר להמשיך בלי חשבון ולנסות להתחבר שוב בהמשך.",
+      errLoginFailed: "שם משתמש או סיסמה שגויים.", errSignupFailed: "ההרשמה נכשלה. אפשר לנסות שם משתמש או סיסמה אחרים.",
       searchPlaceholder: "חיפוש לפי שם, תיאור או ארגון…",
       chipAll: "הכל", topicsAllChip: "כל הנושאים", signOut: "התנתקות", profileBtn: "פרופיל", settingsBtn: "הגדרות",
       favoritesBtn: "מועדפים", favoritesTitle: "המועדפים שלי",
@@ -5473,7 +6013,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favSortLabel: "מיון", favSortSoonest: "הפעילות הקרובה ביותר", favSortRecent: "לפי סדר הוספה למועדפים",
       favSortCategory: "לפי קטגוריה", favSortName: "לפי שם",
       favoriteLabel: "הוספה למועדפים", unfavoriteLabel: "הסרה מהמועדפים", favDetailCloseLabel: "סגירה",
-      guestGreeting: "היי, אורח 👋", greeting: n => `היי, ${n} 👋`,
+      guestGreeting: "היי 👋", greeting: n => `היי, ${n} 👋`,
       emptyStateMsg: "לא נמצאו פעילויות התואמות לחיפוש.", clearFiltersBtn: "איפוס סינון",
       recommendedSectionTitle: "המלצות עבורך", weekSectionTitle: "פעילויות השבוע", newSectionTitle: "חדש",
       welcomeTitle: "כל מה שקורה לנוער בירושלים",
@@ -5483,10 +6023,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       signupSubmit: "יצירת חשבון", loginSubmit: "התחברות",
       switchToLogin: 'כבר יש לך חשבון? <b>התחברות</b>', switchToSignup: 'אין לך חשבון? <b>הרשמה</b>',
       backLabel: "חזרה",
-      homeHi: "היי", guestName: "אורח", homeHeadline: "מה קורה בירושלים?", homeHeadlineGuest: "מה קורה בירושלים?",
+      homeHi: "היי", guestName: "ברוכים הבאים", homeHeadline: "מה קורה בירושלים?", homeHeadlineGuest: "מה קורה בירושלים?",
       seeAll: "לארכיון", messagesLabel: "הודעות", messagesSoon: "ההודעות עוד בפיתוח.",
       stampWeekly: "שבועי", daysShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"],
-      saveFailedMsg: "השמירה נכשלה. נסה שוב.",
+      saveFailedMsg: "השמירה נכשלה. אפשר לנסות שוב.",
       hostedBy: "מאורגן על ידי", priceLabel: "מחיר",
       ctaTickets: "הזמנת כרטיסים", ctaJoinClub: "הרשמה לחוג", ctaRegister: "להרשמה",
       ctaFull: "אין מקומות פנויים", ctaCancelled: "הפעילות בוטלה", ctaEnded: "הפעילות הסתיימה", ctaPostponed: "נדחה — לפרטים",
@@ -5494,11 +6034,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       sessionsLabel: n => `${n} מפגשים`, accessibleNote: "נגיש לכיסא גלגלים",
       // "ו-" with the hyphen, not a bare "ו", is the standard Hebrew form for
       // joining the conjunction directly onto a Latin word (a username here).
-      savedByLine: (names, total) => total === 1 ? `<b>${names[0]}</b> שמר/ה את זה`
-        : total === 2 ? `<b>${names[0]}</b> ו-<b>${names[1]}</b> שמרו את זה`
-        : `<b>${names[0]}</b> ועוד ${total - 1} שמרו את זה`,
+      savedByLine: (names, total) => total === 1 ? `שמור אצל <b>${names[0]}</b>`
+        : total === 2 ? `שמור אצל <b>${names[0]}</b> ו-<b>${names[1]}</b>`
+        : `שמור אצל <b>${names[0]}</b> ועוד ${total - 1}`,
       reviewsLabel: "תגובות:", outOfFive: "מתוך 5", noRatingsYet: "אין דירוגים עדיין",
-      noReviewsYet: "עדיין אין תגובות כאן.", anonymousName: "אנונימי",
+      noReviewsYet: "עדיין אין תגובות כאן.", anonymousName: "בעילום שם",
       writeReviewTitle: "הוספת תגובה", yourReviewTitle: "התגובה שלך",
       ratingLabel: "דירוג", reviewBodyLabel: "תגובה",
       reviewPlaceholder: "מה חשבת? עד 100 תווים.",
@@ -5508,34 +6048,32 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       reviewGuestNote: "כדי להגיב צריך חשבון.",
       reviewSaved: "התגובה פורסמה", reviewDeleted: "התגובה נמחקה",
       reviewFailed: "הפרסום נכשל. נסו שוב.",
-      activitiesLoading: "טוען פעילויות…",
+      activitiesLoading: "הפעילויות נטענות…",
       activitiesUnavailableTitle: "השרת לא זמין",
-      activitiesUnavailableBody: "נסה מאוחר יותר.",
+      activitiesUnavailableBody: "אפשר לנסות שוב מאוחר יותר.",
       activitiesEmptyTitle: "עדיין אין פעילויות",
-      activitiesEmptyBody: "נסה שוב מאוחר יותר.",
-      retryBtn: "נסה שוב",
+      activitiesEmptyBody: "אפשר לנסות שוב מאוחר יותר.",
+      retryBtn: "ניסיון נוסף",
       scheduleAtOrganizer: "המועדים באתר המארגן",
       favCountText: n => n === 1 ? "פעילות אחת" : `${n} פעילויות`,
       favEmptyTitle: "עוד לא שמרת כלום",
       pinnedLabel: "שמורים", myPinnedTitle: "מה ששמרתי",
       bannerChange: "שינוי באנר", aboutYouGroup: "עליך", loginGroup: "פרטי התחברות",
-      mediaHint: "עד 5MB לתמונה.",
       editProfileTitle: "עריכת פרופיל", editPhotosGroup: "תמונות",
       selectedCount: n => n === 1 ? "נבחר אחד" : `${n} נבחרו`, noneSelectedYet: "עדיין לא בחרת",
       aboutYouNote: "אף אחד מהפרטים אינו חובה.",
-      activityTypesNote: "איזה סוג של דבר אתה מחפש.",
-      loginNote: "השאר ריק כדי להשאיר כמו שהוא.",
-      usernameHint: "אות באנגלית, ואז אותיות, ספרות וקו תחתון", passwordHint: "6–10 תווים",
-      showPasswordLabel: "הצג סיסמה", hidePasswordLabel: "הסתר סיסמה",
-      savingBtn: "שומר…", discardBtn: "בטל שינויים", discardPrompt: "לבטל את השינויים שלא נשמרו?",
-      addTopicLabel: "הוסף תחום משלך",
-      mediaUploading: "מעלה…", mediaSaved: "התמונה עודכנה", mediaFailed: "ההעלאה נכשלה. נסה שוב.",
-      mediaTooBig: "התמונה גדולה מדי (עד 5MB).", mediaNotImage: "אפשר להעלות רק תמונות.",
+      activityTypesNote: "אילו סוגי פעילויות מעניינים אותך.",
+      loginNote: "שדה שנשאר ריק לא משתנה.",
+      usernameHint: "אותיות באנגלית, ספרות ו-⁦! @ # _ . -⁩", passwordHint: "6–10 תווים",
+      showPasswordLabel: "הצגת הסיסמה", hidePasswordLabel: "הסתרת הסיסמה",
+      savingBtn: "שמירה…", discardBtn: "ביטול השינויים", discardPrompt: "לבטל את השינויים שלא נשמרו?",
+      addTopicLabel: "הוספת תחום משלך",
+      mediaUploading: "התמונה עולה…", mediaSaved: "התמונה עודכנה", mediaFailed: "ההעלאה נכשלה. אפשר לנסות שוב.",
+      mediaNotImage: "אפשר להעלות רק תמונות.",
       interestsHeading: "תחומי עניין", activityTypesHeading: "סוגי פעילויות",
       accountGroup: "חשבון", displayGroup: "תצוגה", noSuggestionsMsg: "אין המלצות חדשות כרגע.",
-      wantsToFollow: "רוצה לעקוב אחריך", newHereLabel: "חדש כאן",
+      wantsToFollow: "רוצה לעקוב אחריך", newHereLabel: "חשבון חדש",
       sharedInterests: n => n === 1 ? "תחום עניין משותף אחד" : `${n} תחומי עניין משותפים`,
-      followingCountText: n => n === 1 ? "עוקב אחרי אחד" : `עוקב אחרי ${n}`,
       textSizeHint: "משנה את גודל הטקסט בכל האפליקציה.",
       ageYears: n => `גיל ${n}`, gradeShort: g => `כיתה ${g}`,
       archiveLinkAll: "לכל הפעילויות", archiveLinkNew: "לכל החדשות", detailsBtn: "פרטים",
@@ -5548,44 +6086,71 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       priceNotPublished: "המחיר לא פורסם", free: "חינם", perTotal: "לכל התקופה", perSession: "למפגש", perMonth: "לחודש",
       spotsLeftText: (l, c) => `נותרו ${l} מתוך ${c} מקומות`, weeklyOn: d => `כל יום ${d}`, noEndDate: "ללא תאריך סיום", startsAt: t => `מתחיל ב-${t}`,
       register: "להרשמה", moreInfoSource: "לפרטים ולמקור", registrationSoon: "פרטי הרשמה יתפרסמו בקרוב",
-      quizIntroTitle: "בוא נכיר אותך", quizIntroSubtitle: "כמה שאלות קצרות, לוקח פחות מ-2 דקות. אפשר גם לדלג בכל שלב.",
-      startBtn: "בואו נתחיל", skipLink: "דלג על השאלון", backBtn: "הקודם", nextBtn: "הבא",
+      quizIntroTitle: "בואו נכיר", quizIntroSubtitle: "כמה שאלות קצרות, לוקח פחות מ-2 דקות. אפשר גם לדלג בכל שלב.",
+      startBtn: "בואו נתחיל", skipLink: "דילוג על השאלון", backBtn: "הקודם", nextBtn: "הבא",
       nameTitle: "מה השם שלך?", firstNameLabel: "שם פרטי (לא חובה)", lastNameLabel: "שם משפחה (לא חובה)",
       demoTitle: "כמה פרטים בסיסיים", demoSubtitle: "גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך",
-      ageQLabel: "בן/בת כמה אתה?", gradeQLabel: "באיזו כיתה אתה?", areaQLabel: "באיזה אזור בירושלים אתה גר?",
-      typeOrPick: "בחר מהרשימה או הקלד", selectPlaceholder: "בחר…",
+      ageQLabel: "מה הגיל שלך?", gradeQLabel: "מה הכיתה שלך?", areaQLabel: "מה אזור המגורים שלך בירושלים?",
+      typeOrPick: "בחירה מהרשימה או הקלדה", selectPlaceholder: "בחירה…",
       homeTab: "בית", accessibilityLabel: "נגישות", accessibilityTitle: "נגישות",
       editProfileBtn: "עריכת פרופיל", cancelBtn: "ביטול",
       currentUsernameLabel: "שם משתמש נוכחי", noneYet: "עדיין לא מולא",
-      topicsTitle: "באילו תחומים אתה מתעניין?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך",
-      addCustomTopicPlaceholder: "הוסף תחום משלך…", addBtn: "הוסף",
+      topicsTitle: "אילו תחומים מעניינים אותך?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך",
+      addCustomTopicPlaceholder: "תחום משלך…", addBtn: "הוספה",
       activityTypesTitle: "אילו סוגי פעילויות הכי מעניינים אותך?", finishBtn: "סיימתי",
       outroTitle: "מעולה, סיימנו!", outroSubtitle: "האפליקציה מוכנה בשבילך, מותאמת אישית", enterAppBtn: "כניסה לאפליקציה",
-      gradeOptions: [["ז", "ז׳"], ["ח", "ח׳"], ["ט", "ט׳"], ["י", "י׳"], ["יא", "י״א"], ["יב", "י״ב"], ["not_studying", "לא לומד/ת כרגע"]],
+      gradeOptions: [["ז", "ז׳"], ["ח", "ח׳"], ["ט", "ט׳"], ["י", "י׳"], ["יא", "י״א"], ["יב", "י״ב"], ["not_studying", "לא בלימודים כרגע"]],
       areaOptions: ["מרכז", "צפון", "דרום", "מזרח", "מערב"],
       activityTypeOptions: ["קורסים", "הרצאות", "חוגים", "הופעות", "התנדבות", "מקומות תעסוקה"],
       topicOptions: ["ספורט", "אמנות ועיצוב", "טכנולוגיה", "מוזיקה", "בישול", "מדעים", "קולנוע וצילום", "יזמות ועסקים", "חברה וקהילה"],
-      profileTitle: "הפרופיל שלי", avatarChange: "שינוי תמונת פרופיל", saveBtn: "שמור", savedMsg: "נשמר", backToApp: "חזרה לאפליקציה",
+      profileTitle: "הפרופיל שלי", avatarChange: "שינוי תמונת פרופיל", saveBtn: "שמירה", savedMsg: "נשמר", backToApp: "חזרה לאפליקציה",
       settingsTitle: "הגדרות", themeLabel: "מצב תצוגה", themeLight: "בהיר", themeDark: "כהה", themeSystem: "לפי המכשיר",
       textSizeLabel: "גודל טקסט", textSizeSmall: "קטן", textSizeMedium: "רגיל", textSizeLarge: "גדול", languageLabel: "שפה",
       changeUsernameLabel: "שינוי שם משתמש", changePasswordLabel: "שינוי סיסמה",
-      newUsernamePlaceholder: "שם משתמש חדש", newPasswordPlaceholder: "סיסמה חדשה", updateBtn: "עדכן",
+      newUsernamePlaceholder: "שם משתמש חדש", newPasswordPlaceholder: "סיסמה חדשה", updateBtn: "עדכון",
       usernameUpdated: "שם המשתמש עודכן", passwordUpdated: "הסיסמה עודכנה",
       notificationsLabel: "התראות", searchUsersLabel: "חיפוש משתמשים",
       followersLabel: "עוקבים", followingLabel: "במעקב",
-      followBtn: "עקוב", requestedBtn: "ממתין לאישור", followingBtn: "עוקב",
+      followBtn: "מעקב", requestedBtn: "בהמתנה לאישור", followingBtn: "במעקב",
       approveBtn: "אישור", denyBtn: "דחייה", removeFollowerBtn: "הסרה",
       privateProfileLabel: "פרופיל פרטי",
       privateOn: "פרטי", privateOff: "ציבורי",
       privateProfileHint: "בפרופיל פרטי, מעקב אחריך דורש את אישורך.",
-      lockedProfileMsg: "הפרופיל הזה פרטי. יש לעקוב ולקבל אישור כדי לראות את המועדפים שלו/שלה.",
+      lockedProfileMsg: "הפרופיל הזה פרטי. אחרי שבקשת המעקב תאושר, יופיעו כאן תחומי העניין, המועדפים וההישגים.",
       userSearchPlaceholder: "חיפוש לפי שם משתמש…",
       noUsersFoundMsg: "לא נמצאו משתמשים.",
       noRequestsMsg: "אין בקשות מעקב חדשות.",
       noFollowersMsg: "אין עדיין עוקבים.",
       noFollowingMsg: "עוד לא עוקבים אחרי אף אחד.",
       noFavoritesForUserMsg: "עדיין לא נבחרו מועדפים.",
-      favoritesOfUser: n => `המועדפים של ${n}`
+      favoritesOfUser: n => `המועדפים של ${n}`,
+      mediaTooBigTitle: "התמונה גדולה מדי", mediaTooBigBody: "אפשר להעלות תמונה בגודל של עד 5MB.", profileDetailsTitle: "הפרטים שלי", editBtnShort: "עריכה", myAchievementsTitle: "ההישגים שלך", achievementsTitle: "הישגים", achievementsBtn: "הישגים", noAchievementsYet: "עוד אין הישגים.", noAchievementsOther: "עוד אין הישגים.", noInterestsYet: "עוד לא נבחרו תחומי עניין.", noInterestsOther: "לא נבחרו תחומי עניין.", firstNameShort: "שם פרטי", lastNameShort: "שם משפחה", ageShort: "גיל", gradeLabelShort: "כיתה", areaShort: "אזור", privacyLabel: "פרטיות", profileThemeLabel: "צבעי הפרופיל", profileThemeNote: "כך ייראה הפרופיל בכל צפייה בו, בתצוגה בהירה.", paletteLabel: "ערכת צבעים", paletteHint: "צבע הרקע של האפליקציה, בתצוגה בהירה.", paletteDefault: "ברירת מחדל",
+      achievementsProgress: (n, total) => `${n} מתוך ${total}`,
+      achievementEarned: name => `השגת את ההישג "${name}"`,
+      palettes: {butter: "חמאה", sky: "תכלת", sage: "מרווה", sand: "חול", rose: "ורד"},
+      achievements: {
+        first_save: ["צעד ראשון","שמרת פעילות ראשונה"],
+        face_to_name: ["פרצוף לשם","העלית תמונת פרופיל ובאנר"],
+        full_picture: ["תמונה מלאה","מילאת את כל השאלות"],
+        changed: ["השתניתי","עדכנת את ההעדפות 30 יום אחרי המילוי הראשון"],
+        curious: ["סקרנות","שמרת פעילויות מ-3 קטגוריות שונות"],
+        outside_comfort: ["מחוץ לאזור הנוחות","שמרת פעילות מקטגוריה שאינה בתחומי העניין שלך"],
+        deep_dive: ["לעומק","שמרת 3 פעילויות מאותה קטגוריה"],
+        city_walk: ["טיול בעיר","שמרת פעילויות ב-3 מקומות שונים"],
+        quick: ["זריזות","שמרת פעילות ביום שבו פורסמה"],
+        last_minute: ["בדקה ה-90","שמרת פעילות ביום האחרון להרשמה"],
+        three_in_week: ["שלושה בשבוע","שמרת 3 פעילויות שמתקיימות באותו שבוע"],
+        organized: ["עושים סדר","מיינת את המועדפים"],
+        bargain: ["ציד מציאות","שמרת 3 פעילויות בחינם"],
+        know_place: ["מכירים את המקום","השתמשת בחיפוש ובסינון"],
+        daily: ["יום יומי","נכנסת לאפליקציה ב-5 ימים שונים"],
+        not_alone: ["לא לבד","עקבת לראשונה אחרי מישהו"],
+        open_door: ["דלת פתוחה","אישרת בקשת מעקב ראשונה"],
+        crew: ["חבורה","יש לך 5 קשרי מעקב הדדיים"],
+        widen_circle: ["מרחיבים את המעגל","עקבת אחרי מישהו מתוך \"מומלץ לעקוב אחרי\""],
+        same_mind: ["אותו ראש","שמרת פעילות שמופיעה גם במועדפים של מישהו שבמעקב שלך"],
+        beyond_bubble: ["מעבר לבועה","עקבת אחרי מישהו בלי אף תחום עניין משותף"]
+      }
     },
     ar: {
       appTitle: "ما بي\"م", appTagline: "أنشطة ونوادي وفعاليات للشباب",
@@ -5649,7 +6214,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favEmptyTitle: "لم تحفظ شيئًا بعد",
       pinnedLabel: "محفوظات", myPinnedTitle: "ما حفظتُه",
       bannerChange: "تغيير الغلاف", aboutYouGroup: "عنك", loginGroup: "بيانات الدخول",
-      mediaHint: "حتى 5MB للصورة.",
       editProfileTitle: "تعديل الملف الشخصي", editPhotosGroup: "الصور",
       selectedCount: n => n === 1 ? "اخترت واحدًا" : `تم اختيار ${n}`, noneSelectedYet: "لم تختر بعد",
       aboutYouNote: "لا شيء من هذه التفاصيل إلزامي.",
@@ -5660,12 +6224,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       savingBtn: "جارٍ الحفظ…", discardBtn: "تجاهل التغييرات", discardPrompt: "هل تريد تجاهل التغييرات غير المحفوظة؟",
       addTopicLabel: "أضف مجالًا خاصًا بك",
       mediaUploading: "جارٍ الرفع…", mediaSaved: "تم تحديث الصورة", mediaFailed: "فشل الرفع. حاول مرة أخرى.",
-      mediaTooBig: "الصورة كبيرة جدًا (حتى 5MB).", mediaNotImage: "يمكن رفع الصور فقط.",
+      mediaNotImage: "يمكن رفع الصور فقط.",
       interestsHeading: "الاهتمامات", activityTypesHeading: "أنواع الأنشطة",
       accountGroup: "الحساب", displayGroup: "العرض", noSuggestionsMsg: "لا توجد اقتراحات جديدة حاليًا.",
       wantsToFollow: "يريد متابعتك", newHereLabel: "جديد هنا",
       sharedInterests: n => n === 1 ? "اهتمام مشترك واحد" : `${n} اهتمامات مشتركة`,
-      followingCountText: n => n === 1 ? "يتابع واحدًا" : `يتابع ${n}`,
       textSizeHint: "يغيّر حجم النص في كل التطبيق.",
       ageYears: n => `العمر ${n}`, gradeShort: g => `الصف ${g}`,
       archiveLinkAll: "كل الأنشطة", archiveLinkNew: "كل الجديد", detailsBtn: "التفاصيل",
@@ -5715,7 +6278,34 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowersMsg: "لا يوجد متابعون بعد.",
       noFollowingMsg: "لا تتابع أحدًا بعد.",
       noFavoritesForUserMsg: "لم يتم اختيار أي مفضلة بعد.",
-      favoritesOfUser: n => `مفضلة ${n}`
+      favoritesOfUser: n => `مفضلة ${n}`,
+      mediaTooBigTitle: "الصورة كبيرة جدًا", mediaTooBigBody: "يمكن رفع صورة حتى 5MB.", profileDetailsTitle: "تفاصيلي", editBtnShort: "تعديل", myAchievementsTitle: "إنجازاتك", achievementsTitle: "الإنجازات", achievementsBtn: "الإنجازات", noAchievementsYet: "لا إنجازات بعد.", noAchievementsOther: "لا إنجازات بعد.", noInterestsYet: "لم تُختر اهتمامات بعد.", noInterestsOther: "لم تُختر اهتمامات.", firstNameShort: "الاسم الأول", lastNameShort: "اسم العائلة", ageShort: "العمر", gradeLabelShort: "الصف", areaShort: "المنطقة", privacyLabel: "الخصوصية", profileThemeLabel: "ألوان الملف الشخصي", profileThemeNote: "هكذا يظهر الملف الشخصي عند كل زيارة، في الوضع الفاتح.", paletteLabel: "نظام الألوان", paletteHint: "لون خلفية التطبيق في الوضع الفاتح.", paletteDefault: "افتراضي",
+      achievementsProgress: (n, total) => `${n} من ${total}`,
+      achievementEarned: name => `حصلت على إنجاز "${name}"`,
+      palettes: {butter: "زبدة", sky: "سماوي", sage: "مريمية", sand: "رمل", rose: "وردي"},
+      achievements: {
+        first_save: ["الخطوة الأولى","حفظت أول نشاط"],
+        face_to_name: ["وجه للاسم","أضفت صورة شخصية وغلافًا"],
+        full_picture: ["الصورة الكاملة","أجبت عن كل الأسئلة"],
+        changed: ["تغيّرت","حدّثت تفضيلاتك بعد 30 يومًا من أول تعبئة"],
+        curious: ["فضول","حفظت أنشطة من 3 فئات مختلفة"],
+        outside_comfort: ["خارج منطقة الراحة","حفظت نشاطًا من فئة ليست ضمن اهتماماتك"],
+        deep_dive: ["في العمق","حفظت 3 أنشطة من الفئة نفسها"],
+        city_walk: ["جولة في المدينة","حفظت أنشطة في 3 أماكن مختلفة"],
+        quick: ["سرعة","حفظت نشاطًا في يوم نشره"],
+        last_minute: ["في الدقيقة 90","حفظت نشاطًا في آخر يوم للتسجيل"],
+        three_in_week: ["ثلاثة في أسبوع","حفظت 3 أنشطة تجري في الأسبوع نفسه"],
+        organized: ["ترتيب","رتّبت المفضّلة"],
+        bargain: ["صيد الفرص","حفظت 3 أنشطة مجانية"],
+        know_place: ["تعرف المكان","استخدمت البحث والتصفية"],
+        daily: ["يومًا بعد يوم","دخلت التطبيق في 5 أيام مختلفة"],
+        not_alone: ["معًا","تابعت شخصًا لأول مرة"],
+        open_door: ["باب مفتوح","وافقت على أول طلب متابعة"],
+        crew: ["شلّة","لديك 5 متابعات متبادلة"],
+        widen_circle: ["دائرة أوسع","تابعت شخصًا من \"مقترح للمتابعة\""],
+        same_mind: ["نفس التفكير","حفظت نشاطًا موجودًا في مفضّلة شخص تتابعه"],
+        beyond_bubble: ["خارج الفقاعة","تابعت شخصًا بلا أي اهتمام مشترك"]
+      }
     },
     en: {
       appTitle: "Mah Ba\"im", appTagline: "Activities, clubs & events for teens",
@@ -5778,7 +6368,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favEmptyTitle: "Nothing saved yet",
       pinnedLabel: "Saved", myPinnedTitle: "What I saved",
       bannerChange: "Change banner", aboutYouGroup: "About you", loginGroup: "Sign-in details",
-      mediaHint: "Up to 5MB per image.",
       editProfileTitle: "Edit profile", editPhotosGroup: "Photos",
       selectedCount: n => `${n} selected`, noneSelectedYet: "Nothing picked yet",
       aboutYouNote: "None of these are required.",
@@ -5789,12 +6378,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       savingBtn: "Saving…", discardBtn: "Discard changes", discardPrompt: "Discard your unsaved changes?",
       addTopicLabel: "Add your own topic",
       mediaUploading: "Uploading…", mediaSaved: "Photo updated", mediaFailed: "Upload failed. Try again.",
-      mediaTooBig: "That image is too large (5MB max).", mediaNotImage: "Images only.",
+      mediaNotImage: "Images only.",
       interestsHeading: "Interests", activityTypesHeading: "Activity types",
       accountGroup: "Account", displayGroup: "Display", noSuggestionsMsg: "No new suggestions right now.",
       wantsToFollow: "wants to follow you", newHereLabel: "New here",
       sharedInterests: n => n === 1 ? "1 shared interest" : `${n} shared interests`,
-      followingCountText: n => n === 1 ? "following 1" : `following ${n}`,
       textSizeHint: "Changes text size across the whole app.",
       ageYears: n => `Age ${n}`, gradeShort: g => `Grade ${g}`,
       archiveLinkAll: "See all", archiveLinkNew: "See all new", detailsBtn: "Details",
@@ -5844,7 +6432,34 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowersMsg: "No followers yet.",
       noFollowingMsg: "Not following anyone yet.",
       noFavoritesForUserMsg: "No favorites chosen yet.",
-      favoritesOfUser: n => `${n}'s favorites`
+      favoritesOfUser: n => `${n}'s favorites`,
+      mediaTooBigTitle: "That image is too large", mediaTooBigBody: "Images can be up to 5MB.", profileDetailsTitle: "My details", editBtnShort: "Edit", myAchievementsTitle: "Your achievements", achievementsTitle: "Achievements", achievementsBtn: "Achievements", noAchievementsYet: "No achievements yet.", noAchievementsOther: "No achievements yet.", noInterestsYet: "No interests chosen yet.", noInterestsOther: "No interests chosen.", firstNameShort: "First name", lastNameShort: "Last name", ageShort: "Age", gradeLabelShort: "Grade", areaShort: "Area", privacyLabel: "Privacy", profileThemeLabel: "Profile colours", profileThemeNote: "How the profile looks to anyone who opens it, in light mode.", paletteLabel: "Colour theme", paletteHint: "The app's background in light mode.", paletteDefault: "Default",
+      achievementsProgress: (n, total) => `${n} of ${total}`,
+      achievementEarned: name => `You earned "${name}"`,
+      palettes: {butter: "Butter", sky: "Sky", sage: "Sage", sand: "Sand", rose: "Rose"},
+      achievements: {
+        first_save: ["First step","Saved your first activity"],
+        face_to_name: ["A face to the name","Added a profile picture and a banner"],
+        full_picture: ["Full picture","Answered every question"],
+        changed: ["I've changed","Updated your preferences 30 days after first filling them in"],
+        curious: ["Curiosity","Saved activities from 3 different categories"],
+        outside_comfort: ["Out of the comfort zone","Saved an activity from a category outside your interests"],
+        deep_dive: ["Deep dive","Saved 3 activities from the same category"],
+        city_walk: ["City walk","Saved activities in 3 different places"],
+        quick: ["Quick","Saved an activity on the day it was published"],
+        last_minute: ["In the 90th minute","Saved an activity on the last day to register"],
+        three_in_week: ["Three in a week","Saved 3 activities happening in the same week"],
+        organized: ["Tidy up","Sorted your favorites"],
+        bargain: ["Bargain hunt","Saved 3 free activities"],
+        know_place: ["Know your way around","Used search and a filter"],
+        daily: ["Day by day","Opened the app on 5 different days"],
+        not_alone: ["Not alone","Followed someone for the first time"],
+        open_door: ["Open door","Approved your first follow request"],
+        crew: ["Crew","Have 5 mutual follows"],
+        widen_circle: ["Widening the circle","Followed someone from \"Suggested for you\""],
+        same_mind: ["Same wavelength","Saved an activity that is also in the favorites of someone you follow"],
+        beyond_bubble: ["Beyond the bubble","Followed someone with no shared interests"]
+      }
     },
     ru: {
       appTitle: "Ма Баим", appTagline: "Кружки, занятия и мероприятия для подростков",
@@ -5909,7 +6524,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favEmptyTitle: "Пока ничего не сохранено",
       pinnedLabel: "Сохранено", myPinnedTitle: "Что я сохранил",
       bannerChange: "Сменить баннер", aboutYouGroup: "О вас", loginGroup: "Данные для входа",
-      mediaHint: "До 5 МБ на изображение.",
       editProfileTitle: "Редактирование профиля", editPhotosGroup: "Фотографии",
       selectedCount: n => `Выбрано: ${n}`, noneSelectedYet: "Пока ничего не выбрано",
       aboutYouNote: "Ни одно из полей не обязательно.",
@@ -5920,12 +6534,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       savingBtn: "Сохранение…", discardBtn: "Отменить изменения", discardPrompt: "Отменить несохранённые изменения?",
       addTopicLabel: "Добавить свою тему",
       mediaUploading: "Загрузка…", mediaSaved: "Фото обновлено", mediaFailed: "Загрузка не удалась. Попробуйте снова.",
-      mediaTooBig: "Изображение слишком большое (до 5MB).", mediaNotImage: "Только изображения.",
+      mediaNotImage: "Только изображения.",
       interestsHeading: "Интересы", activityTypesHeading: "Виды занятий",
       accountGroup: "Аккаунт", displayGroup: "Отображение", noSuggestionsMsg: "Пока нет новых рекомендаций.",
       wantsToFollow: "хочет подписаться", newHereLabel: "Новичок",
       sharedInterests: n => n === 1 ? "1 общий интерес" : `${n} общих интересов`,
-      followingCountText: n => n === 1 ? "подписка: 1" : `подписок: ${n}`,
       textSizeHint: "Меняет размер текста во всём приложении.",
       ageYears: n => `Возраст ${n}`, gradeShort: g => `${g} класс`,
       archiveLinkAll: "Смотреть все", archiveLinkNew: "Смотреть все новое", detailsBtn: "Подробнее",
@@ -5975,7 +6588,34 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowersMsg: "Пока нет подписчиков.",
       noFollowingMsg: "Вы пока ни на кого не подписаны.",
       noFavoritesForUserMsg: "Избранное пока не выбрано.",
-      favoritesOfUser: n => `Избранное пользователя ${n}`
+      favoritesOfUser: n => `Избранное пользователя ${n}`,
+      mediaTooBigTitle: "Изображение слишком большое", mediaTooBigBody: "Можно загрузить изображение до 5 МБ.", profileDetailsTitle: "Мои данные", editBtnShort: "Изменить", myAchievementsTitle: "Ваши достижения", achievementsTitle: "Достижения", achievementsBtn: "Достижения", noAchievementsYet: "Пока нет достижений.", noAchievementsOther: "Пока нет достижений.", noInterestsYet: "Интересы пока не выбраны.", noInterestsOther: "Интересы не выбраны.", firstNameShort: "Имя", lastNameShort: "Фамилия", ageShort: "Возраст", gradeLabelShort: "Класс", areaShort: "Район", privacyLabel: "Конфиденциальность", profileThemeLabel: "Цвета профиля", profileThemeNote: "Так профиль выглядит для всех, кто его открывает, в светлой теме.", paletteLabel: "Цветовая тема", paletteHint: "Фон приложения в светлой теме.", paletteDefault: "По умолчанию",
+      achievementsProgress: (n, total) => `${n} из ${total}`,
+      achievementEarned: name => `Получено достижение «${name}»`,
+      palettes: {butter: "Масло", sky: "Небо", sage: "Шалфей", sand: "Песок", rose: "Роза"},
+      achievements: {
+        first_save: ["Первый шаг","Сохранено первое занятие"],
+        face_to_name: ["Лицо к имени","Загружены фото профиля и обложка"],
+        full_picture: ["Полная картина","Даны ответы на все вопросы"],
+        changed: ["Перемены","Предпочтения обновлены через 30 дней после первого заполнения"],
+        curious: ["Любопытство","Сохранены занятия из 3 разных категорий"],
+        outside_comfort: ["За пределами зоны комфорта","Сохранено занятие из категории вне ваших интересов"],
+        deep_dive: ["В глубину","Сохранены 3 занятия из одной категории"],
+        city_walk: ["Прогулка по городу","Сохранены занятия в 3 разных местах"],
+        quick: ["Быстрота","Занятие сохранено в день публикации"],
+        last_minute: ["На 90-й минуте","Занятие сохранено в последний день записи"],
+        three_in_week: ["Три за неделю","Сохранены 3 занятия на одной неделе"],
+        organized: ["Наводим порядок","Избранное отсортировано"],
+        bargain: ["Охота за находками","Сохранены 3 бесплатных занятия"],
+        know_place: ["Знаем, где что","Использованы поиск и фильтр"],
+        daily: ["День за днём","Приложение открыто в 5 разных дней"],
+        not_alone: ["Не в одиночку","Первая подписка"],
+        open_door: ["Открытая дверь","Одобрен первый запрос на подписку"],
+        crew: ["Компания","5 взаимных подписок"],
+        widen_circle: ["Шире круг","Подписка из раздела «Рекомендуем подписаться»"],
+        same_mind: ["На одной волне","Сохранено занятие, которое есть в избранном у ваших подписок"],
+        beyond_bubble: ["За пределами пузыря","Подписка на человека без общих интересов"]
+      }
     }
   };
 
@@ -6021,6 +6661,32 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     else root.removeAttribute("data-theme");
   }
 
+  // Colour themes: the ground and surfaces change, the inks stay.
+  const PALETTES = ["butter", "sky", "sage", "sand", "rose"];
+  const PALETTE_SWATCH = { butter: "#FFF4C7", sky: "#D2E9F1", sage: "#D8E6CB", sand: "#ECDDC6", rose: "#F0D6D2" };
+
+  function applyAppPalette(key) {
+    const root = document.documentElement;
+    if (key && key !== "butter" && PALETTES.includes(key)) root.setAttribute("data-palette", key);
+    else root.removeAttribute("data-palette");
+  }
+
+  function setProfilePalette(el, key) {
+    if (key && PALETTES.includes(key)) el.dataset.ppal = key;
+    else delete el.dataset.ppal;
+  }
+
+  // One row of swatches. For a profile the first is "default": the profile
+  // then follows whatever theme its visitor uses.
+  function paletteSwatchesHtml(name, current, withDefault) {
+    const t = L();
+    const opts = (withDefault ? [""] : []).concat(PALETTES);
+    return `<div class="swatches">${opts.map(k => {
+      const label = k ? t.palettes[k] : t.paletteDefault;
+      return `<button type="button" class="swatch${k ? "" : " swatch--default"}" data-${name}="${k}" aria-pressed="${(current || "") === k}"><span class="swatch-dot"${k ? ` style="background:${PALETTE_SWATCH[k]}"` : ""}></span>${label}</button>`;
+    }).join("")}</div>`;
+  }
+
   function applyTextSize(size) {
     const scale = { small: "0.9", medium: "1", large: "1.2" }[size] || "1";
     document.documentElement.style.setProperty("--text-scale", scale);
@@ -6034,7 +6700,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // not exist yet fails the whole row, which used to blank the entire profile —
   // so a missing newer column degrades to "not set" instead of "no profile".
   const PROFILE_BASE_COLS = "username, avatar_url, theme_pref, text_size, language, is_private";
-  const PROFILE_NEW_COLS = ["banner_url"];
+  const PROFILE_NEW_COLS = ["banner_url", "app_palette", "profile_theme"];
 
   async function loadAndApplyProfile(userId) {
     currentUserId = userId;
@@ -6050,6 +6716,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       setLanguage(userProfile.language || "he");
       applyTheme(userProfile.theme_pref || "system");
       applyTextSize(userProfile.text_size || "medium");
+      applyAppPalette(userProfile.app_palette || "butter");
     }
   }
 
@@ -6304,6 +6971,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     await loadAndApplyProfile(userId);
     await loadFavorites();
     await loadFollowedFavoritesMap();
+    await loadAchievementState();
+    logUserEvent("open");
     // On a fresh page load, showApp()'s first-run initAppUI() renders Home after this
     // point anyway, and showApp() itself re-renders Home on every call once started.
     // Favorites has no such call site on the login path, so refresh it explicitly here.
@@ -6393,6 +7062,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     otherProfileUserId = null;
     followListUserId = null;
     currentInterestTopics = [];
+    resetAchievementState();
     loadGuestSettings();
     showApp(null);
   });
@@ -6408,6 +7078,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     otherProfileUserId = null;
     followListUserId = null;
     currentInterestTopics = [];
+    resetAchievementState();
+    applyAppPalette("butter");
     closeActivityDetail();
     const { data: { session } } = await sb.auth.getSession();
     if (session) await sb.auth.signOut();
@@ -6425,7 +7097,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   let profileEditPassword = "";
   let profileBarScrollHandler = () => {};
 
-  async function showProfile() {
+  // The profile is four views on one screen: the page ("view"), its details
+  // ("details"), the edit form ("edit") and the achievements ("achievements").
+  // Called as a click handler it receives an event, hence the string check.
+  async function showProfile(mode) {
     returnToScreen = null;
     appRootEl.hidden = true;
     welcomeScreenEl.hidden = true;
@@ -6439,36 +7114,22 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     profileScreenEl.hidden = false;
     bottomNavEl.hidden = false;
     setActiveTab("profile");
-    profileMode = "view";
+    profileMode = typeof mode === "string" ? mode : "view";
     const { data: prefs } = await sb.from("user_preferences").select("*").eq("user_id", currentUserId).maybeSingle();
+    if (prefs) myPrefs = prefs;
     const gradeMatch = L().gradeOptions.find(g => g[0] === prefs?.grade);
     profileState = {
       firstName: prefs?.first_name || "", lastName: prefs?.last_name || "",
       ageRange: prefs?.age_range || "", grade: prefs?.grade || null,
       gradeLabel: gradeMatch ? gradeMatch[1] : (prefs?.grade || ""),
       area: prefs?.area || "",
-      activityTypes: prefs?.activity_types || [], interestTopics: prefs?.interest_topics || []
+      activityTypes: prefs?.activity_types || [], interestTopics: prefs?.interest_topics || [],
+      profileTheme: userProfile?.profile_theme || null
     };
     socialCounts = await loadSocialCounts(currentUserId);
     renderProfile();
+    window.scrollTo({ top: 0 });
   }
-
-  // Profile's own pinned rows and the avatar picker are re-rendered on every
-  // renderProfile, so their handling is delegated on the stable container.
-  profileContentEl.addEventListener("click", (e) => {
-    const fav = e.target.closest("[data-fav-id]");
-    if (fav) { e.stopPropagation(); toggleFavorite(fav.dataset.favId); return; }
-    const row = e.target.closest(".fav-row[data-open-id]");
-    if (row) openActivityDetail(row.dataset.openId);
-  });
-
-  profileContentEl.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter" && e.key !== " ") return;
-    const row = e.target.closest(".fav-row[data-open-id]");
-    if (!row || e.target.closest("[data-fav-id]")) return;
-    e.preventDefault();
-    openActivityDetail(row.dataset.openId);
-  });
 
   function staticChipsHtml(values) {
     if (!values.length) return `<p class="quiz-subtitle">${L().noneYet}</p>`;
@@ -6479,6 +7140,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // mode reuses it, so tapping a chip and tapping it back leaves Save inert.
   function enterProfileEdit() {
     profileMode = "edit";
+    profileState.profileTheme = userProfile?.profile_theme || null;
     profileEditUsername = userProfile?.username || "";
     profileEditPassword = "";
     profileBaseline = profileEditSnapshot();
@@ -6493,59 +7155,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     // out of band (a media upload, a language switch) must not assume it is there.
     if (!profileState) return;
 
-    if (profileMode === "view") {
-      const name = userProfile?.username || "";
-      const fullName = [profileState.firstName, profileState.lastName].filter(Boolean).join(" ");
-      const meta = [profileState.ageRange && t.ageYears(profileState.ageRange), profileState.gradeLabel && t.gradeShort(profileState.gradeLabel), profileState.area].filter(Boolean);
-      profileContentEl.innerHTML = `
-        <div class="profile-banner">${bannerHtml(name, userProfile?.banner_url)}</div>
-        <div class="profile-top">
-          <button type="button" class="icon-btn" id="pSettingsBtn" aria-label="${t.settingsBtn}">${icon("gear")}</button>
-        </div>
-        <div class="profile-id">
-          <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : (name || "?").charAt(0).toUpperCase()}</span>
-          <h1 class="display display-lg">${fullName || name}</h1>
-          <p class="profile-handle">@${name}${userProfile?.is_private !== false ? " · " + t.privateOn : ""}</p>
-          ${meta.length ? `<p class="profile-meta">${meta.join(" · ")}</p>` : ""}
-          <div class="stat-row">
-            <button type="button" class="stat" id="pFollowersBtn"><b class="num">${socialCounts.followers}</b><span>${t.followersLabel}</span></button>
-            <span class="stat-divider"></span>
-            <button type="button" class="stat" id="pFollowingBtn"><b class="num">${socialCounts.following}</b><span>${t.followingLabel}</span></button>
-            <span class="stat-divider"></span>
-            <span class="stat"><b class="num">${favoriteIds.size}</b><span>${t.pinnedLabel}</span></span>
-          </div>
-          <button type="button" class="outline-btn" id="pEditBtn" style="max-width:230px">${icon("pencil")}${t.editProfileBtn}</button>
-        </div>
-        ${profileState.interestTopics.length ? `
-        <section class="section">
-          <h2 class="display display-sm">${t.interestsHeading}</h2>
-          <div class="topic-tags">${profileState.interestTopics.map(v => `<span class="topic-tag">${v}</span>`).join("")}</div>
-        </section>` : ""}
-        ${profileState.activityTypes.length ? `
-        <section class="section">
-          <h2 class="display display-sm">${t.activityTypesHeading}</h2>
-          <div class="topic-tags">${profileState.activityTypes.map(v => `<span class="topic-tag">${v}</span>`).join("")}</div>
-        </section>` : ""}
-        <section class="section">
-          <div class="section-head">
-            <h2 class="display display-md">${t.myPinnedTitle}</h2>
-            ${favoriteIds.size ? `<button type="button" class="section-more" id="pAllFavsBtn">${t.seeAll}${icon("chevron")}</button>` : ""}
-          </div>
-          <div class="stack" id="pFavList"></div>
-        </section>
-      `;
-      const favs = baseFavorites().slice(0, 3);
-      document.getElementById("pFavList").innerHTML = favs.length
-        ? favs.map((a, i) => favRowHtml(a, { index: i })).join("")
-        : `<p class="rail-empty">${t.favEmptyNoFavoritesMsg}</p>`;
-      document.getElementById("pEditBtn").addEventListener("click", () => { enterProfileEdit(); });
-      document.getElementById("pSettingsBtn").addEventListener("click", showSettings);
-      document.getElementById("pFollowersBtn").addEventListener("click", () => showFollowList("followers", currentUserId));
-      document.getElementById("pFollowingBtn").addEventListener("click", () => showFollowList("following", currentUserId));
-      const allFavsBtn = document.getElementById("pAllFavsBtn");
-      if (allFavsBtn) allFavsBtn.addEventListener("click", showFavorites);
-      return;
-    }
+    setProfilePalette(profileContentEl, profileMode === "edit" ? profileState.profileTheme : userProfile?.profile_theme);
+    if (profileMode === "view") { renderProfileView(); return; }
+    if (profileMode === "details") { renderProfileDetails(); return; }
+    if (profileMode === "achievements") { renderAchievementsPage(); return; }
 
     // Edit mode. The header is edited on itself — banner and avatar are changed
     // on the thing, not through a separate media screen — and everything below is
@@ -6578,7 +7191,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
             <input type="file" id="avatarInput" accept="image/*" hidden>
           </div>
         </div>
-        <p class="pf-media-note">${t.mediaHint}</p>
       </section>
 
       <section ${rise()}>
@@ -6619,6 +7231,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </section>
 
       <section ${rise()}>
+        <div class="pf-sec-head"><h2 class="pf-sec-title">${t.profileThemeLabel}</h2></div>
+        <p class="pf-sec-note">${t.profileThemeNote}</p>
+        ${paletteSwatchesHtml("ppalopt", profileState.profileTheme, true)}
+      </section>
+
+      <section ${rise()}>
         <div class="pf-sec-head"><h2 class="pf-sec-title">${t.loginGroup}</h2></div>
         <p class="pf-sec-note">${t.loginNote}</p>
         <div class="pf-fields">
@@ -6643,6 +7261,154 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     wireProfileEdit();
   }
 
+  // The page: who this is and what they're into — name, interests, favourites,
+  // achievements. Everything else is one tap away under "details".
+  function renderProfileView() {
+    const t = L();
+    const name = userProfile?.username || "";
+    const avatarStyle = userProfile?.avatar_url ? `background-image:url('${userProfile.avatar_url}')` : "";
+    const fullName = [profileState.firstName, profileState.lastName].filter(Boolean).join(" ");
+    const meta = [fullName, profileState.ageRange && t.ageYears(profileState.ageRange), profileState.area].filter(Boolean);
+    const earned = ACHIEVEMENTS.filter(a => earnedAchievements.has(a.key));
+    profileContentEl.innerHTML = `
+      <div class="profile-banner">${bannerHtml(name, userProfile?.banner_url)}</div>
+      <div class="profile-top">
+        <button type="button" class="icon-btn" id="pSettingsBtn" aria-label="${t.settingsBtn}">${icon("gear")}</button>
+      </div>
+      <div class="profile-id">
+        <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((name || "?").charAt(0).toUpperCase())}</span>
+        <h1 class="display display-lg profile-name">${escHtml(name)}</h1>
+        ${meta.length ? `<p class="profile-meta">${meta.map(escHtml).join(" · ")}</p>` : ""}
+        <button type="button" class="pill-btn" id="pDetailsBtn">${icon("user")}${t.detailsBtn}</button>
+      </div>
+      ${interestsBlockHtml(profileState.interestTopics, t.noInterestsYet)}
+      <button type="button" class="outline-btn profile-wide-btn" id="pFavBtn">${icon("heart")}<span>${t.favoritesBtn}</span><span class="profile-btn-count num">${favoriteIds.size}</span></button>
+      ${achievementsBlockHtml(earned, t.myAchievementsTitle, t.noAchievementsYet)}
+      <button type="button" class="plate-btn profile-wide-btn" id="pAchBtn">${icon("trophy")}${t.achievementsBtn}</button>
+    `;
+    document.getElementById("pSettingsBtn").addEventListener("click", showSettings);
+    document.getElementById("pDetailsBtn").addEventListener("click", () => switchProfileMode("details"));
+    document.getElementById("pFavBtn").addEventListener("click", showFavorites);
+    document.getElementById("pAchBtn").addEventListener("click", () => switchProfileMode("achievements"));
+  }
+
+  function switchProfileMode(mode) {
+    profileMode = mode;
+    renderProfile();
+    window.scrollTo({ top: 0 });
+  }
+
+  function interestsBlockHtml(topics, emptyText) {
+    const t = L();
+    return `<section class="profile-block">
+      <h2 class="profile-block-title">${t.interestsHeading}</h2>
+      ${topics.length
+        ? `<div class="topic-tags">${topics.map(v => `<span class="topic-tag">${escHtml(v)}</span>`).join("")}</div>`
+        : `<p class="profile-empty">${emptyText}</p>`}
+    </section>`;
+  }
+
+  // On a profile an achievement is its mark and its name; the condition is on
+  // the achievements page.
+  function achievementsBlockHtml(defs, title, emptyText) {
+    const t = L();
+    return `<section class="profile-block">
+      <h2 class="profile-block-title">${title}</h2>
+      ${defs.length
+        ? `<div class="ach-mini-grid">${defs.map(def => `<div class="ach-mini">${achBadgeHtml(def, true, "sm")}<span>${t.achievements[def.key][0]}</span></div>`).join("")}</div>`
+        : `<p class="profile-empty">${emptyText}</p>`}
+    </section>`;
+  }
+
+  // Details: everything the questionnaire holds, the follow counts, and the
+  // way into editing.
+  function renderProfileDetails() {
+    const t = L();
+    const rtl = LANG_DIR[currentLang] === "rtl";
+    const dash = "—";
+    const rows = [
+      [t.usernameLabel, `<bdi>${escHtml(userProfile?.username || "")}</bdi>`],
+      [t.firstNameShort, escHtml(profileState.firstName) || dash],
+      [t.lastNameShort, escHtml(profileState.lastName) || dash],
+      [t.ageShort, escHtml(profileState.ageRange || "") || dash],
+      [t.gradeLabelShort, escHtml(profileState.gradeLabel || "") || dash],
+      [t.areaShort, escHtml(profileState.area || "") || dash],
+      [t.privacyLabel, userProfile?.is_private !== false ? t.privateOn : t.privateOff],
+      [t.profileThemeLabel, userProfile?.profile_theme ? t.palettes[userProfile.profile_theme] : t.paletteDefault]
+    ];
+    const tags = (title, values) => `<section class="profile-block">
+      <h2 class="profile-block-title">${title}</h2>
+      ${values.length ? `<div class="topic-tags">${values.map(v => `<span class="topic-tag">${escHtml(v)}</span>`).join("")}</div>` : `<p class="profile-empty">${t.noneYet}</p>`}
+    </section>`;
+    profileContentEl.innerHTML = `
+      <div class="back-row"><button type="button" class="back-btn" id="pdBack">${icon(rtl ? "chevronBack" : "chevron")}${t.profileTitle}</button></div>
+      <div class="details-head">
+        <h1 class="display display-lg">${t.profileDetailsTitle}</h1>
+        <button type="button" class="pill-btn" id="pdEdit">${icon("pencil")}${t.editBtnShort}</button>
+      </div>
+      <div class="stat-row details-stats">
+        <button type="button" class="stat" id="pFollowersBtn"><b class="num">${socialCounts.followers}</b><span>${t.followersLabel}</span></button>
+        <span class="stat-divider"></span>
+        <button type="button" class="stat" id="pFollowingBtn"><b class="num">${socialCounts.following}</b><span>${t.followingLabel}</span></button>
+        <span class="stat-divider"></span>
+        <button type="button" class="stat" id="pSavedBtn"><b class="num">${favoriteIds.size}</b><span>${t.pinnedLabel}</span></button>
+      </div>
+      <div class="settings-card details-card">
+        ${rows.map(([k, v]) => `<div class="profile-view-item"><span>${k}</span><b>${v}</b></div>`).join("")}
+      </div>
+      ${tags(t.interestsHeading, profileState.interestTopics)}
+      ${tags(t.activityTypesHeading, profileState.activityTypes)}
+    `;
+    document.getElementById("pdBack").addEventListener("click", () => switchProfileMode("view"));
+    document.getElementById("pdEdit").addEventListener("click", enterProfileEdit);
+    document.getElementById("pFollowersBtn").addEventListener("click", () => showFollowList("followers", currentUserId));
+    document.getElementById("pFollowingBtn").addEventListener("click", () => showFollowList("following", currentUserId));
+    document.getElementById("pSavedBtn").addEventListener("click", showFavorites);
+  }
+
+  // The achievements page — only the owner reaches it. Every achievement,
+  // five to a row, each with its mark, its name and what earns it.
+  function renderAchievementsPage() {
+    const t = L();
+    const rtl = LANG_DIR[currentLang] === "rtl";
+    const have = ACHIEVEMENTS.filter(a => earnedAchievements.has(a.key)).length;
+    const rows = [];
+    for (let i = 0; i < ACHIEVEMENTS.length; i += 5) rows.push(ACHIEVEMENTS.slice(i, i + 5));
+    profileContentEl.innerHTML = `
+      <div class="back-row"><button type="button" class="back-btn" id="paBack">${icon(rtl ? "chevronBack" : "chevron")}${t.profileTitle}</button></div>
+      <div class="ach-hero" aria-hidden="true">${achievementsArtSvg()}</div>
+      <header class="ach-head">
+        <h1 class="display display-lg">${t.achievementsTitle}</h1>
+        <p class="ach-progress">${t.achievementsProgress(have, ACHIEVEMENTS.length)}</p>
+      </header>
+      <div class="ach-rows">
+        ${rows.map(row => `<div class="ach-row">${row.map(def => {
+          const earned = earnedAchievements.has(def.key);
+          const [name, desc] = t.achievements[def.key];
+          return `<div class="ach-cell${earned ? "" : " is-locked"}">${achBadgeHtml(def, earned)}<b>${name}</b><span>${desc}</span></div>`;
+        }).join("")}</div>`).join("")}
+      </div>
+    `;
+    document.getElementById("paBack").addEventListener("click", () => switchProfileMode("view"));
+  }
+
+  // The achievements page's header: hills, cypresses and a low sun — the
+  // Wall and the Dome are the welcome screen's, not repeated here.
+  function achievementsArtSvg() {
+    return `<svg viewBox="0 0 100 30" preserveAspectRatio="xMidYMid slice" role="presentation">
+      <rect width="100" height="30" fill="var(--art-ground)"/>
+      <circle cx="78" cy="11" r="6.5" fill="var(--gold)" opacity=".55"/>
+      <path d="M0 21Q20 13 42 18T100 16V30H0z" fill="var(--cat-wellbeing)" opacity=".55"/>
+      <path d="M13.6 25c-1.4-4.2-1-9.8 1.3-12.8 2.3 3 2.7 8.6 1.3 12.8z" fill="var(--forest)"/>
+      <path d="M19.2 25.4c-1-3.4-.8-7.6 1.1-10 1.9 2.4 2.1 6.6 1.1 10z" fill="var(--cat-wellbeing)"/>
+      <path d="M87.6 24.2c-1.2-3.6-.9-8.4 1.1-11 2 2.6 2.3 7.4 1.1 11z" fill="var(--forest)"/>
+      <path d="M0 26Q30 21 58 25T100 23V30H0z" fill="var(--forest)"/>
+      <g stroke="var(--ink)" stroke-width=".5" fill="none" stroke-linecap="round">
+        <path d="M44 8q1.2-1.2 2.4 0 1.2-1.2 2.4 0"/><path d="M51 5q1-1 2 0 1-1 2 0"/>
+      </g>
+    </svg>`;
+  }
+
   // An attribute value is not a text node: a quote or an angle bracket in a name
   // used to break out of the attribute it was written into.
   function escapeAttr(value) {
@@ -6662,6 +7428,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       area: profileState.area || "",
       topics: [...profileState.interestTopics].sort(),
       types: [...profileState.activityTypes].sort(),
+      theme: profileState.profileTheme || "",
       username: profileEditUsername.trim(),
       password: profileEditPassword
     });
@@ -6720,7 +7487,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const t = L();
     if (!file || !currentUserId) return;
     if (!file.type.startsWith("image/")) { toast(t.mediaNotImage); return; }
-    if (file.size > MEDIA_MAX_BYTES) { toast(t.mediaTooBig); return; }
+    if (file.size > MEDIA_MAX_BYTES) { showNotice({ title: t.mediaTooBigTitle, body: t.mediaTooBigBody, badge: noticeIconHtml("alert") }); return; }
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
     const path = `${currentUserId}/${kind}.${ext}`;
     const column = kind === "banner" ? "banner_url" : "avatar_url";
@@ -6734,6 +7501,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (userProfile) userProfile[column] = url;
     renderProfile();
     toast(t.mediaSaved);
+    checkAchievements();
   }
 
   async function handleAvatarUpload(e) {
@@ -6771,8 +7539,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     const leaveEdit = () => {
       window.removeEventListener("scroll", profileBarScrollHandler);
-      profileMode = "view";
-      showProfile();
+      showProfile("details");
     };
     const cancel = () => {
       if (profileEditSnapshot() !== profileBaseline && !confirm(t.discardPrompt)) return;
@@ -6824,6 +7591,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     profileContentEl.querySelectorAll("[data-ptopic-remove]").forEach(btn => btn.addEventListener("click", () => {
       stashCredentials();
       profileState.interestTopics = profileState.interestTopics.filter(x => x !== btn.dataset.ptopicRemove);
+      renderProfile();
+    }));
+    profileContentEl.querySelectorAll("[data-ppalopt]").forEach(btn => btn.addEventListener("click", () => {
+      stashCredentials();
+      profileState.profileTheme = btn.dataset.ppalopt || null;
       renderProfile();
     }));
     profileContentEl.querySelectorAll("[data-patype]").forEach(btn => btn.addEventListener("click", () => {
@@ -6907,6 +7679,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       refreshProfileSaveState();
     };
 
+    // Which of the questionnaire's answers this save changes — for the
+    // "I've changed" achievement, a month after the first answers.
+    const before = JSON.parse(profileBaseline);
+    const after = JSON.parse(profileEditSnapshot());
+    const prefsChanged = ["firstName", "lastName", "ageRange", "grade", "area", "topics", "types"]
+      .some(k => JSON.stringify(before[k]) !== JSON.stringify(after[k]));
+
     try {
       const newUsername = document.getElementById("pNewUsername").value.trim();
       if (newUsername && newUsername !== userProfile?.username) {
@@ -6934,6 +7713,19 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         activity_types: profileState.activityTypes, interest_topics: profileState.interestTopics
       });
       currentInterestTopics = profileState.interestTopics;
+      myPrefs = {
+        ...(myPrefs || {}),
+        first_name: profileState.firstName || null, last_name: profileState.lastName || null,
+        age_range: profileState.ageRange || null, grade: profileState.grade || null, area: profileState.area || null,
+        activity_types: profileState.activityTypes, interest_topics: profileState.interestTopics
+      };
+      if ((profileState.profileTheme || null) !== (userProfile?.profile_theme || null)) {
+        const { error: themeError } = await sb.from("users").update({ profile_theme: profileState.profileTheme || null }).eq("id", currentUserId);
+        if (!themeError && userProfile) userProfile.profile_theme = profileState.profileTheme || null;
+      }
+      const firstFilled = myPrefs.completed_at ? Date.parse(myPrefs.completed_at) : NaN;
+      if (prefsChanged && Date.now() - firstFilled >= 30 * 864e5) awardAchievements(["changed"]);
+      checkAchievements();
     } catch (err) {
       console.error(err);
       btn.dataset.busy = "";
@@ -6950,8 +7742,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     btn.innerHTML = icon("check") + t.savedMsg;
     setTimeout(() => {
       window.removeEventListener("scroll", profileBarScrollHandler);
-      profileMode = "view";
-      showProfile();
+      showProfile("details");
     }, 850);
   }
 
@@ -6970,9 +7761,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     userProfile = {
       theme_pref: localStorage.getItem("mb_guest_theme_pref") || "system",
       text_size: localStorage.getItem("mb_guest_text_size") || "medium",
-      language: localStorage.getItem("mb_guest_language") || currentLang
+      language: localStorage.getItem("mb_guest_language") || currentLang,
+      app_palette: localStorage.getItem("mb_guest_app_palette") || "butter"
     };
     applyTheme(userProfile.theme_pref);
+    applyAppPalette(userProfile.app_palette);
     applyTextSize(userProfile.text_size);
     setLanguage(userProfile.language);
   }
@@ -7033,6 +7826,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
               <button type="button" class="seg-opt" aria-pressed="${theme === "system"}" data-theme-opt="system">${t.themeSystem}</button>
             </div>
           </div>
+          <div class="set-row set-row--stack">
+            <div class="set-row-text"><b>${t.paletteLabel}</b><span>${t.paletteHint}</span></div>
+            ${paletteSwatchesHtml("palette-opt", userProfile?.app_palette || "butter", false)}
+          </div>
           <div class="set-row">
             <div class="set-row-text"><b>${t.languageLabel}</b></div>
             <select id="sLangSelect" class="settings-select">
@@ -7068,6 +7865,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       const v = btn.dataset.themeOpt;
       applyTheme(v);
       await saveProfileField("theme_pref", v);
+      renderSettings();
+    }));
+
+    settingsContentEl.querySelectorAll("[data-palette-opt]").forEach(btn => btn.addEventListener("click", async () => {
+      const v = btn.dataset.paletteOpt;
+      applyAppPalette(v);
+      await saveProfileField("app_palette", v);
       renderSettings();
     }));
 
@@ -7356,6 +8160,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       interest_other: quiz.interestOther || null
     });
     currentInterestTopics = quiz.interestTopics;
+    myPrefs = {
+      ...(myPrefs || { completed_at: new Date().toISOString() }),
+      first_name: quiz.firstName || null, last_name: quiz.lastName || null,
+      age_range: quiz.ageRange || null, grade: quiz.grade || null, area: quiz.area || null,
+      activity_types: quiz.activityTypes, interest_topics: quiz.interestTopics
+    };
+    checkAchievements();
   }
 
   async function finishQuiz() {

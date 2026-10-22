@@ -114,6 +114,17 @@ RLS is on everywhere. Notable: `favorites`'s select policy is wider than owner-o
 
 ---
 
+## Profile, achievements and themes (2026-10-22)
+
+Migrations `20261022120000_achievements_themes_usernames.sql` and `20261022130000_interest_functions_signed_in_only.sql`:
+
+- **`username_format_chk` now accepts the sign-up form's rule** (English letters, digits and `! @ # _ . -`, 3–20, at least one letter) **as well as the old one**. It had still enforced letters/digits/underscore only, so a sign-up using the new symbols would have failed in the trigger. The old rule stays accepted because a CHECK runs on every update of a row — dropping it would stop old Hebrew-named accounts from changing anything.
+- **`users.app_palette`** (default `butter`) and **`users.profile_theme`** (null = follow the viewer's), both checked against the five palette names.
+- **`user_achievements (user_id, key, earned_at)`** — insert own; select under the same rule as `favorites_select_visible`.
+- **`user_events (user_id, kind, day)`** — `open` per day, `search`, `filter`; owner-only.
+- **`profile_interests(p_user)`** returns a profile's interest topics to whoever may see the profile; **`shared_interest_counts(p_users[])`** returns how many interests the caller shares with each account — counts only. Signed-in only (Supabase's default privileges had also granted them to anon; the second migration revokes that). `recommendedUsers()` now ranks by this RPC: the old code read other people's `user_preferences`, which RLS never allowed, so every suggestion scored 0.
+- Achievements that can't be earned with today's data: **"בדקה ה-90"** needs a `registration_deadline` or a one-off event, and the scraper stores neither (all current rows are weekly clubs); **"ציד מציאות"** needs three free activities and none are free right now.
+
 ## Open loose ends
 
 - **`registrations` exists but is not wired into the UI.** The register CTA opens the organiser's own `registration_url` in a new tab; the app never writes a registration row, and has no attendance data. Don't fabricate any.
