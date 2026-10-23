@@ -1952,7 +1952,7 @@
   .back-row .dt-edit { margin-inline-start: auto; }
   .dt-isle { align-self: center; width: min(76%, 270px); aspect-ratio: 120 / 64; margin: -6px 0 -12px; }
   .dt-isle svg { width: 100%; height: 100%; display: block; }
-  .dt-id { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 10px; width: 100%; text-align: center; }
+  .dt-id { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; text-align: center; }
   .dt-handle { font-size: calc(15px * var(--text-scale)); font-weight: 700; color: var(--ink-faint); direction: ltr; unicode-bidi: isolate; }
   .dt-sec { display: flex; flex-direction: column; gap: 12px; width: 100%; padding-top: 18px; border-top: 1px solid var(--line); }
   .dt-head {
@@ -7102,10 +7102,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           ${pfSelectHtml("pAge", t.ageShort, AGE_VALUES, profileState.ageRange)}
           ${pfSelectHtml("pGrade", t.gradeLabelShort, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
         </div>
+        ${pfSelectHtml("pArea", t.areaShort, t.areaOptions, profileState.area)}
       </section>
 
       <section ${rise()}>
-        ${pfSelectHtml("pArea", t.areaShort, t.areaOptions, profileState.area)}
         <div class="pf-field">
           <span class="pf-field-label">${t.profileTypeLabel}</span>
           <div class="seg-2">
@@ -7235,9 +7235,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </section>`;
   }
 
-  // Details: the display name with the username beside it, the personal
-  // details two to a row, where they live and the profile type on rows of their
-  // own, then interests and activity types — on the paper itself, under an
+  // Details: the display name with the username under it, the personal
+  // details (area included) two to a row, the profile type on a row of its own, then interests and activity types — on the paper itself, under an
   // island of trees, with the way into editing at the top.
   function renderProfileDetails() {
     const t = L();
@@ -7264,10 +7263,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           ${cell(t.lastNameShort, profileState.lastName)}
           ${cell(t.ageShort, profileState.ageRange)}
           ${cell(t.gradeLabelShort, profileState.gradeLabel)}
+          ${cell(t.areaShort, profileState.area)}
         </div>
       </section>
       <section class="dt-sec dt-facts">
-        <div class="dt-fact">${icon("pin")}<span>${t.areaShort}</span><b>${escHtml(profileState.area || "") || "—"}</b></div>
         <div class="dt-fact">${icon(isPrivate ? "lock" : "users")}<span>${t.profileTypeLabel}</span><b>${isPrivate ? t.privateOn : t.privateOff}</b></div>
       </section>
       <section class="dt-sec">
