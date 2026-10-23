@@ -125,6 +125,17 @@ Migrations `20261022120000_achievements_themes_usernames.sql` and `2026102213000
 - **`profile_interests(p_user)`** returns a profile's interest topics to whoever may see the profile; **`shared_interest_counts(p_users[])`** returns how many interests the caller shares with each account — counts only. Signed-in only (Supabase's default privileges had also granted them to anon; the second migration revokes that). `recommendedUsers()` now ranks by this RPC: the old code read other people's `user_preferences`, which RLS never allowed, so every suggestion scored 0.
 - Achievements that can't be earned with today's data: **"בדקה ה-90"** needs a `registration_deadline` or a one-off event, and the scraper stores neither (all current rows are weekly clubs); **"ציד מציאות"** needs three free activities and none are free right now.
 
+## Display names and profile visibility (2026-10-23)
+
+Migration `20261023120000_display_names_profile_visibility.sql` (supersedes parts of the 2026-10-22 one above):
+
+- **`username_format_chk`**: the old rule **or** `^[A-Za-z0-9_]{3,20}$`, the sign-up form's final rule. The short-lived symbols rule (`! @ # _ . -`) is gone; no account used it. Old development usernames ("a", "1", ".", Hebrew ones) still pass because the old rule is kept — a CHECK runs on every update.
+- **`users.display_name`** — any language, 1–30 after trimming, null = show the username. Usernames no longer change from the app.
+- **`users.app_palette` and `users.profile_theme` dropped** — colour themes were removed.
+- **`profile_counts(p_user)`** returns followers / following / saved for any profile (signed-in only; anon execute revoked explicitly, since Supabase's default privileges grant it).
+- **`profile_interests()`** and the **`user_achievements` select policy** now answer every signed-in account, private profile or not; a private profile hides only favourites, picture and banner.
+- **`activity_reviews_public()`** returns the display name (else the username) for named reviews; anonymity unchanged.
+
 ## Open loose ends
 
 - **`registrations` exists but is not wired into the UI.** The register CTA opens the organiser's own `registration_url` in a new tab; the app never writes a registration row, and has no attendance data. Don't fabricate any.

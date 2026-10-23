@@ -156,66 +156,6 @@
   }
 
 
-  /* ---- Colour themes. The app's (html[data-palette], from Settings) and a
-     profile's (data-ppal on the profile, its owner's choice). Each swaps the
-     ground and the surfaces and keeps the inks; dark mode keeps its own
-     near-black ground, so these apply in light mode only. ---- */
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) #profileContent[data-ppal="butter"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="butter"] { --bg: #FFF4C7; --surface: #FFFDF3; --surface-raised: #FFF9E0; --chip-bg: #FBEDB4; --line: #EADB9E; --art-ground: #FFEFB3; }
-    :root[data-palette="sky"]:not([data-theme="dark"]) { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
-    :root:not([data-theme="dark"]) #profileContent[data-ppal="sky"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="sky"] { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
-    :root[data-palette="sage"]:not([data-theme="dark"]) { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
-    :root:not([data-theme="dark"]) #profileContent[data-ppal="sage"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="sage"] { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
-    :root[data-palette="sand"]:not([data-theme="dark"]) { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
-    :root:not([data-theme="dark"]) #profileContent[data-ppal="sand"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="sand"] { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
-    :root[data-palette="rose"]:not([data-theme="dark"]) { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
-    :root:not([data-theme="dark"]) #profileContent[data-ppal="rose"], :root:not([data-theme="dark"]) #otherProfileContent[data-ppal="rose"] { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
-  }
-  :root[data-theme="light"] #profileContent[data-ppal="butter"], :root[data-theme="light"] #otherProfileContent[data-ppal="butter"] { --bg: #FFF4C7; --surface: #FFFDF3; --surface-raised: #FFF9E0; --chip-bg: #FBEDB4; --line: #EADB9E; --art-ground: #FFEFB3; }
-  :root[data-palette="sky"][data-theme="light"] { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
-  :root[data-theme="light"] #profileContent[data-ppal="sky"], :root[data-theme="light"] #otherProfileContent[data-ppal="sky"] { --bg: #E3F2F7; --surface: #FBFEFF; --surface-raised: #F0F8FB; --chip-bg: #D2E9F1; --line: #BCDCE7; --art-ground: #D5ECF4; }
-  :root[data-palette="sage"][data-theme="light"] { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
-  :root[data-theme="light"] #profileContent[data-ppal="sage"], :root[data-theme="light"] #otherProfileContent[data-ppal="sage"] { --bg: #E8F0E0; --surface: #FBFDF8; --surface-raised: #F2F7EC; --chip-bg: #D8E6CB; --line: #C4D7B3; --art-ground: #DCE9D0; }
-  :root[data-palette="sand"][data-theme="light"] { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
-  :root[data-theme="light"] #profileContent[data-ppal="sand"], :root[data-theme="light"] #otherProfileContent[data-ppal="sand"] { --bg: #F5EBDC; --surface: #FFFCF7; --surface-raised: #FAF4EA; --chip-bg: #ECDDC6; --line: #DDCAAE; --art-ground: #EFE1CB; }
-  :root[data-palette="rose"][data-theme="light"] { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
-  :root[data-theme="light"] #profileContent[data-ppal="rose"], :root[data-theme="light"] #otherProfileContent[data-ppal="rose"] { --bg: #F8E8E6; --surface: #FFFBFA; --surface-raised: #FBF1EF; --chip-bg: #F0D6D2; --line: #E4C2BC; --art-ground: #F3DDD9; }
-
-  /* A themed profile paints its ground across the whole viewport while open. */
-  #profileContent[data-ppal], #otherProfileContent[data-ppal] { position: relative; isolation: isolate; }
-  #profileContent[data-ppal]::before, #otherProfileContent[data-ppal]::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: var(--bg);
-  }
-
-  .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
-  .swatch {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding-block: 6px;
-    padding-inline: 7px 12px;
-    border-radius: 99px;
-    border: 1.5px solid var(--line);
-    background: var(--surface);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: calc(13px * var(--text-scale));
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .swatch[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-  .swatch-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 99px;
-    border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent);
-  }
-  .swatch--default .swatch-dot { background: conic-gradient(#FFF4C7 0 25%, #D2E9F1 0 50%, #D8E6CB 0 75%, #F0D6D2 0); }
-
   /* Catch-all first: these are all attribute selectors at equal specificity,
      so a trailing catch-all would silently win over every named category. */
   [data-cat] { --cat: var(--accent); }
@@ -618,6 +558,31 @@
   }
 
   .friends-stack { display: flex; flex: none; }
+  button.friends-row {
+    width: 100%;
+    border: none;
+    font: inherit;
+    color: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: filter 0.14s var(--ease-out);
+  }
+  button.friends-row:hover { filter: brightness(0.97); }
+  .friends-row .friends-go { margin-inline-start: auto; width: 18px; height: 18px; color: var(--ink-faint); }
+  .friends-face { display: inline-flex; padding: 0; border: none; background: none; cursor: pointer; border-radius: 99px; }
+  .friends-stack .friends-face + .friends-face { margin-inline-start: -10px; }
+  .friend-link {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-weight: 800;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
   .friends-stack .avatar-sm { border: 2px solid var(--chip-bg); }
   .friends-stack .avatar-sm + .avatar-sm { margin-inline-start: -10px; }
 
@@ -1983,6 +1948,13 @@
     unicode-bidi: isolate;
   }
   .profile-name .lock-mark .ic { width: 18px; height: 18px; }
+  .profile-id .profile-name { margin-top: 18px; }
+  .profile-id .profile-handle { margin: 0 0 2px; }
+  .profile-id .stat-row { margin: 6px 0 4px; }
+  span.stat { cursor: default; }
+  .profile-locked { display: flex; align-items: flex-start; gap: 8px; }
+  .profile-locked .ic { flex: none; margin-top: 2px; }
+  .user-row-handle { direction: ltr; unicode-bidi: isolate; }
   .profile-top--start { justify-content: flex-start; }
   .pill-btn {
     display: inline-flex;
@@ -3329,12 +3301,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <form class="auth-form" id="authForm" novalidate>
         <div class="field">
           <label for="authUsername" id="authUsernameLabel"></label>
-          <input type="text" id="authUsername" autocomplete="username" dir="ltr" autocapitalize="off" spellcheck="false" required aria-describedby="authUsernameMsg">
+          <input type="text" id="authUsername" autocomplete="username" dir="ltr" autocapitalize="off" spellcheck="false" maxlength="20" required aria-describedby="authUsernameMsg">
           <p class="field-msg" id="authUsernameMsg" aria-live="polite"></p>
         </div>
         <div class="field">
           <label for="authPassword" id="authPasswordLabel"></label>
-          <input type="password" id="authPassword" autocomplete="current-password" dir="ltr" required minlength="6" maxlength="10" aria-describedby="authPasswordMsg">
+          <input type="password" id="authPassword" autocomplete="current-password" dir="ltr" maxlength="20" required aria-describedby="authPasswordMsg">
           <p class="field-msg" id="authPasswordMsg" aria-live="polite"></p>
         </div>
         <p class="form-error" id="authError" role="alert"></p>
@@ -3432,14 +3404,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <div class="quiz-screen" id="settingsContent"></div>
   </div>
 
-  <div class="frame" id="accessibilityScreen" hidden>
-    <div class="quiz-screen" id="accessibilityContent"></div>
-  </div>
-
   <div class="frame" id="favoritesScreen" hidden>
     <header class="screen-head">
       <h1 class="display display-lg" id="favoritesTitleText"></h1>
-      <p class="screen-head-count label num" id="favCount"></p>
     </header>
     <div id="favFiltersWrap">
       <div class="searchbar">
@@ -3483,7 +3450,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <span id="navProfileLabel"></span>
       </button>
       <button type="button" class="bottom-nav-btn" id="navSettings" data-tab="settings">
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h10M18 7.5h2M4 16.5h2M10 16.5h10"/><circle cx="16" cy="7.5" r="2.2"/><circle cx="8" cy="16.5" r="2.2"/></svg>
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.11 4.95L10.66 2.49L13.34 2.49L13.89 4.95L15.65 5.68L17.78 4.33L19.67 6.22L18.32 8.35L19.05 10.11L21.51 10.66L21.51 13.34L19.05 13.89L18.32 15.65L19.67 17.78L17.78 19.67L15.65 18.32L13.89 19.05L13.34 21.51L10.66 21.51L10.11 19.05L8.35 18.32L6.22 19.67L4.33 17.78L5.68 15.65L4.95 13.89L2.49 13.34L2.49 10.66L4.95 10.11L5.68 8.35L4.33 6.22L6.22 4.33L8.35 5.68z"/><circle cx="12" cy="12" r="3.1"/></svg>
         <span id="navSettingsLabel"></span>
       </button>
     </div>
@@ -3582,9 +3549,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     age: '<circle cx="12" cy="8" r="3.6"/><path d="M5.2 20.4c0-3.8 3-6.2 6.8-6.2s6.8 2.4 6.8 6.2"/>',
     alert: '<circle cx="12" cy="12" r="8.6"/><path d="M12 7.8v5M12 15.8v.6"/>',
     check: '<path d="m5.5 12.8 4.2 4.2 8.8-9.6"/>',
-    // Sliders, not a cog: at 20px a toothed cog turns to mush, and the radial
-    // tick version of it reads as a sun.
-    gear: '<path d="M4 7.5h10M18 7.5h2M4 16.5h2M10 16.5h10"/><circle cx="16" cy="7.5" r="2.2"/><circle cx="8" cy="16.5" r="2.2"/>',
+    // A cog: eight flat-topped teeth around a hub, wide enough apart to stay
+    // distinct at 20px.
+    gear: '<path d="M10.11 4.95L10.66 2.49L13.34 2.49L13.89 4.95L15.65 5.68L17.78 4.33L19.67 6.22L18.32 8.35L19.05 10.11L21.51 10.66L21.51 13.34L19.05 13.89L18.32 15.65L19.67 17.78L17.78 19.67L15.65 18.32L13.89 19.05L13.34 21.51L10.66 21.51L10.11 19.05L8.35 18.32L6.22 19.67L4.33 17.78L5.68 15.65L4.95 13.89L2.49 13.34L2.49 10.66L4.95 10.11L5.68 8.35L4.33 6.22L6.22 4.33L8.35 5.68z"/><circle cx="12" cy="12" r="3.1"/>',
     pencil: '<path d="M4.4 19.6h3.4L19 8.4a2.2 2.2 0 0 0-3.1-3.1L4.7 16.5z"/><path d="M14.4 6.8l2.8 2.8"/>',
     lock: '<rect x="4.6" y="10.4" width="14.8" height="10.2" rx="2.4"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/>',
     x: '<path d="M6.4 6.4l11.2 11.2M17.6 6.4L6.4 17.6"/>',
@@ -4097,9 +4064,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const users = followedFavoritesFor(activityId);
     if (!users.length) return "";
     const shown = users.slice(0, 3);
-    const names = shown.map(u => bidiIsolate(u.username || "?"));
+    const names = shown.map(u => bidiIsolate(escHtml(displayNameOf(u) || "?")));
     return `<p class="${metaClass} friends-meta">
-      <span class="mini-avatar-stack">${shown.map(u => `<span class="avatar avatar-xs" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>`).join("")}</span>
+      <span class="mini-avatar-stack">${shown.map(u => `<span class="avatar avatar-xs" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : escHtml((displayNameOf(u) || "?").charAt(0).toUpperCase())}</span>`).join("")}</span>
       <span>${L().savedByLine(names, users.length)}</span>
     </p>`;
   }
@@ -4211,7 +4178,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   function renderHome() {
     const t = L();
     const guest = isGuestMode();
-    const name = guest ? t.guestName : (userProfile?.username || "");
+    const name = guest ? t.guestName : displayNameOf(userProfile);
 
     document.getElementById("homeUserHi").textContent = t.homeHi;
     document.getElementById("homeUserName").textContent = name;
@@ -4695,7 +4662,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     archiveScreenEl.hidden = false;
@@ -4796,7 +4762,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const { data: favs } = await sb.from("favorites").select("activity_id, user_id").in("user_id", followeeIds);
     if (!favs || !favs.length) return;
     const userIds = [...new Set(favs.map(f => f.user_id))];
-    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", userIds);
+    const { data: users } = await sb.from("users").select("id, username, display_name, avatar_url, is_private").in("id", userIds);
     const userById = new Map((users || []).map(u => [u.id, u]));
     favs.forEach(f => {
       const u = userById.get(f.user_id);
@@ -4933,7 +4899,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     document.getElementById("favoritesTitleText").textContent = t.favoritesTitle;
     favSearchInputEl.placeholder = t.searchPlaceholder;
     document.getElementById("favSortLabel").textContent = t.favSortLabel;
-    document.getElementById("favCount").textContent = all.length ? t.favCountText(all.length) : "";
 
     if (!all.length) {
       document.getElementById("favFiltersWrap").hidden = true;
@@ -4958,7 +4923,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     }
 
     const favCategoryOrder = categoryOrder().filter(c => categoriesPresent.has(c));
-    const catChips = [{ key: null, label: L().chipAll }, ...favCategoryOrder.map(c => ({ key: c, label: L().categories[c] || c, color: CATEGORY_COLOR[c] }))];
+    // Each filter carries how many saved activities it holds: "הכל (4)".
+    const inCategory = c => all.filter(a => a.category === c);
+    const catChips = [{ key: null, label: `${L().chipAll} (${all.length})` },
+      ...favCategoryOrder.map(c => ({ key: c, label: `${L().categories[c] || c} (${inCategory(c).length})`, color: CATEGORY_COLOR[c] }))];
     favCategoryChipsEl.innerHTML = catChips.map(c => `
       <button type="button" class="chip" aria-pressed="${favState.category === c.key}" data-cat="${c.key ?? ""}"${c.color ? ` style="--chip-color:${c.color}"` : ""}>${c.label}</button>
     `).join("");
@@ -4969,7 +4937,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       favTopicChipsEl.innerHTML = "";
     } else {
       favTopicChipsEl.hidden = false;
-      const topicChips = [{ key: null, label: L().topicsAllChip }, ...topics.map(t => ({ key: t, label: t }))];
+      const pool = inCategory(favState.category);
+      const topicChips = [{ key: null, label: `${L().topicsAllChip} (${pool.length})` },
+        ...topics.map(t => ({ key: t, label: `${t} (${pool.filter(a => (a.topics || []).includes(t)).length})` }))];
       favTopicChipsEl.innerHTML = topicChips.map(c => `
         <button type="button" class="chip" aria-pressed="${favState.topic === c.key}" data-topic="${c.key ?? ""}">${c.label}</button>
       `).join("");
@@ -5208,21 +5178,50 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (a.id) renderDetailFriends(a.id);
   }
 
+  // On the activity's own screen the people who saved it can be opened: with one
+  // person the whole row is the way to their profile; with several, each face
+  // and each name is its own.
   function renderDetailFriends(activityId) {
     const el = document.getElementById("detailFriends");
     if (!el) return;
     const users = followedFavoritesFor(activityId);
     if (!users.length) { el.innerHTML = ""; return; }
     const t = L();
+    const rtl = LANG_DIR[currentLang] === "rtl";
+    const nameOf = u => escHtml(displayNameOf(u) || "?");
+    const face = u => `<span class="avatar avatar-sm" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : escHtml((displayNameOf(u) || "?").charAt(0).toUpperCase())}</span>`;
+    if (users.length === 1) {
+      const u = users[0];
+      el.innerHTML = `
+        <button type="button" class="friends-row" data-open-user="${u.id}">
+          <span class="friends-stack">${face(u)}</span>
+          <span class="friends-text">${t.savedByLine([bidiIsolate(nameOf(u))], 1)}</span>
+          ${icon(rtl ? "chevron" : "chevronBack", "friends-go")}
+        </button>`;
+      return;
+    }
     const shown = users.slice(0, 4);
-    const names = shown.slice(0, 2).map(u => bidiIsolate(u.username || "?"));
     el.innerHTML = `
       <div class="friends-row">
-        <span class="friends-stack">${shown.map(u => `
-          <span class="avatar avatar-sm" style="${userAvatarStyle(u)}">${u.avatar_url && !u.is_private ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>
-        `).join("")}</span>
-        <span class="friends-text">${t.savedByLine(names, users.length)}</span>
+        <span class="friends-stack">${shown.map(u => `<button type="button" class="friends-face" data-open-user="${u.id}" aria-label="${nameOf(u)}">${face(u)}</button>`).join("")}</span>
+        <span class="friends-text">${t.savedByLine(shown.slice(0, 2).map(u => `<button type="button" class="friend-link" data-open-user="${u.id}">${bidiIsolate(nameOf(u))}</button>`), users.length)}</span>
       </div>`;
+  }
+
+  // A name under an activity opens that person's profile. Its back button
+  // brings back the screen underneath, with the activity open on top again.
+  function openProfileFromDetail(userId) {
+    const activityId = favDetailOpenId;
+    const prevOther = otherProfileUserId;
+    const back = !favoritesScreenEl.hidden ? () => showFavorites()
+      : !archiveScreenEl.hidden ? () => showArchive(archiveState.mode, archiveState.q)
+      : !socialScreenEl.hidden ? () => showSocial()
+      : !profileScreenEl.hidden ? () => showProfile(profileMode)
+      : !otherProfileScreenEl.hidden ? () => showOtherProfile(prevOther)
+      : () => showApp(userProfile?.username || null);
+    closeActivityDetail();
+    showOtherProfile(userId);
+    if (userId !== currentUserId) returnToScreen = () => { back(); if (activityId) openActivityDetail(activityId); };
   }
 
   // ---- Reviews ----
@@ -5450,6 +5449,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // replaced — the same reason the archive and favorites screens wire their
   // chip rows here rather than after each render.
   detailSheetEl.addEventListener("click", (e) => {
+    const friend = e.target.closest("[data-open-user]");
+    if (friend) { openProfileFromDetail(friend.dataset.openUser); return; }
     const star = e.target.closest(".rev-pick-btn");
     if (star) { reviewDraft.rating = Number(star.dataset.rate); refreshReviewPick(); return; }
     if (e.target.closest("#revToggle")) {
@@ -5487,7 +5488,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     favoritesScreenEl.hidden = false;
@@ -5578,11 +5578,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return { followers: followersRes.count || 0, following: followingRes.count || 0, pending: pendingRes.count || 0 };
   }
 
+  // By username (from its start) or by display name (anywhere in it).
+  // Characters that would break PostgREST's or() list are dropped.
   async function searchUsers(query) {
-    if (!query) return [];
+    const q = (query || "").replace(/[,()*%"'\\]/g, "").trim();
+    if (!q) return [];
     const { data } = await sb.from("users")
-      .select("id, username, avatar_url, is_private")
-      .ilike("username", query + "%")
+      .select("id, username, display_name, avatar_url, is_private")
+      .or(`username.ilike.${q}*,display_name.ilike.*${q}*`)
       .neq("id", currentUserId)
       .limit(20);
     const rows = data || [];
@@ -5604,6 +5607,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // FSI/PDI (U+2068/U+2069) tell the browser "this span owns its own
   // direction, don't merge it with what's next to it" — fixes it once here
   // instead of hand-tuning spacing in four languages' STRINGS entries.
+  // What a person is called on screen: the display name they chose, else
+  // their username. Display names are free text in any language — escape them.
+  function displayNameOf(u) {
+    const d = u && typeof u.display_name === "string" ? u.display_name.trim() : "";
+    return d || (u && u.username) || "";
+  }
+
   function bidiIsolate(s) {
     return `⁨${s}⁩`;
   }
@@ -5622,12 +5632,15 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // a private account never renders its avatar — that gate lives in userAvatarStyle.
   function userRowHtml(u, actionHtml, subline) {
     const style = userAvatarStyle(u);
+    const shown = displayNameOf(u);
+    const handle = u.display_name && u.display_name.trim() ? `<span class="user-row-handle">@${escHtml(u.username)}</span>` : "";
+    const sub = [handle, subline].filter(Boolean).join(" · ");
     return `
       <div class="user-row" role="button" tabindex="0" data-open-user="${u.id}">
-        <span class="avatar" style="${style}">${style ? "" : (u.username || "?").charAt(0).toUpperCase()}</span>
+        <span class="avatar" style="${style}">${style ? "" : escHtml((shown || "?").charAt(0).toUpperCase())}</span>
         <span class="user-row-main">
-          <span class="user-row-name">${u.username}${u.is_private ? `<span class="lock-mark" aria-label="${L().privateOn}">${icon("lock", "ic-sm")}</span>` : ""}</span>
-          ${subline ? `<span class="user-row-sub">${subline}</span>` : ""}
+          <span class="user-row-name">${escHtml(shown)}${u.is_private ? `<span class="lock-mark" aria-label="${L().privateOn}">${icon("lock", "ic-sm")}</span>` : ""}</span>
+          ${sub ? `<span class="user-row-sub">${sub}</span>` : ""}
         </span>
         ${actionHtml}
       </div>
@@ -5644,7 +5657,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     otherProfileScreenEl.hidden = false;
     bottomNavEl.hidden = false;
@@ -5652,14 +5664,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     renderOtherProfile();
   }
 
-  // Someone else's profile: their name, interests, favourites and the
-  // achievements they've earned — nothing from their details. A private
-  // profile shows only the name and the way to ask to follow.
+  // Someone else's profile. Any signed-in account sees its display name,
+  // username, counts, interests and achievements. Its favourites, picture and
+  // banner show only when it is public or the viewer is an approved follower.
   async function renderOtherProfile() {
     const t = L();
     const userId = otherProfileUserId;
     otherProfileContentEl.innerHTML = `<p class="quiz-subtitle">…</p>`;
-    let res = await sb.from("users").select("id, username, avatar_url, banner_url, is_private, profile_theme").eq("id", userId).maybeSingle();
+    let res = await sb.from("users").select("id, username, display_name, avatar_url, banner_url, is_private").eq("id", userId).maybeSingle();
     if (res.error) res = await sb.from("users").select("id, username, avatar_url, is_private").eq("id", userId).maybeSingle();
     const targetUser = res.data;
     const relationship = await getRelationship(userId);
@@ -5667,43 +5679,42 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!targetUser) { otherProfileContentEl.innerHTML = `<p class="quiz-subtitle">${t.noUsersFoundMsg}</p>`; return; }
     const visible = canViewProfile(targetUser, relationship);
 
-    let interests = [], favs = [], earnedKeys = new Set();
-    if (visible) {
-      const [interestRes, favList, achRes] = await Promise.all([
-        sb.rpc("profile_interests", { p_user: userId }),
-        loadFavoritesFor(userId),
-        sb.from("user_achievements").select("key").eq("user_id", userId)
-      ]);
-      if (otherProfileUserId !== userId) return;
-      interests = interestRes.error ? [] : (interestRes.data || []);
-      favs = favList;
-      earnedKeys = new Set((achRes.error ? [] : achRes.data || []).map(row => row.key));
-    }
+    const [interestRes, countsRes, achRes, favs] = await Promise.all([
+      sb.rpc("profile_interests", { p_user: userId }),
+      sb.rpc("profile_counts", { p_user: userId }),
+      sb.from("user_achievements").select("key").eq("user_id", userId),
+      visible ? loadFavoritesFor(userId) : Promise.resolve([])
+    ]);
+    if (otherProfileUserId !== userId) return;
+    const interests = interestRes.error ? [] : (interestRes.data || []);
+    const counts = (!countsRes.error && countsRes.data && countsRes.data[0]) || { followers: 0, following: 0, saved: 0 };
+    const earnedKeys = new Set((achRes.error ? [] : achRes.data || []).map(row => row.key));
 
-    const name = targetUser.username || "";
+    const shown = displayNameOf(targetUser);
     const avatarStyle = visible && targetUser.avatar_url ? `background-image:url('${targetUser.avatar_url}')` : "";
     const rtl = LANG_DIR[currentLang] === "rtl";
-    setProfilePalette(otherProfileContentEl, targetUser.profile_theme);
     otherProfileContentEl.innerHTML = `
-      <div class="profile-banner">${bannerHtml(name, visible ? targetUser.banner_url : null)}</div>
+      <div class="profile-banner">${bannerHtml(targetUser.username || "", visible ? targetUser.banner_url : null)}</div>
       <div class="profile-top profile-top--start">
         <button type="button" class="icon-btn" id="opBack" aria-label="${t.backLabel}">${icon(rtl ? "chevronBack" : "chevron")}</button>
       </div>
       <div class="profile-id">
-        <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((name || "?").charAt(0).toUpperCase())}</span>
-        <h1 class="display display-lg profile-name">${escHtml(name)}${targetUser.is_private ? `<span class="lock-mark" aria-label="${t.privateOn}">${icon("lock")}</span>` : ""}</h1>
+        <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((shown || "?").charAt(0).toUpperCase())}</span>
+        <h1 class="display display-lg profile-name">${escHtml(shown)}${targetUser.is_private ? `<span class="lock-mark" aria-label="${t.privateOn}">${icon("lock")}</span>` : ""}</h1>
+        <p class="profile-handle">@${escHtml(targetUser.username || "")}</p>
+        ${profileStatsHtml(counts, false)}
         ${followBtnHtml(targetUser.id, targetUser.is_private, relationship)}
       </div>
-      ${visible ? `
-        ${interestsBlockHtml(interests, t.noInterestsOther)}
-        <section class="profile-block">
-          <h2 class="profile-block-title">${t.favoritesBtn}</h2>
-          ${favs.length
+      ${interestsBlockHtml(interests, t.noInterestsOther)}
+      <section class="profile-block">
+        <h2 class="profile-block-title">${t.favoritesBtn}</h2>
+        ${!visible
+          ? `<p class="profile-empty profile-locked">${icon("lock", "ic-sm")}<span>${t.lockedProfileMsg}</span></p>`
+          : favs.length
             ? `<div class="stack">${favs.map(a => favRowHtml(a, { readOnly: true })).join("")}</div>`
             : `<p class="profile-empty">${t.noFavoritesForUserMsg}</p>`}
-        </section>
-        ${achievementsBlockHtml(ACHIEVEMENTS.filter(a => earnedKeys.has(a.key)), t.achievementsTitle, t.noAchievementsOther)}
-      ` : `<div class="locked-profile">${icon("lock", "ic-lg")}<p>${t.lockedProfileMsg}</p></div>`}
+      </section>
+      ${achievementsBlockHtml(ACHIEVEMENTS.filter(a => earnedKeys.has(a.key)), t.achievementsTitle, t.noAchievementsOther)}
     `;
     document.getElementById("opBack").addEventListener("click", () => { otherProfileUserId = null; (returnToScreen || showProfile)(); });
   }
@@ -5728,7 +5739,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = false;
     bottomNavEl.hidden = false;
@@ -5757,7 +5767,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (followListUserId !== userId || followListKind !== kind) return;
     const ids = (relRows || []).map(r => r[targetCol]);
     if (!ids.length) { renderFollowListRows([]); return; }
-    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", ids);
+    const { data: users } = await sb.from("users").select("id, username, display_name, avatar_url, is_private").in("id", ids);
     if (followListUserId !== userId || followListKind !== kind) return;
     renderFollowListRows(users || []);
   }
@@ -5804,7 +5814,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   async function recommendedUsers() {
     if (!currentUserId) return [];
     const [{ data: candidates }, { data: myFollows }] = await Promise.all([
-      sb.from("users").select("id, username, avatar_url, is_private, created_at")
+      sb.from("users").select("id, username, display_name, avatar_url, is_private, created_at")
         .eq("is_private", false).neq("id", currentUserId)
         .order("created_at", { ascending: false }).limit(30),
       sb.from("follows").select("followee_id").eq("follower_id", currentUserId)
@@ -5828,7 +5838,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     archiveScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     socialScreenEl.hidden = false;
@@ -5895,7 +5904,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     document.getElementById("socialReqBadge").textContent = rows.length || "";
     if (!rows.length) { el.innerHTML = ""; return; }
     const ids = rows.map(r => r.follower_id);
-    const { data: users } = await sb.from("users").select("id, username, avatar_url, is_private").in("id", ids);
+    const { data: users } = await sb.from("users").select("id, username, display_name, avatar_url, is_private").in("id", ids);
     const usersById = new Map((users || []).map(u => [u.id, u]));
     el.innerHTML = rows.map(r => {
       const u = usersById.get(r.follower_id);
@@ -6000,8 +6009,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       appTitle: "מה בי״ם", appTagline: "פעילות, חוגים ואירועים לבני נוער",
       tabLogin: "התחברות", tabSignup: "הרשמה", usernameLabel: "שם משתמש", passwordLabel: "סיסמה",
       or: "או", guestBtn: "כניסה בלי חשבון", guestExitBtn: "התחברות או הרשמה",
-      errUsernameFormat: "שם המשתמש: 3–20 תווים באנגלית — אותיות, ספרות והסימנים ⁦! @ # _. -⁩ (לפחות אות אחת).",
-      errPasswordLength: "הסיסמה: 6–10 תווים — אותיות באנגלית, ספרות וסימנים פשוטים כמו ⁦! @ # $ _⁩.",
+      errUsernameShort: "שם המשתמש חייב להיות באורך 3 תווים לפחות.",
+      errUsernameChars: "שם המשתמש יכול להכיל רק אותיות באנגלית, מספרים וקו תחתון (_).",
+      errPasswordRule: "הסיסמה חייבת להיות באורך 6 תווים לפחות ולהכיל לפחות אות אחת ומספר אחד.",
+      errPasswordChars: "הסיסמה יכולה להכיל רק אותיות באנגלית, מספרים וסימנים פשוטים.",
       errUsernameTaken: "שם המשתמש הזה תפוס. אפשר לבחור שם אחר.", usernameAvailable: "שם המשתמש פנוי ✓",
       errSignupNeedsVerification: "ההרשמה בוצעה, אבל נדרש עוד אימות. צריך לפנות לצוות האפליקציה.",
       errServerDown: "השרת לא זמין כרגע. אפשר להמשיך בלי חשבון ולנסות להתחבר שוב בהמשך.",
@@ -6055,7 +6066,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyBody: "אפשר לנסות שוב מאוחר יותר.",
       retryBtn: "ניסיון נוסף",
       scheduleAtOrganizer: "המועדים באתר המארגן",
-      favCountText: n => n === 1 ? "פעילות אחת" : `${n} פעילויות`,
       favEmptyTitle: "עוד לא שמרת כלום",
       pinnedLabel: "שמורים", myPinnedTitle: "מה ששמרתי",
       bannerChange: "שינוי באנר", aboutYouGroup: "עליך", loginGroup: "פרטי התחברות",
@@ -6064,7 +6074,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       aboutYouNote: "אף אחד מהפרטים אינו חובה.",
       activityTypesNote: "אילו סוגי פעילויות מעניינים אותך.",
       loginNote: "שדה שנשאר ריק לא משתנה.",
-      usernameHint: "אותיות באנגלית, ספרות ו-⁦! @ # _ . -⁩", passwordHint: "6–10 תווים",
+      passwordHint: "לפחות 6 תווים, אות אחת ומספר אחד",
       showPasswordLabel: "הצגת הסיסמה", hidePasswordLabel: "הסתרת הסיסמה",
       savingBtn: "שמירה…", discardBtn: "ביטול השינויים", discardPrompt: "לבטל את השינויים שלא נשמרו?",
       addTopicLabel: "הוספת תחום משלך",
@@ -6092,7 +6102,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       demoTitle: "כמה פרטים בסיסיים", demoSubtitle: "גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך",
       ageQLabel: "מה הגיל שלך?", gradeQLabel: "מה הכיתה שלך?", areaQLabel: "מה אזור המגורים שלך בירושלים?",
       typeOrPick: "בחירה מהרשימה או הקלדה", selectPlaceholder: "בחירה…",
-      homeTab: "בית", accessibilityLabel: "נגישות", accessibilityTitle: "נגישות",
+      homeTab: "בית", accessibilityLabel: "נגישות",
       editProfileBtn: "עריכת פרופיל", cancelBtn: "ביטול",
       currentUsernameLabel: "שם משתמש נוכחי", noneYet: "עדיין לא מולא",
       topicsTitle: "אילו תחומים מעניינים אותך?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך",
@@ -6106,7 +6116,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       profileTitle: "הפרופיל שלי", avatarChange: "שינוי תמונת פרופיל", saveBtn: "שמירה", savedMsg: "נשמר", backToApp: "חזרה לאפליקציה",
       settingsTitle: "הגדרות", themeLabel: "מצב תצוגה", themeLight: "בהיר", themeDark: "כהה", themeSystem: "לפי המכשיר",
       textSizeLabel: "גודל טקסט", textSizeSmall: "קטן", textSizeMedium: "רגיל", textSizeLarge: "גדול", languageLabel: "שפה",
-      changeUsernameLabel: "שינוי שם משתמש", changePasswordLabel: "שינוי סיסמה",
+      changePasswordLabel: "שינוי סיסמה",
       newUsernamePlaceholder: "שם משתמש חדש", newPasswordPlaceholder: "סיסמה חדשה", updateBtn: "עדכון",
       usernameUpdated: "שם המשתמש עודכן", passwordUpdated: "הסיסמה עודכנה",
       notificationsLabel: "התראות", searchUsersLabel: "חיפוש משתמשים",
@@ -6116,7 +6126,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       privateProfileLabel: "פרופיל פרטי",
       privateOn: "פרטי", privateOff: "ציבורי",
       privateProfileHint: "בפרופיל פרטי, מעקב אחריך דורש את אישורך.",
-      lockedProfileMsg: "הפרופיל הזה פרטי. אחרי שבקשת המעקב תאושר, יופיעו כאן תחומי העניין, המועדפים וההישגים.",
+      lockedProfileMsg: "הפרופיל הזה פרטי. המועדפים, תמונת הפרופיל והבאנר יופיעו אחרי שבקשת המעקב תאושר.",
       userSearchPlaceholder: "חיפוש לפי שם משתמש…",
       noUsersFoundMsg: "לא נמצאו משתמשים.",
       noRequestsMsg: "אין בקשות מעקב חדשות.",
@@ -6124,10 +6134,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "עוד לא עוקבים אחרי אף אחד.",
       noFavoritesForUserMsg: "עדיין לא נבחרו מועדפים.",
       favoritesOfUser: n => `המועדפים של ${n}`,
-      mediaTooBigTitle: "התמונה גדולה מדי", mediaTooBigBody: "אפשר להעלות תמונה בגודל של עד 5MB.", profileDetailsTitle: "הפרטים שלי", editBtnShort: "עריכה", myAchievementsTitle: "ההישגים שלך", achievementsTitle: "הישגים", achievementsBtn: "הישגים", noAchievementsYet: "עוד אין הישגים.", noAchievementsOther: "עוד אין הישגים.", noInterestsYet: "עוד לא נבחרו תחומי עניין.", noInterestsOther: "לא נבחרו תחומי עניין.", firstNameShort: "שם פרטי", lastNameShort: "שם משפחה", ageShort: "גיל", gradeLabelShort: "כיתה", areaShort: "אזור", privacyLabel: "פרטיות", profileThemeLabel: "צבעי הפרופיל", profileThemeNote: "כך ייראה הפרופיל בכל צפייה בו, בתצוגה בהירה.", paletteLabel: "ערכת צבעים", paletteHint: "צבע הרקע של האפליקציה, בתצוגה בהירה.", paletteDefault: "ברירת מחדל",
+      mediaTooBigTitle: "התמונה גדולה מדי", mediaTooBigBody: "אפשר להעלות תמונה בגודל של עד 5MB.", profileDetailsTitle: "הפרטים שלי", editBtnShort: "עריכה", myAchievementsTitle: "ההישגים שלך", achievementsTitle: "הישגים", achievementsBtn: "הישגים", noAchievementsYet: "עוד אין הישגים.", noAchievementsOther: "עוד אין הישגים.", noInterestsYet: "עוד לא נבחרו תחומי עניין.", noInterestsOther: "לא נבחרו תחומי עניין.", firstNameShort: "שם פרטי", lastNameShort: "שם משפחה", ageShort: "גיל", gradeLabelShort: "כיתה", areaShort: "אזור", privacyLabel: "פרטיות", displayNameLabel: "שם הצגה", displayNameHint: "מופיע בגדול בפרופיל, בכל שפה",
       achievementsProgress: (n, total) => `${n} מתוך ${total}`,
       achievementEarned: name => `השגת את ההישג "${name}"`,
-      palettes: {butter: "חמאה", sky: "תכלת", sage: "מרווה", sand: "חול", rose: "ורד"},
       achievements: {
         first_save: ["צעד ראשון","שמרת פעילות ראשונה"],
         face_to_name: ["פרצוף לשם","העלית תמונת פרופיל ובאנר"],
@@ -6156,8 +6165,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       appTitle: "ما بي\"م", appTagline: "أنشطة ونوادي وفعاليات للشباب",
       tabLogin: "تسجيل الدخول", tabSignup: "إنشاء حساب", usernameLabel: "اسم المستخدم", passwordLabel: "كلمة المرور",
       or: "أو", guestBtn: "الاستمرار كزائر", guestExitBtn: "الخروج من وضع الزائر",
-      errUsernameFormat: "اسم المستخدم: 3–20 حرفًا بالإنجليزية — حروف وأرقام والرموز ⁦! @ # _. -⁩ (حرف واحد على الأقل).",
-      errPasswordLength: "كلمة المرور: 6–10 أحرف — حروف إنجليزية وأرقام ورموز بسيطة مثل ⁦! @ # $ _⁩.",
+      errUsernameShort: "يجب أن يكون اسم المستخدم 3 أحرف على الأقل.",
+      errUsernameChars: "يمكن أن يحتوي اسم المستخدم على أحرف إنجليزية وأرقام و _ فقط.",
+      errPasswordRule: "يجب أن تكون كلمة المرور 6 أحرف على الأقل وأن تحتوي على حرف واحد ورقم واحد على الأقل.",
+      errPasswordChars: "يمكن أن تحتوي كلمة المرور على أحرف إنجليزية وأرقام ورموز بسيطة فقط.",
       errUsernameTaken: "اسم المستخدم هذا مستخدم، جرّب اسمًا آخر.", usernameAvailable: "اسم المستخدم متاح ✓",
       errSignupNeedsVerification: "تم التسجيل، لكن مطلوب تأكيد إضافي. تواصل مع مدير النظام.",
       errServerDown: "الخادم غير متاح حاليًا. يمكن المتابعة كزائر والمحاولة لاحقًا.",
@@ -6210,7 +6221,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyBody: "حاول لاحقًا.",
       retryBtn: "حاول مرة أخرى",
       scheduleAtOrganizer: "المواعيد على موقع الجهة المنظّمة",
-      favCountText: n => n === 1 ? "نشاط واحد" : `${n} أنشطة`,
       favEmptyTitle: "لم تحفظ شيئًا بعد",
       pinnedLabel: "محفوظات", myPinnedTitle: "ما حفظتُه",
       bannerChange: "تغيير الغلاف", aboutYouGroup: "عنك", loginGroup: "بيانات الدخول",
@@ -6219,7 +6229,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       aboutYouNote: "لا شيء من هذه التفاصيل إلزامي.",
       activityTypesNote: "ما نوع الشيء الذي تبحث عنه.",
       loginNote: "اتركه فارغًا للإبقاء عليه كما هو.",
-      usernameHint: "حرف إنجليزي، ثم حروف أو أرقام أو شرطة سفلية", passwordHint: "6–10 محارف",
+      passwordHint: "6 أحرف على الأقل، حرف واحد ورقم واحد",
       showPasswordLabel: "إظهار كلمة المرور", hidePasswordLabel: "إخفاء كلمة المرور",
       savingBtn: "جارٍ الحفظ…", discardBtn: "تجاهل التغييرات", discardPrompt: "هل تريد تجاهل التغييرات غير المحفوظة؟",
       addTopicLabel: "أضف مجالًا خاصًا بك",
@@ -6247,7 +6257,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       demoTitle: "بعض التفاصيل الأساسية", demoSubtitle: "هذه الخطوة أيضًا اختيارية — يمكن تركها فارغة والمتابعة",
       ageQLabel: "كم عمرك؟", gradeQLabel: "في أي صف أنت؟", areaQLabel: "في أي منطقة بالقدس تسكن؟",
       typeOrPick: "اختر من القائمة أو اكتب", selectPlaceholder: "اختر…",
-      homeTab: "الرئيسية", accessibilityLabel: "إمكانية الوصول", accessibilityTitle: "إمكانية الوصول",
+      homeTab: "الرئيسية", accessibilityLabel: "إمكانية الوصول",
       editProfileBtn: "تعديل الملف الشخصي", cancelBtn: "إلغاء",
       currentUsernameLabel: "اسم المستخدم الحالي", noneYet: "لم تتم تعبئته بعد",
       topicsTitle: "بأي مواضيع تهتم؟", topicsSubtitle: "يمكن اختيار أكثر من واحد، ويمكن أيضًا إضافة موضوع خاص بك",
@@ -6261,7 +6271,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       profileTitle: "ملفي الشخصي", avatarChange: "تغيير صورة الملف الشخصي", saveBtn: "حفظ", savedMsg: "تم الحفظ", backToApp: "العودة إلى التطبيق",
       settingsTitle: "الإعدادات", themeLabel: "المظهر", themeLight: "فاتح", themeDark: "داكن", themeSystem: "حسب الجهاز",
       textSizeLabel: "حجم النص", textSizeSmall: "صغير", textSizeMedium: "عادي", textSizeLarge: "كبير", languageLabel: "اللغة",
-      changeUsernameLabel: "تغيير اسم المستخدم", changePasswordLabel: "تغيير كلمة المرور",
+      changePasswordLabel: "تغيير كلمة المرور",
       newUsernamePlaceholder: "اسم مستخدم جديد", newPasswordPlaceholder: "كلمة مرور جديدة", updateBtn: "تحديث",
       usernameUpdated: "تم تحديث اسم المستخدم", passwordUpdated: "تم تحديث كلمة المرور",
       notificationsLabel: "الإشعارات", searchUsersLabel: "بحث عن مستخدمين",
@@ -6271,7 +6281,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       privateProfileLabel: "حساب خاص",
       privateOn: "خاص", privateOff: "عام",
       privateProfileHint: "في الملف الخاص، تتطلّب متابعتك موافقتك.",
-      lockedProfileMsg: "هذا الحساب خاص. يجب المتابعة والحصول على الموافقة لرؤية المفضلة الخاصة به.",
+      lockedProfileMsg: "هذا الملف خاص. ستظهر المفضّلة والصورة الشخصية والغلاف بعد قبول طلب المتابعة.",
       userSearchPlaceholder: "بحث باسم المستخدم…",
       noUsersFoundMsg: "لم يتم العثور على مستخدمين.",
       noRequestsMsg: "لا توجد طلبات متابعة جديدة.",
@@ -6279,10 +6289,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "لا تتابع أحدًا بعد.",
       noFavoritesForUserMsg: "لم يتم اختيار أي مفضلة بعد.",
       favoritesOfUser: n => `مفضلة ${n}`,
-      mediaTooBigTitle: "الصورة كبيرة جدًا", mediaTooBigBody: "يمكن رفع صورة حتى 5MB.", profileDetailsTitle: "تفاصيلي", editBtnShort: "تعديل", myAchievementsTitle: "إنجازاتك", achievementsTitle: "الإنجازات", achievementsBtn: "الإنجازات", noAchievementsYet: "لا إنجازات بعد.", noAchievementsOther: "لا إنجازات بعد.", noInterestsYet: "لم تُختر اهتمامات بعد.", noInterestsOther: "لم تُختر اهتمامات.", firstNameShort: "الاسم الأول", lastNameShort: "اسم العائلة", ageShort: "العمر", gradeLabelShort: "الصف", areaShort: "المنطقة", privacyLabel: "الخصوصية", profileThemeLabel: "ألوان الملف الشخصي", profileThemeNote: "هكذا يظهر الملف الشخصي عند كل زيارة، في الوضع الفاتح.", paletteLabel: "نظام الألوان", paletteHint: "لون خلفية التطبيق في الوضع الفاتح.", paletteDefault: "افتراضي",
+      mediaTooBigTitle: "الصورة كبيرة جدًا", mediaTooBigBody: "يمكن رفع صورة حتى 5MB.", profileDetailsTitle: "تفاصيلي", editBtnShort: "تعديل", myAchievementsTitle: "إنجازاتك", achievementsTitle: "الإنجازات", achievementsBtn: "الإنجازات", noAchievementsYet: "لا إنجازات بعد.", noAchievementsOther: "لا إنجازات بعد.", noInterestsYet: "لم تُختر اهتمامات بعد.", noInterestsOther: "لم تُختر اهتمامات.", firstNameShort: "الاسم الأول", lastNameShort: "اسم العائلة", ageShort: "العمر", gradeLabelShort: "الصف", areaShort: "المنطقة", privacyLabel: "الخصوصية", displayNameLabel: "الاسم المعروض", displayNameHint: "يظهر بخط كبير في الملف الشخصي، بأي لغة",
       achievementsProgress: (n, total) => `${n} من ${total}`,
       achievementEarned: name => `حصلت على إنجاز "${name}"`,
-      palettes: {butter: "زبدة", sky: "سماوي", sage: "مريمية", sand: "رمل", rose: "وردي"},
       achievements: {
         first_save: ["الخطوة الأولى","حفظت أول نشاط"],
         face_to_name: ["وجه للاسم","أضفت صورة شخصية وغلافًا"],
@@ -6311,8 +6320,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       appTitle: "Mah Ba\"im", appTagline: "Activities, clubs & events for teens",
       tabLogin: "Log in", tabSignup: "Sign up", usernameLabel: "Username", passwordLabel: "Password",
       or: "or", guestBtn: "Continue as guest", guestExitBtn: "Exit guest mode",
-      errUsernameFormat: "Username: 3–20 characters — English letters, digits and ⁦! @ # _. -⁩ (at least one letter).",
-      errPasswordLength: "Password: 6–10 characters — English letters, digits and simple symbols like ⁦! @ # $ _⁩.",
+      errUsernameShort: "The username must be at least 3 characters long.",
+      errUsernameChars: "The username can only contain English letters, digits and _.",
+      errPasswordRule: "The password must be at least 6 characters long and contain at least one letter and one digit.",
+      errPasswordChars: "The password can only contain English letters, digits and simple symbols.",
       errUsernameTaken: "That username is taken, try another one.", usernameAvailable: "Username is available ✓",
       errSignupNeedsVerification: "Signed up, but verification is still required. Contact the site admin.",
       errServerDown: "The server is unavailable right now. You can continue as a guest and try again later.",
@@ -6364,7 +6375,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyBody: "Try again later.",
       retryBtn: "Try again",
       scheduleAtOrganizer: "Times on the organizer's site",
-      favCountText: n => n === 1 ? "1 activity" : `${n} activities`,
       favEmptyTitle: "Nothing saved yet",
       pinnedLabel: "Saved", myPinnedTitle: "What I saved",
       bannerChange: "Change banner", aboutYouGroup: "About you", loginGroup: "Sign-in details",
@@ -6373,7 +6383,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       aboutYouNote: "None of these are required.",
       activityTypesNote: "What kind of thing you are looking for.",
       loginNote: "Leave blank to keep what you have.",
-      usernameHint: "A letter, then letters, digits or _", passwordHint: "6–10 characters",
+      passwordHint: "At least 6 characters, one letter and one digit",
       showPasswordLabel: "Show password", hidePasswordLabel: "Hide password",
       savingBtn: "Saving…", discardBtn: "Discard changes", discardPrompt: "Discard your unsaved changes?",
       addTopicLabel: "Add your own topic",
@@ -6401,7 +6411,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       demoTitle: "A few basic details", demoSubtitle: "This step is optional too — you can leave it blank and continue",
       ageQLabel: "How old are you?", gradeQLabel: "What grade are you in?", areaQLabel: "Which area of Jerusalem do you live in?",
       typeOrPick: "Pick from the list or type your own", selectPlaceholder: "Select…",
-      homeTab: "Home", accessibilityLabel: "Accessibility", accessibilityTitle: "Accessibility",
+      homeTab: "Home", accessibilityLabel: "Accessibility",
       editProfileBtn: "Edit profile", cancelBtn: "Cancel",
       currentUsernameLabel: "Current username", noneYet: "Not filled in yet",
       topicsTitle: "What topics are you interested in?", topicsSubtitle: "You can pick several, and add your own topic too",
@@ -6415,7 +6425,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       profileTitle: "My profile", avatarChange: "Change profile picture", saveBtn: "Save", savedMsg: "Saved", backToApp: "Back to the app",
       settingsTitle: "Settings", themeLabel: "Appearance", themeLight: "Light", themeDark: "Dark", themeSystem: "Match device",
       textSizeLabel: "Text size", textSizeSmall: "Small", textSizeMedium: "Medium", textSizeLarge: "Large", languageLabel: "Language",
-      changeUsernameLabel: "Change username", changePasswordLabel: "Change password",
+      changePasswordLabel: "Change password",
       newUsernamePlaceholder: "New username", newPasswordPlaceholder: "New password", updateBtn: "Update",
       usernameUpdated: "Username updated", passwordUpdated: "Password updated",
       notificationsLabel: "Notifications", searchUsersLabel: "Search users",
@@ -6425,7 +6435,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       privateProfileLabel: "Private account",
       privateOn: "Private", privateOff: "Public",
       privateProfileHint: "With a private profile, following you needs your approval.",
-      lockedProfileMsg: "This account is private. Follow and get approved to see their favorites.",
+      lockedProfileMsg: "This profile is private. Favorites, the profile picture and the banner appear once the follow request is approved.",
       userSearchPlaceholder: "Search by username…",
       noUsersFoundMsg: "No users found.",
       noRequestsMsg: "No new follow requests.",
@@ -6433,10 +6443,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "Not following anyone yet.",
       noFavoritesForUserMsg: "No favorites chosen yet.",
       favoritesOfUser: n => `${n}'s favorites`,
-      mediaTooBigTitle: "That image is too large", mediaTooBigBody: "Images can be up to 5MB.", profileDetailsTitle: "My details", editBtnShort: "Edit", myAchievementsTitle: "Your achievements", achievementsTitle: "Achievements", achievementsBtn: "Achievements", noAchievementsYet: "No achievements yet.", noAchievementsOther: "No achievements yet.", noInterestsYet: "No interests chosen yet.", noInterestsOther: "No interests chosen.", firstNameShort: "First name", lastNameShort: "Last name", ageShort: "Age", gradeLabelShort: "Grade", areaShort: "Area", privacyLabel: "Privacy", profileThemeLabel: "Profile colours", profileThemeNote: "How the profile looks to anyone who opens it, in light mode.", paletteLabel: "Colour theme", paletteHint: "The app's background in light mode.", paletteDefault: "Default",
+      mediaTooBigTitle: "That image is too large", mediaTooBigBody: "Images can be up to 5MB.", profileDetailsTitle: "My details", editBtnShort: "Edit", myAchievementsTitle: "Your achievements", achievementsTitle: "Achievements", achievementsBtn: "Achievements", noAchievementsYet: "No achievements yet.", noAchievementsOther: "No achievements yet.", noInterestsYet: "No interests chosen yet.", noInterestsOther: "No interests chosen.", firstNameShort: "First name", lastNameShort: "Last name", ageShort: "Age", gradeLabelShort: "Grade", areaShort: "Area", privacyLabel: "Privacy", displayNameLabel: "Display name", displayNameHint: "Shown large on the profile, in any language",
       achievementsProgress: (n, total) => `${n} of ${total}`,
       achievementEarned: name => `You earned "${name}"`,
-      palettes: {butter: "Butter", sky: "Sky", sage: "Sage", sand: "Sand", rose: "Rose"},
       achievements: {
         first_save: ["First step","Saved your first activity"],
         face_to_name: ["A face to the name","Added a profile picture and a banner"],
@@ -6465,8 +6474,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       appTitle: "Ма Баим", appTagline: "Кружки, занятия и мероприятия для подростков",
       tabLogin: "Вход", tabSignup: "Регистрация", usernameLabel: "Имя пользователя", passwordLabel: "Пароль",
       or: "или", guestBtn: "Продолжить как гость", guestExitBtn: "Выйти из гостевого режима",
-      errUsernameFormat: "Имя пользователя: 3–20 символов на английском — буквы, цифры и ⁦! @ # _. -⁩ (хотя бы одна буква).",
-      errPasswordLength: "Пароль: 6–10 символов — английские буквы, цифры и простые символы вроде ⁦! @ # $ _⁩.",
+      errUsernameShort: "Имя пользователя должно быть не короче 3 символов.",
+      errUsernameChars: "Имя пользователя может содержать только английские буквы, цифры и _.",
+      errPasswordRule: "Пароль должен быть не короче 6 символов и содержать хотя бы одну букву и одну цифру.",
+      errPasswordChars: "Пароль может содержать только английские буквы, цифры и простые символы.",
       errUsernameTaken: "Это имя пользователя уже занято, попробуйте другое.", usernameAvailable: "Имя пользователя свободно ✓",
       errSignupNeedsVerification: "Регистрация выполнена, но требуется подтверждение. Обратитесь к администратору.",
       errServerDown: "Сервер сейчас недоступен. Можно продолжить как гость и повторить попытку позже.",
@@ -6520,7 +6531,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       activitiesEmptyBody: "Попробуйте позже.",
       retryBtn: "Попробовать снова",
       scheduleAtOrganizer: "Расписание на сайте организатора",
-      favCountText: n => n === 1 ? "1 занятие" : `${n} занятий`,
       favEmptyTitle: "Пока ничего не сохранено",
       pinnedLabel: "Сохранено", myPinnedTitle: "Что я сохранил",
       bannerChange: "Сменить баннер", aboutYouGroup: "О вас", loginGroup: "Данные для входа",
@@ -6529,7 +6539,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       aboutYouNote: "Ни одно из полей не обязательно.",
       activityTypesNote: "Что именно вы ищете.",
       loginNote: "Оставьте пустым, чтобы ничего не менять.",
-      usernameHint: "Латинская буква, затем буквы, цифры или _", passwordHint: "6–10 символов",
+      passwordHint: "Не меньше 6 символов, одна буква и одна цифра",
       showPasswordLabel: "Показать пароль", hidePasswordLabel: "Скрыть пароль",
       savingBtn: "Сохранение…", discardBtn: "Отменить изменения", discardPrompt: "Отменить несохранённые изменения?",
       addTopicLabel: "Добавить свою тему",
@@ -6557,7 +6567,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       demoTitle: "Немного базовой информации", demoSubtitle: "Этот шаг тоже необязателен — можно оставить пустым и продолжить",
       ageQLabel: "Сколько вам лет?", gradeQLabel: "В каком вы классе?", areaQLabel: "В каком районе Иерусалима вы живёте?",
       typeOrPick: "Выберите из списка или введите свой вариант", selectPlaceholder: "Выбрать…",
-      homeTab: "Главная", accessibilityLabel: "Специальные возможности", accessibilityTitle: "Специальные возможности",
+      homeTab: "Главная", accessibilityLabel: "Специальные возможности",
       editProfileBtn: "Редактировать профиль", cancelBtn: "Отмена",
       currentUsernameLabel: "Текущее имя пользователя", noneYet: "Пока не заполнено",
       topicsTitle: "Какие темы вас интересуют?", topicsSubtitle: "Можно выбрать несколько, а также добавить свою тему",
@@ -6571,7 +6581,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       profileTitle: "Мой профиль", avatarChange: "Изменить фото профиля", saveBtn: "Сохранить", savedMsg: "Сохранено", backToApp: "Назад в приложение",
       settingsTitle: "Настройки", themeLabel: "Оформление", themeLight: "Светлая", themeDark: "Тёмная", themeSystem: "Как на устройстве",
       textSizeLabel: "Размер текста", textSizeSmall: "Маленький", textSizeMedium: "Обычный", textSizeLarge: "Крупный", languageLabel: "Язык",
-      changeUsernameLabel: "Изменить имя пользователя", changePasswordLabel: "Изменить пароль",
+      changePasswordLabel: "Изменить пароль",
       newUsernamePlaceholder: "Новое имя пользователя", newPasswordPlaceholder: "Новый пароль", updateBtn: "Обновить",
       usernameUpdated: "Имя пользователя обновлено", passwordUpdated: "Пароль обновлён",
       notificationsLabel: "Уведомления", searchUsersLabel: "Поиск пользователей",
@@ -6581,7 +6591,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       privateProfileLabel: "Закрытый профиль",
       privateOn: "Закрытый", privateOff: "Открытый",
       privateProfileHint: "В закрытом профиле подписка на вас требует вашего одобрения.",
-      lockedProfileMsg: "Этот профиль закрытый. Подпишитесь и дождитесь подтверждения, чтобы увидеть избранное.",
+      lockedProfileMsg: "Это закрытый профиль. Избранное, фото и обложка появятся после одобрения запроса на подписку.",
       userSearchPlaceholder: "Поиск по имени пользователя…",
       noUsersFoundMsg: "Пользователи не найдены.",
       noRequestsMsg: "Нет новых запросов на подписку.",
@@ -6589,10 +6599,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "Вы пока ни на кого не подписаны.",
       noFavoritesForUserMsg: "Избранное пока не выбрано.",
       favoritesOfUser: n => `Избранное пользователя ${n}`,
-      mediaTooBigTitle: "Изображение слишком большое", mediaTooBigBody: "Можно загрузить изображение до 5 МБ.", profileDetailsTitle: "Мои данные", editBtnShort: "Изменить", myAchievementsTitle: "Ваши достижения", achievementsTitle: "Достижения", achievementsBtn: "Достижения", noAchievementsYet: "Пока нет достижений.", noAchievementsOther: "Пока нет достижений.", noInterestsYet: "Интересы пока не выбраны.", noInterestsOther: "Интересы не выбраны.", firstNameShort: "Имя", lastNameShort: "Фамилия", ageShort: "Возраст", gradeLabelShort: "Класс", areaShort: "Район", privacyLabel: "Конфиденциальность", profileThemeLabel: "Цвета профиля", profileThemeNote: "Так профиль выглядит для всех, кто его открывает, в светлой теме.", paletteLabel: "Цветовая тема", paletteHint: "Фон приложения в светлой теме.", paletteDefault: "По умолчанию",
+      mediaTooBigTitle: "Изображение слишком большое", mediaTooBigBody: "Можно загрузить изображение до 5 МБ.", profileDetailsTitle: "Мои данные", editBtnShort: "Изменить", myAchievementsTitle: "Ваши достижения", achievementsTitle: "Достижения", achievementsBtn: "Достижения", noAchievementsYet: "Пока нет достижений.", noAchievementsOther: "Пока нет достижений.", noInterestsYet: "Интересы пока не выбраны.", noInterestsOther: "Интересы не выбраны.", firstNameShort: "Имя", lastNameShort: "Фамилия", ageShort: "Возраст", gradeLabelShort: "Класс", areaShort: "Район", privacyLabel: "Конфиденциальность", displayNameLabel: "Отображаемое имя", displayNameHint: "Крупно в профиле, на любом языке",
       achievementsProgress: (n, total) => `${n} из ${total}`,
       achievementEarned: name => `Получено достижение «${name}»`,
-      palettes: {butter: "Масло", sky: "Небо", sage: "Шалфей", sand: "Песок", rose: "Роза"},
       achievements: {
         first_save: ["Первый шаг","Сохранено первое занятие"],
         face_to_name: ["Лицо к имени","Загружены фото профиля и обложка"],
@@ -6661,32 +6670,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     else root.removeAttribute("data-theme");
   }
 
-  // Colour themes: the ground and surfaces change, the inks stay.
-  const PALETTES = ["butter", "sky", "sage", "sand", "rose"];
-  const PALETTE_SWATCH = { butter: "#FFF4C7", sky: "#D2E9F1", sage: "#D8E6CB", sand: "#ECDDC6", rose: "#F0D6D2" };
-
-  function applyAppPalette(key) {
-    const root = document.documentElement;
-    if (key && key !== "butter" && PALETTES.includes(key)) root.setAttribute("data-palette", key);
-    else root.removeAttribute("data-palette");
-  }
-
-  function setProfilePalette(el, key) {
-    if (key && PALETTES.includes(key)) el.dataset.ppal = key;
-    else delete el.dataset.ppal;
-  }
-
-  // One row of swatches. For a profile the first is "default": the profile
-  // then follows whatever theme its visitor uses.
-  function paletteSwatchesHtml(name, current, withDefault) {
-    const t = L();
-    const opts = (withDefault ? [""] : []).concat(PALETTES);
-    return `<div class="swatches">${opts.map(k => {
-      const label = k ? t.palettes[k] : t.paletteDefault;
-      return `<button type="button" class="swatch${k ? "" : " swatch--default"}" data-${name}="${k}" aria-pressed="${(current || "") === k}"><span class="swatch-dot"${k ? ` style="background:${PALETTE_SWATCH[k]}"` : ""}></span>${label}</button>`;
-    }).join("")}</div>`;
-  }
-
   function applyTextSize(size) {
     const scale = { small: "0.9", medium: "1", large: "1.2" }[size] || "1";
     document.documentElement.style.setProperty("--text-scale", scale);
@@ -6700,7 +6683,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // not exist yet fails the whole row, which used to blank the entire profile —
   // so a missing newer column degrades to "not set" instead of "no profile".
   const PROFILE_BASE_COLS = "username, avatar_url, theme_pref, text_size, language, is_private";
-  const PROFILE_NEW_COLS = ["banner_url", "app_palette", "profile_theme"];
+  const PROFILE_NEW_COLS = ["banner_url", "display_name"];
 
   async function loadAndApplyProfile(userId) {
     currentUserId = userId;
@@ -6716,7 +6699,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       setLanguage(userProfile.language || "he");
       applyTheme(userProfile.theme_pref || "system");
       applyTextSize(userProfile.text_size || "medium");
-      applyAppPalette(userProfile.app_palette || "butter");
     }
   }
 
@@ -6732,7 +6714,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     if (!socialScreenEl.hidden) renderSocial();
     if (profileState && !profileScreenEl.hidden) renderProfile();
     if (!settingsScreenEl.hidden) renderSettings();
-    if (!accessibilityScreenEl.hidden) renderAccessibility();
     if (!otherProfileScreenEl.hidden) renderOtherProfile();
     if (!followListScreenEl.hidden) renderFollowList();
     if (!detailScreenEl.hidden) renderActivityDetail();
@@ -6752,10 +6733,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   const guestBtnEl = document.getElementById("guestBtn");
   const profileScreenEl = document.getElementById("profileScreen");
   const settingsScreenEl = document.getElementById("settingsScreen");
-  const accessibilityScreenEl = document.getElementById("accessibilityScreen");
   const profileContentEl = document.getElementById("profileContent");
   const settingsContentEl = document.getElementById("settingsContent");
-  const accessibilityContentEl = document.getElementById("accessibilityContent");
   const bottomNavEl = document.getElementById("bottomNav");
   const navHomeEl = document.getElementById("navHome");
   const navFavoritesEl = document.getElementById("navFavorites");
@@ -6766,15 +6745,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   let authMode = "login";
   let appStarted = false;
 
-  // New usernames: English letters and digits, plus ! @ # _ . - ; at least one
-  // letter. Passwords: English letters, digits and simple symbols, 6–10 long.
-  // Login does not apply these — accounts made under the old rules still sign in.
-  const USERNAME_RE = /^(?=.*[A-Za-z])[A-Za-z0-9!@#_.\-]{3,20}$/;
-  const PASSWORD_RE = /^[A-Za-z0-9!@#$%^&*()_+\-=.,?]{6,10}$/;
+  // New usernames: English letters, digits and _, 3–20 characters. Passwords:
+  // English letters, digits and simple symbols, 6–20, with at least one letter
+  // and one digit. Both inputs stop at 20 characters, so that limit needs no
+  // message. Login does not apply these — older accounts still sign in.
+  const USERNAME_RE = /^[A-Za-z0-9_]{3,20}$/;
+  const PASSWORD_CHARS_RE = /^[A-Za-z0-9!@#$%^&*()_+\-=.,?]*$/;
+  const PASSWORD_RE = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9!@#$%^&*()_+\-=.,?]{6,20}$/;
 
-  // The account's hidden e-mail. "@" (and "!", "#" for strict validators) can't
-  // stand in an address, so any character outside a-z, 0-9 and _ is written as
-  // its code ("noa@1" → "noa-x40-1"); plain names keep the old form exactly.
+  // The account's hidden e-mail. A character outside a-z, 0-9 and _ (only old
+  // accounts have them) is written as its code, so the address stays valid.
   function usernameToEmail(username) {
     const local = username.trim().toLowerCase().replace(/\s+/g, "_")
       .replace(/[^a-z0-9_]/g, c => `-x${c.codePointAt(0).toString(16)}-`).replace(/-+$/, "");
@@ -6811,11 +6791,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   document.getElementById("welcomeLoginBtn").addEventListener("click", () => showAuthMode("login"));
   document.getElementById("authBackBtn").addEventListener("click", showAuth);
 
-  // ---- Per-field checks on signup. A message appears once the user leaves a
-  // field (or submits) and then follows every keystroke until it is fixed; the
-  // username is also looked up while typing, so a taken name is known before
-  // the form is sent. Login keeps a single message: it must not reveal which
-  // of the two was wrong. ----
+  // ---- Per-field checks on signup. A field is judged when the user leaves it
+  // (moving on to the next one) or presses the button — never while typing, and
+  // typing again clears its message. The username is looked up at that point
+  // too, so a taken name is reported before the form is sent. Login keeps a
+  // single message: it must not reveal which of the two was wrong. ----
   const authUsernameMsgEl = document.getElementById("authUsernameMsg");
   const authPasswordMsgEl = document.getElementById("authPasswordMsg");
 
@@ -6829,8 +6809,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   function clearFieldMsgs() {
     setFieldMsg(authUsernameEl, authUsernameMsgEl, "");
     setFieldMsg(authPasswordEl, authPasswordMsgEl, "");
-    authUsernameEl.dataset.checked = "";
-    authPasswordEl.dataset.checked = "";
   }
 
   // Taken regardless of case: the hidden e-mail is lower-cased, so "Noa" and
@@ -6842,54 +6820,43 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return (data || []).length > 0;
   }
 
+  // One problem at a time, said plainly — not the whole rulebook.
   function usernameProblem(name) {
-    return USERNAME_RE.test(name) ? "" : L().errUsernameFormat;
+    if (!/^[A-Za-z0-9_]*$/.test(name)) return L().errUsernameChars;
+    if (name.length < 3) return L().errUsernameShort;
+    return USERNAME_RE.test(name) ? "" : L().errUsernameChars;
   }
   function passwordProblem(pw) {
-    return PASSWORD_RE.test(pw) ? "" : L().errPasswordLength;
+    if (!PASSWORD_CHARS_RE.test(pw)) return L().errPasswordChars;
+    return PASSWORD_RE.test(pw) ? "" : L().errPasswordRule;
   }
 
-  let usernameCheckTimer = 0, usernameCheckSeq = 0;
-  function checkUsernameLive(force) {
+  let usernameCheckSeq = 0;
+  async function checkUsernameField() {
     if (authMode !== "signup") return;
-    clearTimeout(usernameCheckTimer);
     const name = authUsernameEl.value.trim();
     const seq = ++usernameCheckSeq;
-    if (!name) { setFieldMsg(authUsernameEl, authUsernameMsgEl, force ? L().errUsernameFormat : ""); return; }
+    if (!name) return; // an empty field is reported by the button, not by passing through it
     const problem = usernameProblem(name);
-    if (problem) {
-      if (force || authUsernameEl.dataset.checked) setFieldMsg(authUsernameEl, authUsernameMsgEl, problem);
-      return;
-    }
-    setFieldMsg(authUsernameEl, authUsernameMsgEl, "");
-    usernameCheckTimer = setTimeout(async () => {
-      try {
-        const taken = await usernameTaken(name);
-        if (seq !== usernameCheckSeq) return;
-        setFieldMsg(authUsernameEl, authUsernameMsgEl, taken ? L().errUsernameTaken : L().usernameAvailable, !taken);
-      } catch { /* offline: checked again on submit */ }
-    }, 450);
-  }
-  function checkPasswordLive(force) {
-    if (authMode !== "signup") return;
-    const pw = authPasswordEl.value;
-    if (!force && !authPasswordEl.dataset.checked) return;
-    setFieldMsg(authPasswordEl, authPasswordMsgEl, passwordProblem(pw));
+    if (problem) { setFieldMsg(authUsernameEl, authUsernameMsgEl, problem); return; }
+    try {
+      const taken = await usernameTaken(name);
+      if (seq !== usernameCheckSeq || authUsernameEl.value.trim() !== name) return;
+      setFieldMsg(authUsernameEl, authUsernameMsgEl, taken ? L().errUsernameTaken : L().usernameAvailable, !taken);
+    } catch { /* offline: checked again on submit */ }
   }
 
-  authUsernameEl.addEventListener("input", () => checkUsernameLive(false));
-  authUsernameEl.addEventListener("blur", () => {
-    if (authMode !== "signup" || !authUsernameEl.value.trim()) return;
-    authUsernameEl.dataset.checked = "1";
-    checkUsernameLive(false);
-    const problem = usernameProblem(authUsernameEl.value.trim());
-    if (problem) setFieldMsg(authUsernameEl, authUsernameMsgEl, problem);
-  });
-  authPasswordEl.addEventListener("input", () => checkPasswordLive(false));
+  authUsernameEl.addEventListener("blur", checkUsernameField);
   authPasswordEl.addEventListener("blur", () => {
     if (authMode !== "signup" || !authPasswordEl.value) return;
-    authPasswordEl.dataset.checked = "1";
-    checkPasswordLive(true);
+    setFieldMsg(authPasswordEl, authPasswordMsgEl, passwordProblem(authPasswordEl.value));
+  });
+  authUsernameEl.addEventListener("input", () => {
+    usernameCheckSeq++;
+    if (authMode === "signup") setFieldMsg(authUsernameEl, authUsernameMsgEl, "");
+  });
+  authPasswordEl.addEventListener("input", () => {
+    if (authMode === "signup") setFieldMsg(authPasswordEl, authPasswordMsgEl, "");
   });
 
   function setAuthError(msg, field) {
@@ -6919,7 +6886,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     appRootEl.hidden = false;
@@ -6947,7 +6913,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     authScreenEl.hidden = true;
@@ -6993,8 +6958,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     if (authMode === "signup") {
       // Every problem at once, each under its own field.
-      authUsernameEl.dataset.checked = "1";
-      authPasswordEl.dataset.checked = "1";
       const uProblem = usernameProblem(username);
       const pProblem = passwordProblem(password);
       setFieldMsg(authUsernameEl, authUsernameMsgEl, uProblem);
@@ -7079,7 +7042,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     followListUserId = null;
     currentInterestTopics = [];
     resetAchievementState();
-    applyAppPalette("butter");
     closeActivityDetail();
     const { data: { session } } = await sb.auth.getSession();
     if (session) await sb.auth.signOut();
@@ -7089,11 +7051,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // ---- Profile ----
   let profileState = null;
   let profileMode = "view";
-  // Edit-mode only. The two credential fields live out here rather than in the
-  // DOM because a chip tap re-renders the whole section out from under them, and
+  // Edit-mode only. The password field lives out here rather than in the DOM
+  // because a chip tap re-renders the whole section out from under it, and
   // `profileBaseline` is the snapshot Save and the discard link compare against.
   let profileBaseline = "";
-  let profileEditUsername = "";
   let profileEditPassword = "";
   let profileBarScrollHandler = () => {};
 
@@ -7108,7 +7069,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     archiveScreenEl.hidden = true;
     socialScreenEl.hidden = true;
     settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     profileScreenEl.hidden = false;
@@ -7124,7 +7084,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       gradeLabel: gradeMatch ? gradeMatch[1] : (prefs?.grade || ""),
       area: prefs?.area || "",
       activityTypes: prefs?.activity_types || [], interestTopics: prefs?.interest_topics || [],
-      profileTheme: userProfile?.profile_theme || null
+      displayName: userProfile?.display_name || ""
     };
     socialCounts = await loadSocialCounts(currentUserId);
     renderProfile();
@@ -7140,8 +7100,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   // mode reuses it, so tapping a chip and tapping it back leaves Save inert.
   function enterProfileEdit() {
     profileMode = "edit";
-    profileState.profileTheme = userProfile?.profile_theme || null;
-    profileEditUsername = userProfile?.username || "";
+    profileState.displayName = userProfile?.display_name || "";
     profileEditPassword = "";
     profileBaseline = profileEditSnapshot();
     window.scrollTo({ top: 0 });
@@ -7155,7 +7114,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     // out of band (a media upload, a language switch) must not assume it is there.
     if (!profileState) return;
 
-    setProfilePalette(profileContentEl, profileMode === "edit" ? profileState.profileTheme : userProfile?.profile_theme);
     if (profileMode === "view") { renderProfileView(); return; }
     if (profileMode === "details") { renderProfileDetails(); return; }
     if (profileMode === "achievements") { renderAchievementsPage(); return; }
@@ -7197,6 +7155,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <div class="pf-sec-head"><h2 class="pf-sec-title">${t.aboutYouGroup}</h2></div>
         <p class="pf-sec-note">${t.aboutYouNote}</p>
         <div class="pf-fields">
+          <div class="pf-field">
+            <label class="pf-field-label" for="pDisplayName">${t.displayNameLabel}<span class="pf-field-hint">${t.displayNameHint}</span></label>
+            <input type="text" class="pf-input" id="pDisplayName" value="${escapeAttr(profileState.displayName)}" maxlength="30" placeholder="${escapeAttr(userProfile?.username || "")}" aria-describedby="pDisplayNameMsg">
+            <p class="pf-msg" id="pDisplayNameMsg" role="alert"></p>
+          </div>
           ${pfTextFieldHtml("pFirstName", t.firstNameLabel, profileState.firstName)}
           ${pfTextFieldHtml("pLastName", t.lastNameLabel, profileState.lastName)}
           ${pfSelectHtml("pAge", t.ageQLabel, AGE_VALUES, profileState.ageRange)}
@@ -7231,24 +7194,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </section>
 
       <section ${rise()}>
-        <div class="pf-sec-head"><h2 class="pf-sec-title">${t.profileThemeLabel}</h2></div>
-        <p class="pf-sec-note">${t.profileThemeNote}</p>
-        ${paletteSwatchesHtml("ppalopt", profileState.profileTheme, true)}
-      </section>
-
-      <section ${rise()}>
         <div class="pf-sec-head"><h2 class="pf-sec-title">${t.loginGroup}</h2></div>
         <p class="pf-sec-note">${t.loginNote}</p>
         <div class="pf-fields">
           <div class="pf-field">
-            <label class="pf-field-label" for="pNewUsername">${t.changeUsernameLabel}<span class="pf-field-hint">${t.usernameHint}</span></label>
-            <input type="text" class="pf-input" id="pNewUsername" value="${escapeAttr(profileEditUsername)}" dir="ltr" autocomplete="username" aria-describedby="pUsernameMsg">
-            <p class="pf-msg" id="pUsernameMsg" role="alert"></p>
-          </div>
-          <div class="pf-field">
             <label class="pf-field-label" for="pNewPassword">${t.changePasswordLabel}<span class="pf-field-hint">${t.passwordHint}</span></label>
             <div class="pf-pass-wrap">
-              <input type="password" class="pf-input" id="pNewPassword" value="${escapeAttr(profileEditPassword)}" placeholder="${t.newPasswordPlaceholder}" minlength="6" maxlength="10" dir="ltr" autocomplete="new-password" aria-describedby="pPasswordMsg">
+              <input type="password" class="pf-input" id="pNewPassword" value="${escapeAttr(profileEditPassword)}" placeholder="${t.newPasswordPlaceholder}" maxlength="20" dir="ltr" autocomplete="new-password" aria-describedby="pPasswordMsg">
               <button type="button" class="pf-pass-toggle" id="pPassToggle" aria-label="${t.showPasswordLabel}" aria-pressed="false">${icon("eye")}</button>
             </div>
             <p class="pf-msg" id="pPasswordMsg" role="alert"></p>
@@ -7261,24 +7213,24 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     wireProfileEdit();
   }
 
-  // The page: who this is and what they're into — name, interests, favourites,
-  // achievements. Everything else is one tap away under "details".
+  // The page: the display name large, the username under it, the counts, then
+  // interests, favourites and achievements. The questionnaire's answers are
+  // one tap away under "details".
   function renderProfileView() {
     const t = L();
-    const name = userProfile?.username || "";
+    const shown = displayNameOf(userProfile);
     const avatarStyle = userProfile?.avatar_url ? `background-image:url('${userProfile.avatar_url}')` : "";
-    const fullName = [profileState.firstName, profileState.lastName].filter(Boolean).join(" ");
-    const meta = [fullName, profileState.ageRange && t.ageYears(profileState.ageRange), profileState.area].filter(Boolean);
     const earned = ACHIEVEMENTS.filter(a => earnedAchievements.has(a.key));
     profileContentEl.innerHTML = `
-      <div class="profile-banner">${bannerHtml(name, userProfile?.banner_url)}</div>
-      <div class="profile-top">
+      <div class="profile-banner">${bannerHtml(userProfile?.username || "", userProfile?.banner_url)}</div>
+      <div class="profile-top profile-top--start">
         <button type="button" class="icon-btn" id="pSettingsBtn" aria-label="${t.settingsBtn}">${icon("gear")}</button>
       </div>
       <div class="profile-id">
-        <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((name || "?").charAt(0).toUpperCase())}</span>
-        <h1 class="display display-lg profile-name">${escHtml(name)}</h1>
-        ${meta.length ? `<p class="profile-meta">${meta.map(escHtml).join(" · ")}</p>` : ""}
+        <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((shown || "?").charAt(0).toUpperCase())}</span>
+        <h1 class="display display-lg profile-name">${escHtml(shown)}</h1>
+        <p class="profile-handle">@${escHtml(userProfile?.username || "")}</p>
+        ${profileStatsHtml({ followers: socialCounts.followers, following: socialCounts.following, saved: favoriteIds.size }, true)}
         <button type="button" class="pill-btn" id="pDetailsBtn">${icon("user")}${t.detailsBtn}</button>
       </div>
       ${interestsBlockHtml(profileState.interestTopics, t.noInterestsYet)}
@@ -7288,8 +7240,27 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     `;
     document.getElementById("pSettingsBtn").addEventListener("click", showSettings);
     document.getElementById("pDetailsBtn").addEventListener("click", () => switchProfileMode("details"));
+    document.getElementById("pFollowersBtn").addEventListener("click", () => showFollowList("followers", currentUserId));
+    document.getElementById("pFollowingBtn").addEventListener("click", () => showFollowList("following", currentUserId));
+    document.getElementById("pSavedBtn").addEventListener("click", showFavorites);
     document.getElementById("pFavBtn").addEventListener("click", showFavorites);
     document.getElementById("pAchBtn").addEventListener("click", () => switchProfileMode("achievements"));
+  }
+
+  // Followers, following and saved. Your own open their lists; on someone
+  // else's profile they are counts only.
+  function profileStatsHtml(counts, own) {
+    const t = L();
+    const cell = (id, n, label) => own
+      ? `<button type="button" class="stat" id="${id}"><b class="num">${n}</b><span>${label}</span></button>`
+      : `<span class="stat"><b class="num">${n}</b><span>${label}</span></span>`;
+    return `<div class="stat-row">
+      ${cell("pFollowersBtn", counts.followers, t.followersLabel)}
+      <span class="stat-divider"></span>
+      ${cell("pFollowingBtn", counts.following, t.followingLabel)}
+      <span class="stat-divider"></span>
+      ${cell("pSavedBtn", counts.saved, t.pinnedLabel)}
+    </div>`;
   }
 
   function switchProfileMode(mode) {
@@ -7327,14 +7298,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     const rtl = LANG_DIR[currentLang] === "rtl";
     const dash = "—";
     const rows = [
+      [t.displayNameLabel, escHtml(displayNameOf(userProfile))],
       [t.usernameLabel, `<bdi>${escHtml(userProfile?.username || "")}</bdi>`],
       [t.firstNameShort, escHtml(profileState.firstName) || dash],
       [t.lastNameShort, escHtml(profileState.lastName) || dash],
       [t.ageShort, escHtml(profileState.ageRange || "") || dash],
       [t.gradeLabelShort, escHtml(profileState.gradeLabel || "") || dash],
       [t.areaShort, escHtml(profileState.area || "") || dash],
-      [t.privacyLabel, userProfile?.is_private !== false ? t.privateOn : t.privateOff],
-      [t.profileThemeLabel, userProfile?.profile_theme ? t.palettes[userProfile.profile_theme] : t.paletteDefault]
+      [t.privacyLabel, userProfile?.is_private !== false ? t.privateOn : t.privateOff]
     ];
     const tags = (title, values) => `<section class="profile-block">
       <h2 class="profile-block-title">${title}</h2>
@@ -7346,13 +7317,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <h1 class="display display-lg">${t.profileDetailsTitle}</h1>
         <button type="button" class="pill-btn" id="pdEdit">${icon("pencil")}${t.editBtnShort}</button>
       </div>
-      <div class="stat-row details-stats">
-        <button type="button" class="stat" id="pFollowersBtn"><b class="num">${socialCounts.followers}</b><span>${t.followersLabel}</span></button>
-        <span class="stat-divider"></span>
-        <button type="button" class="stat" id="pFollowingBtn"><b class="num">${socialCounts.following}</b><span>${t.followingLabel}</span></button>
-        <span class="stat-divider"></span>
-        <button type="button" class="stat" id="pSavedBtn"><b class="num">${favoriteIds.size}</b><span>${t.pinnedLabel}</span></button>
-      </div>
       <div class="settings-card details-card">
         ${rows.map(([k, v]) => `<div class="profile-view-item"><span>${k}</span><b>${v}</b></div>`).join("")}
       </div>
@@ -7361,9 +7325,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     `;
     document.getElementById("pdBack").addEventListener("click", () => switchProfileMode("view"));
     document.getElementById("pdEdit").addEventListener("click", enterProfileEdit);
-    document.getElementById("pFollowersBtn").addEventListener("click", () => showFollowList("followers", currentUserId));
-    document.getElementById("pFollowingBtn").addEventListener("click", () => showFollowList("following", currentUserId));
-    document.getElementById("pSavedBtn").addEventListener("click", showFavorites);
   }
 
   // The achievements page — only the owner reaches it. Every achievement,
@@ -7428,8 +7389,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       area: profileState.area || "",
       topics: [...profileState.interestTopics].sort(),
       types: [...profileState.activityTypes].sort(),
-      theme: profileState.profileTheme || "",
-      username: profileEditUsername.trim(),
+      displayName: (profileState.displayName || "").trim(),
       password: profileEditPassword
     });
   }
@@ -7574,12 +7534,18 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     });
 
     // Chip edits re-render the section (the count and the check marks move with
-    // them), so the live values of the two text inputs are parked on module state
-    // first — otherwise typing a username and then tapping a chip loses it.
+    // them), so the live password is parked on module state first — otherwise
+    // typing it and then tapping a chip loses it.
     const stashCredentials = () => {
-      profileEditUsername = el("pNewUsername").value;
       profileEditPassword = el("pNewPassword").value;
     };
+
+    el("pDisplayName").addEventListener("input", e => {
+      profileState.displayName = e.target.value;
+      e.target.removeAttribute("aria-invalid");
+      el("pDisplayNameMsg").innerHTML = "";
+      refreshProfileSaveState();
+    });
 
     profileContentEl.querySelectorAll("[data-ptopic]").forEach(btn => btn.addEventListener("click", () => {
       stashCredentials();
@@ -7591,11 +7557,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     profileContentEl.querySelectorAll("[data-ptopic-remove]").forEach(btn => btn.addEventListener("click", () => {
       stashCredentials();
       profileState.interestTopics = profileState.interestTopics.filter(x => x !== btn.dataset.ptopicRemove);
-      renderProfile();
-    }));
-    profileContentEl.querySelectorAll("[data-ppalopt]").forEach(btn => btn.addEventListener("click", () => {
-      stashCredentials();
-      profileState.profileTheme = btn.dataset.ppalopt || null;
       renderProfile();
     }));
     profileContentEl.querySelectorAll("[data-patype]").forEach(btn => btn.addEventListener("click", () => {
@@ -7633,13 +7594,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       passInput.focus();
     });
 
-    const userInput = el("pNewUsername");
-    userInput.addEventListener("input", () => {
-      profileEditUsername = userInput.value;
-      userInput.removeAttribute("aria-invalid");
-      el("pUsernameMsg").innerHTML = "";
-      refreshProfileSaveState();
-    });
     passInput.addEventListener("input", () => {
       profileEditPassword = passInput.value;
       passInput.removeAttribute("aria-invalid");
@@ -7662,9 +7616,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   async function saveProfileEdits() {
     const t = L();
     const btn = document.getElementById("pSave");
-    const uMsgEl = document.getElementById("pUsernameMsg");
-    const pMsgEl = document.getElementById("pPasswordMsg");
-    uMsgEl.innerHTML = ""; pMsgEl.innerHTML = "";
+    document.getElementById("pDisplayNameMsg").innerHTML = "";
+    document.getElementById("pPasswordMsg").innerHTML = "";
 
     // The button becomes the progress indicator; nothing else on screen moves,
     // so the control the thumb is already on is the one that reports back.
@@ -7687,21 +7640,18 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       .some(k => JSON.stringify(before[k]) !== JSON.stringify(after[k]));
 
     try {
-      const newUsername = document.getElementById("pNewUsername").value.trim();
-      if (newUsername && newUsername !== userProfile?.username) {
-        if (!USERNAME_RE.test(newUsername)) return fail("pUsernameMsg", "pNewUsername", t.errUsernameFormat);
-        if (newUsername.toLowerCase() !== (userProfile?.username || "").toLowerCase() && await usernameTaken(newUsername)) {
-          return fail("pUsernameMsg", "pNewUsername", t.errUsernameTaken);
-        }
-        const { error } = await sb.auth.updateUser({ data: { username: newUsername, full_name: newUsername } });
-        if (error) return fail("pUsernameMsg", "pNewUsername", t.errSignupFailed);
-        await sb.from("users").update({ username: newUsername }).eq("id", currentUserId);
-        userProfile.username = newUsername;
+      // The username stays as it was made; the display name is what changes.
+      const newDisplayName = (profileState.displayName || "").trim() || null;
+      if (newDisplayName !== ((userProfile?.display_name || "").trim() || null)) {
+        const { error } = await sb.from("users").update({ display_name: newDisplayName }).eq("id", currentUserId);
+        if (error) return fail("pDisplayNameMsg", "pDisplayName", t.errServerDown);
+        userProfile.display_name = newDisplayName;
       }
 
       const newPassword = document.getElementById("pNewPassword").value;
       if (newPassword) {
-        if (!PASSWORD_RE.test(newPassword)) return fail("pPasswordMsg", "pNewPassword", t.errPasswordLength);
+        const problem = passwordProblem(newPassword);
+        if (problem) return fail("pPasswordMsg", "pNewPassword", problem);
         const { error } = await sb.auth.updateUser({ password: newPassword });
         if (error) return fail("pPasswordMsg", "pNewPassword", t.errSignupFailed);
       }
@@ -7719,10 +7669,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         age_range: profileState.ageRange || null, grade: profileState.grade || null, area: profileState.area || null,
         activity_types: profileState.activityTypes, interest_topics: profileState.interestTopics
       };
-      if ((profileState.profileTheme || null) !== (userProfile?.profile_theme || null)) {
-        const { error: themeError } = await sb.from("users").update({ profile_theme: profileState.profileTheme || null }).eq("id", currentUserId);
-        if (!themeError && userProfile) userProfile.profile_theme = profileState.profileTheme || null;
-      }
       const firstFilled = myPrefs.completed_at ? Date.parse(myPrefs.completed_at) : NaN;
       if (prefsChanged && Date.now() - firstFilled >= 30 * 864e5) awardAchievements(["changed"]);
       checkAchievements();
@@ -7736,7 +7682,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     btn.dataset.busy = "";
     profileEditPassword = "";
-    profileEditUsername = userProfile?.username || "";
     profileBaseline = profileEditSnapshot();
     btn.classList.add("is-saved");
     btn.innerHTML = icon("check") + t.savedMsg;
@@ -7761,11 +7706,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     userProfile = {
       theme_pref: localStorage.getItem("mb_guest_theme_pref") || "system",
       text_size: localStorage.getItem("mb_guest_text_size") || "medium",
-      language: localStorage.getItem("mb_guest_language") || currentLang,
-      app_palette: localStorage.getItem("mb_guest_app_palette") || "butter"
+      language: localStorage.getItem("mb_guest_language") || currentLang
     };
     applyTheme(userProfile.theme_pref);
-    applyAppPalette(userProfile.app_palette);
     applyTextSize(userProfile.text_size);
     setLanguage(userProfile.language);
   }
@@ -7777,23 +7720,25 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     archiveScreenEl.hidden = true;
     socialScreenEl.hidden = true;
     profileScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = true;
     otherProfileScreenEl.hidden = true;
     followListScreenEl.hidden = true;
     settingsScreenEl.hidden = false;
     bottomNavEl.hidden = false;
-    setActiveTab("settings");
+    // Signed in, Settings belongs to the profile (it opens from the profile's
+    // cog), so the profile tab stays marked. A guest has Settings as a tab.
+    setActiveTab(currentUserId ? "profile" : "settings");
     renderSettings();
   }
 
   function renderSettings() {
     const t = L();
     const theme = userProfile?.theme_pref || "system";
+    const size = userProfile?.text_size || "medium";
     const isPrivate = userProfile?.is_private !== false;
     const loggedIn = !!currentUserId;
     const rtl = LANG_DIR[currentLang] === "rtl";
-    // Grouped list: account, then display, then the exit. One card per group,
-    // rules between rows, no boxed row-inside-a-box.
+    // Grouped list: account, display, accessibility, then the exit. One card per
+    // group, rules between rows, no boxed row-inside-a-box, no sub-screens.
     settingsContentEl.innerHTML = `
       ${loggedIn ? `<div class="back-row"><button type="button" class="back-btn" id="sBackToProfile">${icon(rtl ? "chevronBack" : "chevron")}${t.profileTitle}</button></div>` : ""}
       <h1 class="display display-lg">${t.settingsTitle}</h1>
@@ -7826,20 +7771,26 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
               <button type="button" class="seg-opt" aria-pressed="${theme === "system"}" data-theme-opt="system">${t.themeSystem}</button>
             </div>
           </div>
-          <div class="set-row set-row--stack">
-            <div class="set-row-text"><b>${t.paletteLabel}</b><span>${t.paletteHint}</span></div>
-            ${paletteSwatchesHtml("palette-opt", userProfile?.app_palette || "butter", false)}
-          </div>
           <div class="set-row">
             <div class="set-row-text"><b>${t.languageLabel}</b></div>
             <select id="sLangSelect" class="settings-select">
               ${Object.keys(LANG_NAME).map(l => `<option value="${l}" ${currentLang === l ? "selected" : ""}>${LANG_NAME[l]}</option>`).join("")}
             </select>
           </div>
-          <button type="button" class="set-row set-row--nav" id="goAccessibility">
-            <div class="set-row-text"><b>${t.accessibilityLabel}</b><span>${t.textSizeLabel}</span></div>
-            <span class="set-chevron">${icon(rtl ? "chevronBack" : "chevron")}</span>
-          </button>
+        </div>
+      </section>
+
+      <section class="settings-group">
+        <p class="label settings-group-label">${t.accessibilityLabel}</p>
+        <div class="settings-card">
+          <div class="set-row set-row--stack">
+            <div class="set-row-text"><b>${t.textSizeLabel}</b><span>${t.textSizeHint}</span></div>
+            <div class="seg-3">
+              <button type="button" class="seg-opt" aria-pressed="${size === "small"}" data-size-opt="small">${t.textSizeSmall}</button>
+              <button type="button" class="seg-opt" aria-pressed="${size === "medium"}" data-size-opt="medium">${t.textSizeMedium}</button>
+              <button type="button" class="seg-opt" aria-pressed="${size === "large"}" data-size-opt="large">${t.textSizeLarge}</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -7849,7 +7800,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   }
 
   function wireSettings() {
-    document.getElementById("goAccessibility").addEventListener("click", showAccessibility);
     document.getElementById("sSignOut").addEventListener("click", doSignOut);
     const backBtn = document.getElementById("sBackToProfile");
     if (backBtn) backBtn.addEventListener("click", showProfile);
@@ -7868,10 +7818,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       renderSettings();
     }));
 
-    settingsContentEl.querySelectorAll("[data-palette-opt]").forEach(btn => btn.addEventListener("click", async () => {
-      const v = btn.dataset.paletteOpt;
-      applyAppPalette(v);
-      await saveProfileField("app_palette", v);
+    settingsContentEl.querySelectorAll("[data-size-opt]").forEach(btn => btn.addEventListener("click", async () => {
+      const v = btn.dataset.sizeOpt;
+      applyTextSize(v);
+      await saveProfileField("text_size", v);
       renderSettings();
     }));
 
@@ -7879,42 +7829,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       const v = btn.dataset.privacyOpt === "true";
       await saveProfileField("is_private", v);
       renderSettings();
-    }));
-  }
-
-  function showAccessibility() {
-    settingsScreenEl.hidden = true;
-    accessibilityScreenEl.hidden = false;
-    renderAccessibility();
-  }
-
-  function renderAccessibility() {
-    const t = L();
-    const size = userProfile?.text_size || "medium";
-    const rtl = LANG_DIR[currentLang] === "rtl";
-    accessibilityContentEl.innerHTML = `
-      <div class="back-row"><button type="button" class="back-btn" id="accBack">${icon(rtl ? "chevronBack" : "chevron")}${t.settingsTitle}</button></div>
-      <h1 class="display display-lg">${t.accessibilityTitle}</h1>
-      <section class="settings-group">
-        <p class="label settings-group-label">${t.displayGroup}</p>
-        <div class="settings-card">
-          <div class="set-row set-row--stack">
-            <div class="set-row-text"><b>${t.textSizeLabel}</b><span>${t.textSizeHint}</span></div>
-            <div class="seg-3">
-              <button type="button" class="seg-opt" aria-pressed="${size === "small"}" data-size-opt="small">${t.textSizeSmall}</button>
-              <button type="button" class="seg-opt" aria-pressed="${size === "medium"}" data-size-opt="medium">${t.textSizeMedium}</button>
-              <button type="button" class="seg-opt" aria-pressed="${size === "large"}" data-size-opt="large">${t.textSizeLarge}</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    `;
-    document.getElementById("accBack").addEventListener("click", () => { accessibilityScreenEl.hidden = true; settingsScreenEl.hidden = false; });
-    accessibilityContentEl.querySelectorAll("[data-size-opt]").forEach(btn => btn.addEventListener("click", async () => {
-      const v = btn.dataset.sizeOpt;
-      applyTextSize(v);
-      await saveProfileField("text_size", v);
-      renderAccessibility();
     }));
   }
 
