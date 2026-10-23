@@ -39,6 +39,7 @@
     --forest: #2E6B3A;
     --stone: #E3CB8F;
     --stone-deep: #C7A963;
+    --bark: #7A5230;
     --sky: #BFE3EE;
     --line: #EADB9E;
     --line-strong: #111111;
@@ -90,6 +91,7 @@
       --forest: #6FB27A;
       --stone: #8C7440;
       --stone-deep: #6F5A31;
+      --bark: #A97C4E;
       --sky: #17323C;
       --line: #2E3226;
       --line-strong: #4A4F3E;
@@ -131,6 +133,7 @@
     --forest: #6FB27A;
     --stone: #8C7440;
     --stone-deep: #6F5A31;
+    --bark: #A97C4E;
     --sky: #17323C;
     --line: #2E3226;
     --line-strong: #4A4F3E;
@@ -1674,13 +1677,6 @@
 
   .quiz-progress span.done { background: var(--accent); }
 
-  .quiz-eyebrow {
-    font-size: calc(12.5px * var(--text-scale));
-    font-weight: 700;
-    color: var(--ink-faint);
-    letter-spacing: 0.03em;
-  }
-
   /* Matches .display-lg exactly — a heading that differs only in weight or
      tracking reads as a different typeface, which is what made the archive and
      quiz screens look like they came from another app. */
@@ -1708,39 +1704,6 @@
     gap: 14px;
   }
 
-  .quiz-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .quiz-field label {
-    font-size: calc(13px * var(--text-scale));
-    font-weight: 600;
-    color: var(--ink-soft);
-  }
-
-  .quiz-field input {
-    height: 46px;
-    padding: 0 16px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: calc(15px * var(--text-scale));
-    outline: none;
-  }
-
-  .quiz-field input:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 1px; }
-
-  .quiz-options {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-
   .seg {
     display: flex;
     gap: 8px;
@@ -1765,49 +1728,10 @@
     transition: border-color 0.15s ease, background 0.15s ease;
   }
 
-  .quiz-select-field {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    text-align: center;
-  }
-
-  .quiz-select-field label {
-    font-size: calc(13px * var(--text-scale));
-    font-weight: 600;
-    color: var(--ink-soft);
-  }
-
-  .quiz-select-field select {
-    width: 100%;
-    max-width: 260px;
-    height: 48px;
-    padding: 0 14px;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: calc(15px * var(--text-scale));
-    text-align: center;
-    text-align-last: center;
-    cursor: pointer;
-  }
-
-  .quiz-select-field select:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 1px; }
-
   .quiz-option[aria-pressed="true"] {
     border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 14%, var(--surface));
     font-weight: 700;
-  }
-
-  .quiz-section-label {
-    font-size: calc(13.5px * var(--text-scale));
-    font-weight: 700;
-    color: var(--ink);
-    margin: 4px 0 -2px;
   }
 
   .quiz-nav {
@@ -1815,27 +1739,50 @@
     gap: 10px;
   }
 
-  .quiz-btn {
-    flex: 1;
-    height: 48px;
-    border: none;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: calc(15px * var(--text-scale));
-    font-weight: 700;
-    cursor: pointer;
+  /* The questionnaire: the question at the top, the buttons at the bottom where
+     the thumb is, and an island of trees in the room between them. The island
+     gives way first when a step needs the space, and the buttons stay pinned
+     to the bottom when a long step scrolls. */
+  body:has(#quizScreen:not([hidden])) { padding-bottom: 0; }
+  html[dir="ltr"] #quizContent { direction: ltr; }
+  .quiz-flow { min-height: calc(100dvh - 20px); gap: 0; padding: 8px 4px 0; }
+  .qz-main { display: flex; flex-direction: column; gap: 18px; }
+  .qz-scene {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: 210px;
+    margin-block: auto;
+    padding-top: 18px;
+    display: flex;
+    justify-content: center;
+    container-type: size;
   }
-
-  .quiz-btn.primary { background: var(--accent); color: var(--accent-ink); }
-  .quiz-btn.primary:disabled { opacity: 0.5; cursor: default; }
-  .quiz-btn.secondary { background: var(--chip-bg); color: var(--ink); flex: 0 0 92px; }
-
-  .quiz-result {
-    text-align: center;
-    padding: 12px 0;
+  .qz-scene svg { height: 100%; width: auto; max-width: 100%; display: block; }
+  @container (max-height: 84px) { .qz-scene svg { display: none; } }
+  .quiz-flow.is-hero .qz-scene { max-height: 290px; }
+  .qz-foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 0 max(14px, env(safe-area-inset-bottom));
+    background: linear-gradient(to bottom, transparent, var(--bg) 16px);
   }
-
-  .quiz-result .emoji { font-size: calc(40px * var(--text-scale)); }
+  .qz-foot .quiz-nav .outline-btn { flex: 0 0 112px; width: auto; }
+  .qz-foot .quiz-nav .plate-btn { flex: 1; width: auto; }
+  .qz-hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 22px; }
+  .qz-hello { margin: 20px 0 0; }
+  .qz-lede {
+    margin: 12px 0 0;
+    max-width: 30ch;
+    font-size: calc(16px * var(--text-scale));
+    line-height: 1.6;
+    color: var(--ink-soft);
+    text-wrap: balance;
+  }
+  .qz-note { margin: 10px 0 0; font-size: calc(13px * var(--text-scale)); font-weight: 600; color: var(--ink-faint); }
 
   /* ---- Profile: banner, identity block, stats, then the user's own pins. ---- */
   .profile-banner {
@@ -2000,11 +1947,37 @@
     line-height: 1.25;
     color: var(--ink-soft);
   }
-  .details-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
-  .details-head h1 { margin: 0; }
-  .details-stats { align-self: center; margin: 0; }
-  .details-card { padding: 2px 16px; }
-  .details-card .profile-view-item:last-child { border-bottom: none; }
+  /* Details: on the paper itself, no card. An island of trees over the name,
+     small green headings with a sprig, two facts to a row. */
+  .back-row .dt-edit { margin-inline-start: auto; }
+  .dt-isle { align-self: center; width: min(76%, 270px); aspect-ratio: 120 / 64; margin: -6px 0 -12px; }
+  .dt-isle svg { width: 100%; height: 100%; display: block; }
+  .dt-id { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 10px; width: 100%; text-align: center; }
+  .dt-handle { font-size: calc(15px * var(--text-scale)); font-weight: 700; color: var(--ink-faint); direction: ltr; unicode-bidi: isolate; }
+  .dt-sec { display: flex; flex-direction: column; gap: 12px; width: 100%; padding-top: 18px; border-top: 1px solid var(--line); }
+  .dt-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: calc(13.5px * var(--text-scale));
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--forest);
+  }
+  .sprig { width: 20px; height: 20px; flex: none; }
+  .dt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 14px; }
+  .dt-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .dt-cell span { font-size: calc(12.5px * var(--text-scale)); font-weight: 600; color: var(--ink-faint); }
+  .dt-cell b { font-size: calc(16.5px * var(--text-scale)); font-weight: 700; color: var(--ink); overflow-wrap: anywhere; }
+  .dt-facts { gap: 12px; }
+  .dt-fact { display: flex; align-items: center; gap: 10px; font-size: calc(15px * var(--text-scale)); }
+  .dt-fact .ic { color: var(--forest); }
+  .dt-fact span { font-weight: 600; color: var(--ink-faint); }
+  .dt-fact b { margin-inline-start: auto; font-weight: 700; color: var(--ink); }
+  .dt-grove { align-self: center; width: min(70%, 250px); aspect-ratio: 120 / 24; margin-top: 8px; }
+  .dt-grove svg { width: 100%; height: 100%; display: block; }
   .locked-profile .ic-lg { width: 30px; height: 30px; color: var(--ink-faint); margin-bottom: 8px; }
 
   /* Achievements page: rows of five, each its mark, name and condition. */
@@ -2228,18 +2201,9 @@
 
   .pf-sec-head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 10px;
-  }
-
-  .pf-sec-title {
-    font-family: var(--font-display);
-    font-size: calc(17.5px * var(--text-scale));
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    color: var(--ink);
-    margin: 0;
   }
 
   .pf-sec-count {
@@ -2420,6 +2384,28 @@
   }
   .pf-add-btn:hover:not(:disabled) { background: var(--chip-bg); }
   .pf-add-btn:disabled { opacity: 0.4; cursor: default; border-color: var(--line); }
+
+  /* Two fields to a row, as on the details page. */
+  .pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 12px; }
+  .pf-grid .pf-field { min-width: 0; }
+  .pf-grid .pf-select-wrap select { padding-inline: 14px 38px; }
+  .pf-grid .pf-caret { inset-inline-end: 12px; }
+  /* The username is shown, not edited. */
+  .pf-fixed {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-style: dashed;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .pf-fixed:hover { border-color: var(--line); }
+  .pf-fixed bdi { overflow: hidden; text-overflow: ellipsis; }
+  .pf-fixed .ic { color: var(--ink-faint); }
+  .pf-hint { margin: 0; font-size: calc(12px * var(--text-scale)); color: var(--ink-faint); }
 
   .pf-msg {
     display: flex;
@@ -2679,27 +2665,6 @@
     margin-bottom: 10px;
   }
 
-  .profile-view-list {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .profile-view-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 12px 2px;
-    border-bottom: 1px solid var(--line);
-    font-size: calc(14px * var(--text-scale));
-  }
-
-  .profile-view-item span { color: var(--ink-faint); }
-  .profile-view-item b { color: var(--ink); font-weight: 600; }
-
-  .quiz-option.static { cursor: default; }
-
   /* ---- Settings: grouped cards, rules between rows, one destructive exit. ---- */
   .settings-group { display: flex; flex-direction: column; gap: 9px; width: 100%; }
   .settings-group-label { margin: 0 2px; }
@@ -2871,31 +2836,6 @@
     cursor: pointer;
     padding: 4px;
     margin-bottom: 6px;
-  }
-
-  .quiz-add-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .quiz-add-row input {
-    flex: 1;
-    height: 42px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: calc(14px * var(--text-scale));
-    outline: none;
-  }
-
-  .quiz-add-btn {
-    flex: 0 0 auto;
-    height: 42px;
-    padding: 0 18px;
   }
 
   .quiz-skip {
@@ -3317,7 +3257,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   </div>
 
   <div class="frame" id="quizScreen" hidden>
-    <div class="quiz-screen" id="quizContent"></div>
+    <div class="quiz-screen quiz-flow" id="quizContent"></div>
   </div>
 
   <div class="frame" id="appRoot" hidden>
@@ -6068,11 +6008,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       scheduleAtOrganizer: "המועדים באתר המארגן",
       favEmptyTitle: "עוד לא שמרת כלום",
       pinnedLabel: "שמורים", myPinnedTitle: "מה ששמרתי",
-      bannerChange: "שינוי באנר", aboutYouGroup: "עליך", loginGroup: "פרטי התחברות",
+      bannerChange: "שינוי באנר",
       editProfileTitle: "עריכת פרופיל", editPhotosGroup: "תמונות",
       selectedCount: n => n === 1 ? "נבחר אחד" : `${n} נבחרו`, noneSelectedYet: "עדיין לא בחרת",
-      aboutYouNote: "אף אחד מהפרטים אינו חובה.",
-      activityTypesNote: "אילו סוגי פעילויות מעניינים אותך.",
       loginNote: "שדה שנשאר ריק לא משתנה.",
       passwordHint: "לפחות 6 תווים, אות אחת ומספר אחד",
       showPasswordLabel: "הצגת הסיסמה", hidePasswordLabel: "הסתרת הסיסמה",
@@ -6096,7 +6034,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       priceNotPublished: "המחיר לא פורסם", free: "חינם", perTotal: "לכל התקופה", perSession: "למפגש", perMonth: "לחודש",
       spotsLeftText: (l, c) => `נותרו ${l} מתוך ${c} מקומות`, weeklyOn: d => `כל יום ${d}`, noEndDate: "ללא תאריך סיום", startsAt: t => `מתחיל ב-${t}`,
       register: "להרשמה", moreInfoSource: "לפרטים ולמקור", registrationSoon: "פרטי הרשמה יתפרסמו בקרוב",
-      quizIntroTitle: "בואו נכיר", quizIntroSubtitle: "כמה שאלות קצרות, לוקח פחות מ-2 דקות. אפשר גם לדלג בכל שלב.",
+      quizIntroTitle: "בואו נכיר!", quizIntroBody: "כדי שנכיר אתכם, ענו על השאלון. כמה שאלות שלוקחות פחות מ-2 דקות.", quizIntroSkipNote: "אפשר לדלג בכל שלב.",
       startBtn: "בואו נתחיל", skipLink: "דילוג על השאלון", backBtn: "הקודם", nextBtn: "הבא",
       nameTitle: "מה השם שלך?", firstNameLabel: "שם פרטי (לא חובה)", lastNameLabel: "שם משפחה (לא חובה)",
       demoTitle: "כמה פרטים בסיסיים", demoSubtitle: "גם השלב הזה לא חובה — אפשר להשאיר ריק ולהמשיך",
@@ -6105,7 +6043,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       homeTab: "בית", accessibilityLabel: "נגישות",
       editProfileBtn: "עריכת פרופיל", cancelBtn: "ביטול",
       currentUsernameLabel: "שם משתמש נוכחי", noneYet: "עדיין לא מולא",
-      topicsTitle: "אילו תחומים מעניינים אותך?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך",
+      topicsTitle: "אילו תחומים מעניינים אותך?", topicsSubtitle: "אפשר לבחור כמה שרוצים, ואפשר גם להוסיף תחום משלך", activityTypesSubtitle: "אפשר לבחור כמה שרוצים",
       addCustomTopicPlaceholder: "תחום משלך…", addBtn: "הוספה",
       activityTypesTitle: "אילו סוגי פעילויות הכי מעניינים אותך?", finishBtn: "סיימתי",
       outroTitle: "מעולה, סיימנו!", outroSubtitle: "האפליקציה מוכנה בשבילך, מותאמת אישית", enterAppBtn: "כניסה לאפליקציה",
@@ -6134,7 +6072,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "עוד לא עוקבים אחרי אף אחד.",
       noFavoritesForUserMsg: "עדיין לא נבחרו מועדפים.",
       favoritesOfUser: n => `המועדפים של ${n}`,
-      mediaTooBigTitle: "התמונה גדולה מדי", mediaTooBigBody: "אפשר להעלות תמונה בגודל של עד 5MB.", profileDetailsTitle: "הפרטים שלי", editBtnShort: "עריכה", myAchievementsTitle: "ההישגים שלך", achievementsTitle: "הישגים", achievementsBtn: "הישגים", noAchievementsYet: "עוד אין הישגים.", noAchievementsOther: "עוד אין הישגים.", noInterestsYet: "עוד לא נבחרו תחומי עניין.", noInterestsOther: "לא נבחרו תחומי עניין.", firstNameShort: "שם פרטי", lastNameShort: "שם משפחה", ageShort: "גיל", gradeLabelShort: "כיתה", areaShort: "אזור", privacyLabel: "פרטיות", displayNameLabel: "שם הצגה", displayNameHint: "מופיע בגדול בפרופיל, בכל שפה",
+      mediaTooBigTitle: "התמונה גדולה מדי", mediaTooBigBody: "אפשר להעלות תמונה בגודל של עד 5MB.", editBtnShort: "עריכה", myAchievementsTitle: "ההישגים שלך", achievementsTitle: "הישגים", achievementsBtn: "הישגים", noAchievementsYet: "עוד אין הישגים.", noAchievementsOther: "עוד אין הישגים.", noInterestsYet: "עוד לא נבחרו תחומי עניין.", noInterestsOther: "לא נבחרו תחומי עניין.", firstNameShort: "שם פרטי", lastNameShort: "שם משפחה", ageShort: "גיל", gradeLabelShort: "כיתה", areaShort: "אזור", privacyLabel: "פרטיות", displayNameLabel: "שם הצגה", personalDetailsHeading: "פרטים אישיים", profileTypeLabel: "סוג פרופיל",
       achievementsProgress: (n, total) => `${n} מתוך ${total}`,
       achievementEarned: name => `השגת את ההישג "${name}"`,
       achievements: {
@@ -6223,11 +6161,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       scheduleAtOrganizer: "المواعيد على موقع الجهة المنظّمة",
       favEmptyTitle: "لم تحفظ شيئًا بعد",
       pinnedLabel: "محفوظات", myPinnedTitle: "ما حفظتُه",
-      bannerChange: "تغيير الغلاف", aboutYouGroup: "عنك", loginGroup: "بيانات الدخول",
+      bannerChange: "تغيير الغلاف",
       editProfileTitle: "تعديل الملف الشخصي", editPhotosGroup: "الصور",
       selectedCount: n => n === 1 ? "اخترت واحدًا" : `تم اختيار ${n}`, noneSelectedYet: "لم تختر بعد",
-      aboutYouNote: "لا شيء من هذه التفاصيل إلزامي.",
-      activityTypesNote: "ما نوع الشيء الذي تبحث عنه.",
       loginNote: "اتركه فارغًا للإبقاء عليه كما هو.",
       passwordHint: "6 أحرف على الأقل، حرف واحد ورقم واحد",
       showPasswordLabel: "إظهار كلمة المرور", hidePasswordLabel: "إخفاء كلمة المرور",
@@ -6251,17 +6187,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       priceNotPublished: "السعر غير منشور", free: "مجاني", perTotal: "للفترة كاملة", perSession: "لكل لقاء", perMonth: "شهريًا",
       spotsLeftText: (l, c) => `تبقّى ${l} من ${c} مقاعد`, weeklyOn: d => `كل يوم ${d}`, noEndDate: "بدون تاريخ انتهاء", startsAt: t => `يبدأ في ${t}`,
       register: "التسجيل", moreInfoSource: "التفاصيل والمصدر", registrationSoon: "تفاصيل التسجيل ستُنشر قريبًا",
-      quizIntroTitle: "لنتعرّف عليك", quizIntroSubtitle: "بضعة أسئلة قصيرة، تستغرق أقل من دقيقتين. يمكن التخطي في أي وقت.",
+      quizIntroTitle: "لنتعارف!", quizIntroBody: "كي نتعرّف عليكم، أجيبوا عن الاستبيان. بضعة أسئلة تستغرق أقل من دقيقتين.", quizIntroSkipNote: "يمكن التخطي في أي مرحلة.",
       startBtn: "لنبدأ", skipLink: "تخطي الاستبيان", backBtn: "السابق", nextBtn: "التالي",
       nameTitle: "ما اسمك؟", firstNameLabel: "الاسم الأول (اختياري)", lastNameLabel: "اسم العائلة (اختياري)",
       demoTitle: "بعض التفاصيل الأساسية", demoSubtitle: "هذه الخطوة أيضًا اختيارية — يمكن تركها فارغة والمتابعة",
-      ageQLabel: "كم عمرك؟", gradeQLabel: "في أي صف أنت؟", areaQLabel: "في أي منطقة بالقدس تسكن؟",
-      typeOrPick: "اختر من القائمة أو اكتب", selectPlaceholder: "اختر…",
+      ageQLabel: "كم عمرك؟", gradeQLabel: "في أي صف أنت؟", areaQLabel: "ما منطقة سكنك في القدس؟",
+      typeOrPick: "اختر من القائمة أو اكتب", selectPlaceholder: "اختيار…",
       homeTab: "الرئيسية", accessibilityLabel: "إمكانية الوصول",
       editProfileBtn: "تعديل الملف الشخصي", cancelBtn: "إلغاء",
       currentUsernameLabel: "اسم المستخدم الحالي", noneYet: "لم تتم تعبئته بعد",
-      topicsTitle: "بأي مواضيع تهتم؟", topicsSubtitle: "يمكن اختيار أكثر من واحد، ويمكن أيضًا إضافة موضوع خاص بك",
-      addCustomTopicPlaceholder: "أضف موضوعك الخاص…", addBtn: "إضافة",
+      topicsTitle: "ما المواضيع التي تهمّك؟", topicsSubtitle: "يمكن اختيار أكثر من واحد، ويمكن أيضًا إضافة موضوع خاص بك", activityTypesSubtitle: "يمكن اختيار أكثر من واحد",
+      addCustomTopicPlaceholder: "موضوع خاص بك…", addBtn: "إضافة",
       activityTypesTitle: "ما أنواع الأنشطة التي تهمك أكثر؟", finishBtn: "انتهيت",
       outroTitle: "رائع، انتهينا!", outroSubtitle: "التطبيق جاهز لك، مخصّص لك", enterAppBtn: "الدخول إلى التطبيق",
       gradeOptions: [["ז", "السابع"], ["ח", "الثامن"], ["ט", "التاسع"], ["י", "العاشر"], ["יא", "الحادي عشر"], ["יב", "الثاني عشر"], ["not_studying", "لا أدرس حاليًا"]],
@@ -6289,7 +6225,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "لا تتابع أحدًا بعد.",
       noFavoritesForUserMsg: "لم يتم اختيار أي مفضلة بعد.",
       favoritesOfUser: n => `مفضلة ${n}`,
-      mediaTooBigTitle: "الصورة كبيرة جدًا", mediaTooBigBody: "يمكن رفع صورة حتى 5MB.", profileDetailsTitle: "تفاصيلي", editBtnShort: "تعديل", myAchievementsTitle: "إنجازاتك", achievementsTitle: "الإنجازات", achievementsBtn: "الإنجازات", noAchievementsYet: "لا إنجازات بعد.", noAchievementsOther: "لا إنجازات بعد.", noInterestsYet: "لم تُختر اهتمامات بعد.", noInterestsOther: "لم تُختر اهتمامات.", firstNameShort: "الاسم الأول", lastNameShort: "اسم العائلة", ageShort: "العمر", gradeLabelShort: "الصف", areaShort: "المنطقة", privacyLabel: "الخصوصية", displayNameLabel: "الاسم المعروض", displayNameHint: "يظهر بخط كبير في الملف الشخصي، بأي لغة",
+      mediaTooBigTitle: "الصورة كبيرة جدًا", mediaTooBigBody: "يمكن رفع صورة حتى 5MB.", editBtnShort: "تعديل", myAchievementsTitle: "إنجازاتك", achievementsTitle: "الإنجازات", achievementsBtn: "الإنجازات", noAchievementsYet: "لا إنجازات بعد.", noAchievementsOther: "لا إنجازات بعد.", noInterestsYet: "لم تُختر اهتمامات بعد.", noInterestsOther: "لم تُختر اهتمامات.", firstNameShort: "الاسم الأول", lastNameShort: "اسم العائلة", ageShort: "العمر", gradeLabelShort: "الصف", areaShort: "المنطقة", privacyLabel: "الخصوصية", displayNameLabel: "الاسم المعروض", personalDetailsHeading: "التفاصيل الشخصية", profileTypeLabel: "نوع الحساب",
       achievementsProgress: (n, total) => `${n} من ${total}`,
       achievementEarned: name => `حصلت على إنجاز "${name}"`,
       achievements: {
@@ -6377,11 +6313,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       scheduleAtOrganizer: "Times on the organizer's site",
       favEmptyTitle: "Nothing saved yet",
       pinnedLabel: "Saved", myPinnedTitle: "What I saved",
-      bannerChange: "Change banner", aboutYouGroup: "About you", loginGroup: "Sign-in details",
+      bannerChange: "Change banner",
       editProfileTitle: "Edit profile", editPhotosGroup: "Photos",
       selectedCount: n => `${n} selected`, noneSelectedYet: "Nothing picked yet",
-      aboutYouNote: "None of these are required.",
-      activityTypesNote: "What kind of thing you are looking for.",
       loginNote: "Leave blank to keep what you have.",
       passwordHint: "At least 6 characters, one letter and one digit",
       showPasswordLabel: "Show password", hidePasswordLabel: "Hide password",
@@ -6405,7 +6339,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       priceNotPublished: "Price not published", free: "Free", perTotal: "for the whole period", perSession: "per session", perMonth: "per month",
       spotsLeftText: (l, c) => `${l} of ${c} spots left`, weeklyOn: d => `Every ${d}`, noEndDate: "no end date", startsAt: t => `Starts at ${t}`,
       register: "Register", moreInfoSource: "Details & source", registrationSoon: "Registration details coming soon",
-      quizIntroTitle: "Let's get to know you", quizIntroSubtitle: "A few quick questions, under 2 minutes. You can skip at any step.",
+      quizIntroTitle: "Let's get to know you!", quizIntroBody: "So we can get to know you, answer the questionnaire. A few questions that take less than 2 minutes.", quizIntroSkipNote: "You can skip at any step.",
       startBtn: "Let's start", skipLink: "Skip the questionnaire", backBtn: "Back", nextBtn: "Next",
       nameTitle: "What's your name?", firstNameLabel: "First name (optional)", lastNameLabel: "Last name (optional)",
       demoTitle: "A few basic details", demoSubtitle: "This step is optional too — you can leave it blank and continue",
@@ -6414,7 +6348,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       homeTab: "Home", accessibilityLabel: "Accessibility",
       editProfileBtn: "Edit profile", cancelBtn: "Cancel",
       currentUsernameLabel: "Current username", noneYet: "Not filled in yet",
-      topicsTitle: "What topics are you interested in?", topicsSubtitle: "You can pick several, and add your own topic too",
+      topicsTitle: "What topics are you interested in?", topicsSubtitle: "You can pick several, and add your own topic too", activityTypesSubtitle: "You can pick several",
       addCustomTopicPlaceholder: "Add your own topic…", addBtn: "Add",
       activityTypesTitle: "What kinds of activities interest you most?", finishBtn: "Done",
       outroTitle: "All set!", outroSubtitle: "The app is ready and personalized for you", enterAppBtn: "Enter the app",
@@ -6443,7 +6377,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "Not following anyone yet.",
       noFavoritesForUserMsg: "No favorites chosen yet.",
       favoritesOfUser: n => `${n}'s favorites`,
-      mediaTooBigTitle: "That image is too large", mediaTooBigBody: "Images can be up to 5MB.", profileDetailsTitle: "My details", editBtnShort: "Edit", myAchievementsTitle: "Your achievements", achievementsTitle: "Achievements", achievementsBtn: "Achievements", noAchievementsYet: "No achievements yet.", noAchievementsOther: "No achievements yet.", noInterestsYet: "No interests chosen yet.", noInterestsOther: "No interests chosen.", firstNameShort: "First name", lastNameShort: "Last name", ageShort: "Age", gradeLabelShort: "Grade", areaShort: "Area", privacyLabel: "Privacy", displayNameLabel: "Display name", displayNameHint: "Shown large on the profile, in any language",
+      mediaTooBigTitle: "That image is too large", mediaTooBigBody: "Images can be up to 5MB.", editBtnShort: "Edit", myAchievementsTitle: "Your achievements", achievementsTitle: "Achievements", achievementsBtn: "Achievements", noAchievementsYet: "No achievements yet.", noAchievementsOther: "No achievements yet.", noInterestsYet: "No interests chosen yet.", noInterestsOther: "No interests chosen.", firstNameShort: "First name", lastNameShort: "Last name", ageShort: "Age", gradeLabelShort: "Grade", areaShort: "Area", privacyLabel: "Privacy", displayNameLabel: "Display name", personalDetailsHeading: "Personal details", profileTypeLabel: "Profile type",
       achievementsProgress: (n, total) => `${n} of ${total}`,
       achievementEarned: name => `You earned "${name}"`,
       achievements: {
@@ -6533,11 +6467,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       scheduleAtOrganizer: "Расписание на сайте организатора",
       favEmptyTitle: "Пока ничего не сохранено",
       pinnedLabel: "Сохранено", myPinnedTitle: "Что я сохранил",
-      bannerChange: "Сменить баннер", aboutYouGroup: "О вас", loginGroup: "Данные для входа",
+      bannerChange: "Сменить баннер",
       editProfileTitle: "Редактирование профиля", editPhotosGroup: "Фотографии",
       selectedCount: n => `Выбрано: ${n}`, noneSelectedYet: "Пока ничего не выбрано",
-      aboutYouNote: "Ни одно из полей не обязательно.",
-      activityTypesNote: "Что именно вы ищете.",
       loginNote: "Оставьте пустым, чтобы ничего не менять.",
       passwordHint: "Не меньше 6 символов, одна буква и одна цифра",
       showPasswordLabel: "Показать пароль", hidePasswordLabel: "Скрыть пароль",
@@ -6561,7 +6493,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       priceNotPublished: "Цена не указана", free: "Бесплатно", perTotal: "за весь период", perSession: "за занятие", perMonth: "в месяц",
       spotsLeftText: (l, c) => `Осталось ${l} из ${c} мест`, weeklyOn: d => `Каждый ${d}`, noEndDate: "без даты окончания", startsAt: t => `Начало в ${t}`,
       register: "Регистрация", moreInfoSource: "Подробности и источник", registrationSoon: "Информация о регистрации появится позже",
-      quizIntroTitle: "Давай познакомимся", quizIntroSubtitle: "Несколько коротких вопросов, менее 2 минут. Можно пропустить на любом шаге.",
+      quizIntroTitle: "Давайте познакомимся!", quizIntroBody: "Чтобы мы узнали вас, ответьте на вопросы анкеты. Несколько вопросов, меньше 2 минут.", quizIntroSkipNote: "Можно пропустить на любом шаге.",
       startBtn: "Начать", skipLink: "Пропустить опрос", backBtn: "Назад", nextBtn: "Далее",
       nameTitle: "Как вас зовут?", firstNameLabel: "Имя (необязательно)", lastNameLabel: "Фамилия (необязательно)",
       demoTitle: "Немного базовой информации", demoSubtitle: "Этот шаг тоже необязателен — можно оставить пустым и продолжить",
@@ -6570,7 +6502,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       homeTab: "Главная", accessibilityLabel: "Специальные возможности",
       editProfileBtn: "Редактировать профиль", cancelBtn: "Отмена",
       currentUsernameLabel: "Текущее имя пользователя", noneYet: "Пока не заполнено",
-      topicsTitle: "Какие темы вас интересуют?", topicsSubtitle: "Можно выбрать несколько, а также добавить свою тему",
+      topicsTitle: "Какие темы вас интересуют?", topicsSubtitle: "Можно выбрать несколько, а также добавить свою тему", activityTypesSubtitle: "Можно выбрать несколько",
       addCustomTopicPlaceholder: "Добавьте свою тему…", addBtn: "Добавить",
       activityTypesTitle: "Какие виды занятий вам интереснее всего?", finishBtn: "Готово",
       outroTitle: "Отлично, готово!", outroSubtitle: "Приложение готово и настроено для вас", enterAppBtn: "Войти в приложение",
@@ -6599,7 +6531,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       noFollowingMsg: "Вы пока ни на кого не подписаны.",
       noFavoritesForUserMsg: "Избранное пока не выбрано.",
       favoritesOfUser: n => `Избранное пользователя ${n}`,
-      mediaTooBigTitle: "Изображение слишком большое", mediaTooBigBody: "Можно загрузить изображение до 5 МБ.", profileDetailsTitle: "Мои данные", editBtnShort: "Изменить", myAchievementsTitle: "Ваши достижения", achievementsTitle: "Достижения", achievementsBtn: "Достижения", noAchievementsYet: "Пока нет достижений.", noAchievementsOther: "Пока нет достижений.", noInterestsYet: "Интересы пока не выбраны.", noInterestsOther: "Интересы не выбраны.", firstNameShort: "Имя", lastNameShort: "Фамилия", ageShort: "Возраст", gradeLabelShort: "Класс", areaShort: "Район", privacyLabel: "Конфиденциальность", displayNameLabel: "Отображаемое имя", displayNameHint: "Крупно в профиле, на любом языке",
+      mediaTooBigTitle: "Изображение слишком большое", mediaTooBigBody: "Можно загрузить изображение до 5 МБ.", editBtnShort: "Изменить", myAchievementsTitle: "Ваши достижения", achievementsTitle: "Достижения", achievementsBtn: "Достижения", noAchievementsYet: "Пока нет достижений.", noAchievementsOther: "Пока нет достижений.", noInterestsYet: "Интересы пока не выбраны.", noInterestsOther: "Интересы не выбраны.", firstNameShort: "Имя", lastNameShort: "Фамилия", ageShort: "Возраст", gradeLabelShort: "Класс", areaShort: "Район", privacyLabel: "Конфиденциальность", displayNameLabel: "Отображаемое имя", personalDetailsHeading: "Личные данные", profileTypeLabel: "Тип профиля",
       achievementsProgress: (n, total) => `${n} из ${total}`,
       achievementEarned: name => `Получено достижение «${name}»`,
       achievements: {
@@ -7084,16 +7016,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       gradeLabel: gradeMatch ? gradeMatch[1] : (prefs?.grade || ""),
       area: prefs?.area || "",
       activityTypes: prefs?.activity_types || [], interestTopics: prefs?.interest_topics || [],
-      displayName: userProfile?.display_name || ""
+      displayName: userProfile?.display_name || "",
+      isPrivate: userProfile?.is_private !== false
     };
     socialCounts = await loadSocialCounts(currentUserId);
     renderProfile();
     window.scrollTo({ top: 0 });
-  }
-
-  function staticChipsHtml(values) {
-    if (!values.length) return `<p class="quiz-subtitle">${L().noneYet}</p>`;
-    return `<div class="quiz-options">${values.map(v => `<span class="quiz-option static" aria-pressed="true">${v}</span>`).join("")}</div>`;
   }
 
   // Opening the form takes the baseline once. Every later render inside edit
@@ -7101,6 +7029,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   function enterProfileEdit() {
     profileMode = "edit";
     profileState.displayName = userProfile?.display_name || "";
+    profileState.isPrivate = userProfile?.is_private !== false;
     profileEditPassword = "";
     profileBaseline = profileEditSnapshot();
     window.scrollTo({ top: 0 });
@@ -7144,7 +7073,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <button type="button" class="pf-media-banner-btn" id="bannerBtn">${icon("camera")}${t.bannerChange}</button>
           <input type="file" id="bannerInput" accept="image/*" hidden>
           <div class="pf-avatar-wrap">
-            <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : (name || "?").charAt(0).toUpperCase()}</span>
+            <span class="avatar avatar-lg" style="${avatarStyle}">${avatarStyle ? "" : escHtml((displayNameOf(userProfile) || "?").charAt(0).toUpperCase())}</span>
             <button type="button" class="pf-avatar-btn" id="avatarBtn" aria-label="${t.avatarChange}">${icon("camera")}</button>
             <input type="file" id="avatarInput" accept="image/*" hidden>
           </div>
@@ -7152,25 +7081,43 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </section>
 
       <section ${rise()}>
-        <div class="pf-sec-head"><h2 class="pf-sec-title">${t.aboutYouGroup}</h2></div>
-        <p class="pf-sec-note">${t.aboutYouNote}</p>
-        <div class="pf-fields">
+        <div class="pf-grid">
           <div class="pf-field">
-            <label class="pf-field-label" for="pDisplayName">${t.displayNameLabel}<span class="pf-field-hint">${t.displayNameHint}</span></label>
+            <label class="pf-field-label" for="pDisplayName">${t.displayNameLabel}</label>
             <input type="text" class="pf-input" id="pDisplayName" value="${escapeAttr(profileState.displayName)}" maxlength="30" placeholder="${escapeAttr(userProfile?.username || "")}" aria-describedby="pDisplayNameMsg">
-            <p class="pf-msg" id="pDisplayNameMsg" role="alert"></p>
           </div>
-          ${pfTextFieldHtml("pFirstName", t.firstNameLabel, profileState.firstName)}
-          ${pfTextFieldHtml("pLastName", t.lastNameLabel, profileState.lastName)}
-          ${pfSelectHtml("pAge", t.ageQLabel, AGE_VALUES, profileState.ageRange)}
-          ${pfSelectHtml("pGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
-          ${pfSelectHtml("pArea", t.areaQLabel, t.areaOptions, profileState.area)}
+          <div class="pf-field">
+            <span class="pf-field-label">${t.usernameLabel}</span>
+            <span class="pf-input pf-fixed">${icon("lock", "ic-sm")}<bdi>${escHtml(userProfile?.username || "")}</bdi></span>
+          </div>
+        </div>
+        <p class="pf-msg" id="pDisplayNameMsg" role="alert"></p>
+      </section>
+
+      <section ${rise()}>
+        <h2 class="dt-head">${sprigSvg()}${t.personalDetailsHeading}</h2>
+        <div class="pf-grid">
+          ${pfTextFieldHtml("pFirstName", t.firstNameShort, profileState.firstName)}
+          ${pfTextFieldHtml("pLastName", t.lastNameShort, profileState.lastName)}
+          ${pfSelectHtml("pAge", t.ageShort, AGE_VALUES, profileState.ageRange)}
+          ${pfSelectHtml("pGrade", t.gradeLabelShort, t.gradeOptions.map(g => g[1]), profileState.gradeLabel)}
+        </div>
+      </section>
+
+      <section ${rise()}>
+        ${pfSelectHtml("pArea", t.areaShort, t.areaOptions, profileState.area)}
+        <div class="pf-field">
+          <span class="pf-field-label">${t.profileTypeLabel}</span>
+          <div class="seg-2">
+            <button type="button" class="seg-opt" aria-pressed="${profileState.isPrivate}" data-pprivacy="true">${icon("lock", "ic-sm")}${t.privateOn}</button>
+            <button type="button" class="seg-opt" aria-pressed="${!profileState.isPrivate}" data-pprivacy="false">${icon("users", "ic-sm")}${t.privateOff}</button>
+          </div>
         </div>
       </section>
 
       <section ${rise()}>
         <div class="pf-sec-head">
-          <h2 class="pf-sec-title">${t.interestsHeading}</h2>
+          <h2 class="dt-head">${sprigSvg()}${t.interestsHeading}</h2>
           <span class="pf-sec-count${topicCount ? "" : " is-empty"}">${topicCount ? t.selectedCount(topicCount) : t.noneSelectedYet}</span>
         </div>
         ${pfChipsHtml("ptopic", t.topicOptions, profileState.interestTopics)}
@@ -7186,25 +7133,22 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
       <section ${rise()}>
         <div class="pf-sec-head">
-          <h2 class="pf-sec-title">${t.activityTypesHeading}</h2>
+          <h2 class="dt-head">${sprigSvg()}${t.activityTypesHeading}</h2>
           <span class="pf-sec-count${typeCount ? "" : " is-empty"}">${typeCount ? t.selectedCount(typeCount) : t.noneSelectedYet}</span>
         </div>
-        <p class="pf-sec-note">${t.activityTypesNote}</p>
         ${pfChipsHtml("patype", t.activityTypeOptions, profileState.activityTypes)}
       </section>
 
       <section ${rise()}>
-        <div class="pf-sec-head"><h2 class="pf-sec-title">${t.loginGroup}</h2></div>
+        <h2 class="dt-head">${sprigSvg()}${t.changePasswordLabel}</h2>
         <p class="pf-sec-note">${t.loginNote}</p>
-        <div class="pf-fields">
-          <div class="pf-field">
-            <label class="pf-field-label" for="pNewPassword">${t.changePasswordLabel}<span class="pf-field-hint">${t.passwordHint}</span></label>
-            <div class="pf-pass-wrap">
-              <input type="password" class="pf-input" id="pNewPassword" value="${escapeAttr(profileEditPassword)}" placeholder="${t.newPasswordPlaceholder}" maxlength="20" dir="ltr" autocomplete="new-password" aria-describedby="pPasswordMsg">
-              <button type="button" class="pf-pass-toggle" id="pPassToggle" aria-label="${t.showPasswordLabel}" aria-pressed="false">${icon("eye")}</button>
-            </div>
-            <p class="pf-msg" id="pPasswordMsg" role="alert"></p>
+        <div class="pf-field">
+          <div class="pf-pass-wrap">
+            <input type="password" class="pf-input" id="pNewPassword" value="${escapeAttr(profileEditPassword)}" placeholder="${t.newPasswordPlaceholder}" aria-label="${t.newPasswordPlaceholder}" maxlength="20" dir="ltr" autocomplete="new-password" aria-describedby="pPasswordHint pPasswordMsg">
+            <button type="button" class="pf-pass-toggle" id="pPassToggle" aria-label="${t.showPasswordLabel}" aria-pressed="false">${icon("eye")}</button>
           </div>
+          <p class="pf-hint" id="pPasswordHint">${t.passwordHint}</p>
+          <p class="pf-msg" id="pPasswordMsg" role="alert"></p>
         </div>
       </section>
 
@@ -7231,7 +7175,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <h1 class="display display-lg profile-name">${escHtml(shown)}</h1>
         <p class="profile-handle">@${escHtml(userProfile?.username || "")}</p>
         ${profileStatsHtml({ followers: socialCounts.followers, following: socialCounts.following, saved: favoriteIds.size }, true)}
-        <button type="button" class="pill-btn" id="pDetailsBtn">${icon("user")}${t.detailsBtn}</button>
+        <button type="button" class="pill-btn" id="pDetailsBtn">${t.detailsBtn}</button>
       </div>
       ${interestsBlockHtml(profileState.interestTopics, t.noInterestsYet)}
       <button type="button" class="outline-btn profile-wide-btn" id="pFavBtn">${icon("heart")}<span>${t.favoritesBtn}</span><span class="profile-btn-count num">${favoriteIds.size}</span></button>
@@ -7291,37 +7235,50 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </section>`;
   }
 
-  // Details: everything the questionnaire holds, the follow counts, and the
-  // way into editing.
+  // Details: the display name with the username beside it, the personal
+  // details two to a row, where they live and the profile type on rows of their
+  // own, then interests and activity types — on the paper itself, under an
+  // island of trees, with the way into editing at the top.
   function renderProfileDetails() {
     const t = L();
     const rtl = LANG_DIR[currentLang] === "rtl";
-    const dash = "—";
-    const rows = [
-      [t.displayNameLabel, escHtml(displayNameOf(userProfile))],
-      [t.usernameLabel, `<bdi>${escHtml(userProfile?.username || "")}</bdi>`],
-      [t.firstNameShort, escHtml(profileState.firstName) || dash],
-      [t.lastNameShort, escHtml(profileState.lastName) || dash],
-      [t.ageShort, escHtml(profileState.ageRange || "") || dash],
-      [t.gradeLabelShort, escHtml(profileState.gradeLabel || "") || dash],
-      [t.areaShort, escHtml(profileState.area || "") || dash],
-      [t.privacyLabel, userProfile?.is_private !== false ? t.privateOn : t.privateOff]
-    ];
-    const tags = (title, values) => `<section class="profile-block">
-      <h2 class="profile-block-title">${title}</h2>
-      ${values.length ? `<div class="topic-tags">${values.map(v => `<span class="topic-tag">${escHtml(v)}</span>`).join("")}</div>` : `<p class="profile-empty">${t.noneYet}</p>`}
-    </section>`;
+    const isPrivate = userProfile?.is_private !== false;
+    const cell = (label, value) => `<div class="dt-cell"><span>${label}</span><b>${escHtml(value || "") || "—"}</b></div>`;
+    const tags = values => values.length
+      ? `<div class="topic-tags">${values.map(v => `<span class="topic-tag">${escHtml(v)}</span>`).join("")}</div>`
+      : `<p class="profile-empty">${t.noneYet}</p>`;
     profileContentEl.innerHTML = `
-      <div class="back-row"><button type="button" class="back-btn" id="pdBack">${icon(rtl ? "chevronBack" : "chevron")}${t.profileTitle}</button></div>
-      <div class="details-head">
-        <h1 class="display display-lg">${t.profileDetailsTitle}</h1>
-        <button type="button" class="pill-btn" id="pdEdit">${icon("pencil")}${t.editBtnShort}</button>
+      <div class="back-row">
+        <button type="button" class="back-btn" id="pdBack">${icon(rtl ? "chevronBack" : "chevron")}${t.profileTitle}</button>
+        <button type="button" class="pill-btn dt-edit" id="pdEdit">${icon("pencil")}${t.editBtnShort}</button>
       </div>
-      <div class="settings-card details-card">
-        ${rows.map(([k, v]) => `<div class="profile-view-item"><span>${k}</span><b>${v}</b></div>`).join("")}
-      </div>
-      ${tags(t.interestsHeading, profileState.interestTopics)}
-      ${tags(t.activityTypesHeading, profileState.activityTypes)}
+      <div class="dt-isle" aria-hidden="true">${isleArtSvg(DETAILS_ISLE)}</div>
+      <header class="dt-id">
+        <h1 class="display display-lg">${escHtml(displayNameOf(userProfile))}</h1>
+        <span class="dt-handle">@${escHtml(userProfile?.username || "")}</span>
+      </header>
+      <section class="dt-sec">
+        <h2 class="dt-head">${sprigSvg()}${t.personalDetailsHeading}</h2>
+        <div class="dt-grid">
+          ${cell(t.firstNameShort, profileState.firstName)}
+          ${cell(t.lastNameShort, profileState.lastName)}
+          ${cell(t.ageShort, profileState.ageRange)}
+          ${cell(t.gradeLabelShort, profileState.gradeLabel)}
+        </div>
+      </section>
+      <section class="dt-sec dt-facts">
+        <div class="dt-fact">${icon("pin")}<span>${t.areaShort}</span><b>${escHtml(profileState.area || "") || "—"}</b></div>
+        <div class="dt-fact">${icon(isPrivate ? "lock" : "users")}<span>${t.profileTypeLabel}</span><b>${isPrivate ? t.privateOn : t.privateOff}</b></div>
+      </section>
+      <section class="dt-sec">
+        <h2 class="dt-head">${sprigSvg()}${t.interestsHeading}</h2>
+        ${tags(profileState.interestTopics)}
+      </section>
+      <section class="dt-sec">
+        <h2 class="dt-head">${sprigSvg()}${t.activityTypesHeading}</h2>
+        ${tags(profileState.activityTypes)}
+      </section>
+      <div class="dt-grove" aria-hidden="true">${groveArtSvg()}</div>
     `;
     document.getElementById("pdBack").addEventListener("click", () => switchProfileMode("view"));
     document.getElementById("pdEdit").addEventListener("click", enterProfileEdit);
@@ -7370,6 +7327,106 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </svg>`;
   }
 
+  // An island of grass on a brown bed of earth, with olive trees, cypresses,
+  // bushes and flowers on it. The details page and every questionnaire step set
+  // their own trees on it: brown trunks and earth, green leaves, a muted gold
+  // sun or a few sparks. Drawn here from plain shapes.
+  function isleArtSvg({ trees = [], flowers = [], sun = null, birds = [], post = null, sparks = [] }) {
+    const L = 14, R = 106, EDGE = 46, CREST = 38;
+    const bez = (t, a, b, c, d) => (1 - t) ** 3 * a + 3 * (1 - t) ** 2 * t * b + 3 * (1 - t) * t * t * c + t ** 3 * d;
+    // The grass line's height at x, so whatever stands on it touches it.
+    const ground = x => {
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 24; i++) { const m = (lo + hi) / 2; if (bez(m, L, 30, 90, R) < x) lo = m; else hi = m; }
+      return bez(lo, EDGE, CREST, CREST, EDGE);
+    };
+    const n = v => +v.toFixed(2);
+    const olive = (x, k) => {
+      const b = ground(x) + .4;
+      const at = (dx, dy) => `${n(x + dx * k)} ${n(b - dy * k)}`;
+      return `<path d="M${at(-.9, 0)}C${at(-.6, 2.6)} ${at(-1.5, 4)} ${at(-.7, 6.4)}L${at(.5, 6.4)}C${at(-.1, 4)} ${at(1.2, 2.6)} ${at(.9, 0)}z" fill="var(--bark)"/>` +
+        `<path d="M${at(-.4, 4.6)}L${at(-3, 7.4)}M${at(.2, 5)}L${at(2.8, 7.6)}" stroke="var(--bark)" stroke-width="${n(.7 * k)}" stroke-linecap="round"/>` +
+        `<g fill="var(--forest)"><ellipse cx="${n(x - 3.8 * k)}" cy="${n(b - 8.6 * k)}" rx="${n(4 * k)}" ry="${n(2.9 * k)}"/><ellipse cx="${n(x + 3.9 * k)}" cy="${n(b - 9 * k)}" rx="${n(4.2 * k)}" ry="${n(3 * k)}"/></g>` +
+        `<g fill="var(--cat-wellbeing)"><ellipse cx="${n(x + .2 * k)}" cy="${n(b - 11.4 * k)}" rx="${n(4.8 * k)}" ry="${n(3.3 * k)}"/><ellipse cx="${n(x - 2.4 * k)}" cy="${n(b - 9.6 * k)}" rx="${n(3 * k)}" ry="${n(2.2 * k)}"/><ellipse cx="${n(x + 2.8 * k)}" cy="${n(b - 10 * k)}" rx="${n(3 * k)}" ry="${n(2.2 * k)}"/></g>`;
+    };
+    const cypress = (x, h) => {
+      const b = ground(x) + .3;
+      return `<rect x="${n(x - .45)}" y="${n(b - 1.6)}" width=".9" height="1.8" fill="var(--bark)"/>` +
+        `<path d="M${n(x - 2)} ${n(b - 1.2)}C${n(x - 2.8)} ${n(b - h * .48)} ${n(x - 1.1)} ${n(b - h * .86)} ${n(x)} ${n(b - h)}C${n(x + 1.1)} ${n(b - h * .86)} ${n(x + 2.8)} ${n(b - h * .48)} ${n(x + 2)} ${n(b - 1.2)}z" fill="var(--forest)"/>`;
+    };
+    const bush = (x, rad) => `<path d="M${n(x - rad)} ${n(ground(x) + .3)}a${rad} ${n(rad * .8)} 0 0 1 ${n(2 * rad)} 0z" fill="var(--cat-wellbeing)"/>`;
+    const flower = x => { const b = ground(x); return `<path d="M${n(x)} ${n(b)}v-2.2" stroke="var(--forest)" stroke-width=".45"/><circle cx="${n(x)}" cy="${n(b - 2.5)}" r=".85" fill="var(--gold)"/>`; };
+    // A wooden signpost with two boards pointing different ways.
+    const signpost = x => {
+      const b = ground(x) + .3;
+      return `<rect x="${n(x - .6)}" y="${n(b - 15)}" width="1.2" height="15" rx=".4" fill="var(--bark)"/>` +
+        `<path d="M${n(x + .6)} ${n(b - 14)}h7.4l2 1.7-2 1.7h-7.4z" fill="var(--stone)" stroke="var(--bark)" stroke-width=".5" stroke-linejoin="round"/>` +
+        `<path d="M${n(x - .6)} ${n(b - 10.2)}h-6.6l-2 1.6 2 1.6h6.6z" fill="var(--stone)" stroke="var(--bark)" stroke-width=".5" stroke-linejoin="round"/>` +
+        `<path d="M${n(x + 2.2)} ${n(b - 12.3)}h4.4M${n(x - 2.4)} ${n(b - 8.6)}h-3.8" stroke="var(--bark)" stroke-width=".45" stroke-linecap="round" opacity=".7"/>`;
+    };
+    const spark = ([x, y, rad]) => `<path d="M${x} ${n(y - rad)}Q${x} ${y} ${n(x + rad)} ${y}Q${x} ${y} ${x} ${n(y + rad)}Q${x} ${y} ${n(x - rad)} ${y}Q${x} ${y} ${x} ${n(y - rad)}z" fill="var(--gold)"/>`;
+    return `<svg viewBox="0 0 120 64" role="presentation">
+      ${sun ? `<circle cx="${sun[0]}" cy="${sun[1]}" r="${sun[2]}" fill="var(--gold)" opacity=".55"/>` : ""}
+      ${sparks.map(spark).join("")}
+      <path d="M${L} ${EDGE}C30 ${CREST} 90 ${CREST} ${R} ${EDGE}C98 55 75 61.5 60 61.5C45 61.5 22 55 ${L} ${EDGE}z" fill="var(--bark)"/>
+      <g fill="var(--stone-deep)"><ellipse cx="40" cy="53" rx="3" ry="1.5"/><ellipse cx="70" cy="56" rx="2.4" ry="1.2"/><ellipse cx="56" cy="51.5" rx="1.6" ry=".9"/><ellipse cx="86" cy="51" rx="1.8" ry="1"/></g>
+      <path d="M${L} ${EDGE}C30 ${CREST} 90 ${CREST} ${R} ${EDGE}C88 49.5 32 49.5 ${L} ${EDGE}z" fill="var(--forest)"/>
+      <path d="M${L + 2} ${EDGE - .6}C30 ${CREST + .3} 90 ${CREST + .3} ${R - 2} ${EDGE - .6}C88 47 32 47 ${L + 2} ${EDGE - .6}z" fill="var(--cat-wellbeing)"/>
+      ${post != null ? signpost(post) : ""}
+      ${trees.map(([kind, x, v]) => kind === "olive" ? olive(x, v) : kind === "cypress" ? cypress(x, v) : bush(x, v)).join("")}
+      ${flowers.map(flower).join("")}
+      ${birds.length ? `<g stroke="var(--ink)" stroke-width=".55" fill="none" stroke-linecap="round">${birds.map(([x, y]) => `<path d="M${x} ${y}q1.1-1.1 2.2 0 1.1-1.1 2.2 0"/>`).join("")}</g>` : ""}
+    </svg>`;
+  }
+
+  // Trees are [kind, x, size]: an olive's scale, a cypress's height, a bush's radius.
+  const DETAILS_ISLE = { trees: [["cypress", 28, 17], ["olive", 44, 1.15], ["bush", 58, 3], ["cypress", 70, 23], ["cypress", 76, 16], ["olive", 91, .9]], flowers: [52, 63, 84], birds: [[20, 14], [27, 10]], sun: [96, 13, 7] };
+  // One per questionnaire screen: the opening (with a signpost), the four
+  // steps, and the end (with sparks).
+  const QUIZ_ISLES = [
+    { trees: [["cypress", 22, 18], ["olive", 36, 1.2], ["bush", 48, 2.6], ["cypress", 78, 24], ["cypress", 84, 17], ["bush", 95, 2.2]], post: 62, flowers: [44, 70, 90], birds: [[30, 12], [37, 8]], sun: [100, 13, 7] },
+    { trees: [["olive", 40, 1.1], ["bush", 54, 2.8], ["cypress", 66, 21], ["cypress", 72, 15], ["bush", 84, 2.4]], flowers: [30, 60, 90] },
+    { trees: [["cypress", 30, 16], ["cypress", 36, 22], ["olive", 56, 1.2], ["bush", 72, 2.6], ["cypress", 86, 18]], flowers: [46, 66, 95] },
+    { trees: [["olive", 34, 1], ["olive", 54, 1.25], ["bush", 70, 2.4], ["cypress", 82, 20], ["cypress", 88, 14]], flowers: [44, 64, 96] },
+    { trees: [["cypress", 26, 15], ["bush", 38, 2.6], ["olive", 54, 1.05], ["cypress", 72, 24], ["cypress", 78, 18], ["cypress", 84, 13]], flowers: [46, 62, 94] },
+    { trees: [["cypress", 24, 18], ["olive", 40, 1.2], ["bush", 54, 2.6], ["olive", 70, 1], ["cypress", 86, 22], ["cypress", 92, 15]], flowers: [32, 48, 62, 78], birds: [[46, 10], [54, 6]], sparks: [[22, 14, 2], [66, 9, 1.6], [100, 20, 2.2], [84, 6, 1.4]] }
+  ];
+
+  // An olive sprig — a brown stem with pairs of narrow leaves — beside a small
+  // section heading.
+  function sprigSvg() {
+    const leaf = (x, y, a, len, ink) => `<path d="M0 0q${len / 2} ${-len * .27} ${len} 0q${-len / 2} ${len * .27} ${-len} 0z" transform="translate(${x} ${y}) rotate(${a})" fill="var(${ink})"/>`;
+    return `<svg class="sprig" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M3.5 17C7 13.5 11 9 16.5 3.5" stroke="var(--bark)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      ${leaf(6.8, 13.6, -97, 5.4, "--forest")}${leaf(6.8, 13.6, 7, 5.4, "--cat-wellbeing")}
+      ${leaf(9.9, 10.3, -96, 5.6, "--cat-wellbeing")}${leaf(9.9, 10.3, 6, 5.6, "--forest")}
+      ${leaf(13.4, 6.7, -94, 4.8, "--forest")}${leaf(13.4, 6.7, 4, 4.8, "--cat-wellbeing")}
+      ${leaf(16.3, 3.7, -45, 3.6, "--cat-wellbeing")}
+    </svg>`;
+  }
+
+  // The details page closes on a small grove: a mound of grass that thins out
+  // at both ends, with a cypress pair, an olive tree and a bush on it.
+  function groveArtSvg() {
+    // The mound's top edge at x (a quadratic from 14 to 106 cresting at 16.75).
+    const ground = x => { const t = (x - 14) / 92; return 21 - 17 * t * (1 - t) + .3; };
+    const n = v => +v.toFixed(2);
+    const cypress = (x, h) => { const b = ground(x); return `<rect x="${n(x - .4)}" y="${n(b - 1.4)}" width=".8" height="1.6" fill="var(--bark)"/><path d="M${n(x - 1.7)} ${n(b - 1)}C${n(x - 2.3)} ${n(b - h * .48)} ${n(x - .95)} ${n(b - h * .86)} ${n(x)} ${n(b - h)}C${n(x + .95)} ${n(b - h * .86)} ${n(x + 2.3)} ${n(b - h * .48)} ${n(x + 1.7)} ${n(b - 1)}z" fill="var(--forest)"/>`; };
+    const olive = (x, k) => {
+      const b = ground(x);
+      return `<path d="M${n(x - .8 * k)} ${n(b)}C${n(x - .5 * k)} ${n(b - 2.6 * k)} ${n(x - 1.4 * k)} ${n(b - 4 * k)} ${n(x - .6 * k)} ${n(b - 6.4 * k)}H${n(x + .5 * k)}C${n(x - .1 * k)} ${n(b - 4 * k)} ${n(x + 1.1 * k)} ${n(b - 2.6 * k)} ${n(x + .8 * k)} ${n(b)}z" fill="var(--bark)"/>` +
+        `<ellipse cx="${n(x - 3.4 * k)}" cy="${n(b - 8.6 * k)}" rx="${n(3.8 * k)}" ry="${n(2.8 * k)}" fill="var(--forest)"/><ellipse cx="${n(x + 3.5 * k)}" cy="${n(b - 9 * k)}" rx="${n(4 * k)}" ry="${n(2.9 * k)}" fill="var(--forest)"/>` +
+        `<ellipse cx="${n(x)}" cy="${n(b - 11.2 * k)}" rx="${n(4.6 * k)}" ry="${n(3.2 * k)}" fill="var(--cat-wellbeing)"/>`;
+    };
+    return `<svg viewBox="0 0 120 24" role="presentation">
+      <path d="M14 21Q60 19.6 106 21Q60 24 14 21z" fill="var(--forest)"/>
+      <path d="M14 21Q60 12.5 106 21Q60 19.6 14 21z" fill="var(--cat-wellbeing)"/>
+      ${cypress(36, 11)}${cypress(40.5, 8)}${olive(58, .8)}${cypress(78, 12.5)}
+      <path d="M${n(86 - 2.4)} ${n(ground(86))}a2.4 1.9 0 0 1 4.8 0z" fill="var(--forest)"/>
+      <g stroke="var(--ink)" stroke-width=".5" fill="none" stroke-linecap="round"><path d="M66 5.5q1-1 2 0 1-1 2 0"/><path d="M72 3q.8-.8 1.6 0 .8-.8 1.6 0"/></g>
+    </svg>`;
+  }
+
   // An attribute value is not a text node: a quote or an angle bracket in a name
   // used to break out of the attribute it was written into.
   function escapeAttr(value) {
@@ -7390,6 +7447,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       topics: [...profileState.interestTopics].sort(),
       types: [...profileState.activityTypes].sort(),
       displayName: (profileState.displayName || "").trim(),
+      isPrivate: !!profileState.isPrivate,
       password: profileEditPassword
     });
   }
@@ -7547,6 +7605,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       refreshProfileSaveState();
     });
 
+    profileContentEl.querySelectorAll("[data-pprivacy]").forEach(btn => btn.addEventListener("click", () => {
+      profileState.isPrivate = btn.dataset.pprivacy === "true";
+      profileContentEl.querySelectorAll("[data-pprivacy]").forEach(b =>
+        b.setAttribute("aria-pressed", String((b.dataset.pprivacy === "true") === profileState.isPrivate)));
+      refreshProfileSaveState();
+    }));
+
     profileContentEl.querySelectorAll("[data-ptopic]").forEach(btn => btn.addEventListener("click", () => {
       stashCredentials();
       const v = btn.dataset.ptopic;
@@ -7646,6 +7711,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         const { error } = await sb.from("users").update({ display_name: newDisplayName }).eq("id", currentUserId);
         if (error) return fail("pDisplayNameMsg", "pDisplayName", t.errServerDown);
         userProfile.display_name = newDisplayName;
+      }
+
+      if (profileState.isPrivate !== (userProfile?.is_private !== false)) {
+        const { error } = await sb.from("users").update({ is_private: profileState.isPrivate }).eq("id", currentUserId);
+        if (error) throw error;
+        userProfile.is_private = profileState.isPrivate;
       }
 
       const newPassword = document.getElementById("pNewPassword").value;
@@ -7861,143 +7932,91 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     return `<div class="quiz-progress">${dots}</div>`;
   }
 
-  function pillOptionsHtml(name, options, selected, multi) {
-    return `<div class="quiz-options">${options.map(opt => {
-      const v = typeof opt === "string" ? opt : opt.v;
-      const l = typeof opt === "string" ? opt : opt.l;
-      const isSel = multi ? selected.includes(v) : selected === v;
-      return `<button type="button" class="quiz-option" aria-pressed="${isSel}" data-${name}="${v}">${l}</button>`;
-    }).join("")}</div>`;
-  }
-
-  function selectFieldHtml(id, labelText, options, value) {
-    return `
-      <div class="quiz-select-field">
-        <label for="${id}">${labelText}</label>
-        <select id="${id}">
-          <option value="" ${!value ? "selected" : ""}>${L().selectPlaceholder}</option>
-          ${options.map(o => `<option value="${o}" ${value === o ? "selected" : ""}>${o}</option>`).join("")}
-        </select>
-      </div>
-    `;
-  }
-
-  function customTagsHtml(name, presetOptions, selected) {
-    const custom = selected.filter(v => !presetOptions.includes(v));
-    if (!custom.length) return "";
-    return `<div class="quiz-options">${custom.map(v =>
-      `<button type="button" class="quiz-option" aria-pressed="true" data-${name}-remove="${v}">${v} ✕</button>`
-    ).join("")}</div>`;
-  }
-
-  function addCustomRowHtml(inputId, btnId) {
-    return `
-      <div class="quiz-add-row">
-        <input type="text" id="${inputId}" placeholder="${L().addCustomTopicPlaceholder}">
-        <button type="button" id="${btnId}" class="quiz-btn secondary quiz-add-btn">${L().addBtn}</button>
-      </div>
-    `;
-  }
-
   function skipLinkHtml() {
     return `<button type="button" class="quiz-skip" id="qSkip">${L().skipLink}</button>`;
   }
 
+  // Every screen has the same three parts: the question at the top, an island
+  // of trees in whatever room is left, and the buttons at the bottom where the
+  // thumb is, with the skip link under them.
   function renderQuiz() {
     const s = quiz.step;
     const t = L();
-    let html = "";
+    const nav = nextLabel => `
+      <div class="quiz-nav">
+        <button type="button" class="outline-btn" id="qBack">${t.backBtn}</button>
+        <button type="button" class="plate-btn" id="qNext">${nextLabel}</button>
+      </div>
+      ${skipLinkHtml()}`;
+    let main = "", foot = "";
 
     if (s === 0) {
-      html = `
-        <div class="quiz-eyebrow">${t.appTitle}</div>
-        <h1 class="quiz-title">${t.quizIntroTitle}</h1>
-        <p class="quiz-subtitle">${t.quizIntroSubtitle}</p>
-        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qNext">${t.startBtn}</button></div>
-        ${skipLinkHtml()}
-      `;
+      main = `
+        <div class="qz-hero">
+          <h1 class="welcome-mark">מה בי<i>״</i>ם</h1>
+          <h2 class="display display-lg qz-hello">${t.quizIntroTitle}</h2>
+          <p class="qz-lede">${t.quizIntroBody}</p>
+          <p class="qz-note">${t.quizIntroSkipNote}</p>
+        </div>`;
+      foot = `<button type="button" class="plate-btn" id="qNext">${t.startBtn}</button>${skipLinkHtml()}`;
     } else if (s === 1) {
-      html = `
+      main = `
         ${quizProgressHtml(1)}
         <h1 class="quiz-title">${t.nameTitle}</h1>
         <div class="quiz-body">
-          <div class="quiz-field">
-            <label for="qFirstName">${t.firstNameLabel}</label>
-            <input type="text" id="qFirstName" value="${quiz.firstName}">
-          </div>
-          <div class="quiz-field">
-            <label for="qLastName">${t.lastNameLabel}</label>
-            <input type="text" id="qLastName" value="${quiz.lastName}">
-          </div>
-        </div>
-        <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
-          <button type="button" class="quiz-btn primary" id="qNext">${t.nextBtn}</button>
-        </div>
-        ${skipLinkHtml()}
-      `;
+          ${pfTextFieldHtml("qFirstName", t.firstNameLabel, quiz.firstName)}
+          ${pfTextFieldHtml("qLastName", t.lastNameLabel, quiz.lastName)}
+        </div>`;
+      foot = nav(t.nextBtn);
     } else if (s === 2) {
-      html = `
+      main = `
         ${quizProgressHtml(2)}
         <h1 class="quiz-title">${t.demoTitle}</h1>
         <p class="quiz-subtitle">${t.demoSubtitle}</p>
         <div class="quiz-body">
-          ${selectFieldHtml("qAge", t.ageQLabel, AGE_VALUES, quiz.ageRange)}
-          ${selectFieldHtml("qGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), quiz.gradeLabel)}
-          ${selectFieldHtml("qArea", t.areaQLabel, t.areaOptions, quiz.area)}
-        </div>
-        <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
-          <button type="button" class="quiz-btn primary" id="qNext">${t.nextBtn}</button>
-        </div>
-        ${skipLinkHtml()}
-      `;
+          ${pfSelectHtml("qAge", t.ageQLabel, AGE_VALUES, quiz.ageRange)}
+          ${pfSelectHtml("qGrade", t.gradeQLabel, t.gradeOptions.map(g => g[1]), quiz.gradeLabel)}
+          ${pfSelectHtml("qArea", t.areaQLabel, t.areaOptions, quiz.area)}
+        </div>`;
+      foot = nav(t.nextBtn);
     } else if (s === 3) {
-      html = `
+      main = `
         ${quizProgressHtml(3)}
         <h1 class="quiz-title">${t.topicsTitle}</h1>
         <p class="quiz-subtitle">${t.topicsSubtitle}</p>
         <div class="quiz-body">
-          <div class="quiz-field">
-            ${pillOptionsHtml("topic", t.topicOptions, quiz.interestTopics, true)}
-            ${customTagsHtml("topic", t.topicOptions, quiz.interestTopics)}
-            ${addCustomRowHtml("qAddTopic", "qAddTopicBtn")}
+          ${pfChipsHtml("topic", t.topicOptions, quiz.interestTopics)}
+          ${pfCustomChipsHtml("topic", t.topicOptions, quiz.interestTopics)}
+          <div class="pf-add-row">
+            <input type="text" class="pf-input" id="qAddTopic" placeholder="${t.addCustomTopicPlaceholder}" aria-label="${t.addTopicLabel}">
+            <button type="button" class="pf-add-btn" id="qAddTopicBtn" aria-label="${t.addBtn}" disabled>${icon("plus")}</button>
           </div>
-        </div>
-        <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
-          <button type="button" class="quiz-btn primary" id="qNext">${t.nextBtn}</button>
-        </div>
-        ${skipLinkHtml()}
-      `;
+        </div>`;
+      foot = nav(t.nextBtn);
     } else if (s === 4) {
-      html = `
+      main = `
         ${quizProgressHtml(4)}
         <h1 class="quiz-title">${t.activityTypesTitle}</h1>
-        <p class="quiz-subtitle">${t.topicsSubtitle}</p>
+        <p class="quiz-subtitle">${t.activityTypesSubtitle}</p>
         <div class="quiz-body">
-          <div class="quiz-field">
-            ${pillOptionsHtml("atype", t.activityTypeOptions, quiz.activityTypes, true)}
-          </div>
-        </div>
-        <div class="quiz-nav">
-          <button type="button" class="quiz-btn secondary" id="qBack">${t.backBtn}</button>
-          <button type="button" class="quiz-btn primary" id="qNext">${t.finishBtn}</button>
-        </div>
-        ${skipLinkHtml()}
-      `;
+          ${pfChipsHtml("atype", t.activityTypeOptions, quiz.activityTypes)}
+        </div>`;
+      foot = nav(t.finishBtn);
     } else if (s === 5) {
-      html = `
-        <div class="quiz-result">
-          <div class="emoji">🎉</div>
-          <h1 class="quiz-title">${t.outroTitle}</h1>
-          <p class="quiz-subtitle">${t.outroSubtitle}</p>
-        </div>
-        <div class="quiz-nav"><button type="button" class="quiz-btn primary" id="qEnter">${t.enterAppBtn}</button></div>
-      `;
+      main = `
+        <div class="qz-hero">
+          <h1 class="welcome-mark">מה בי<i>״</i>ם</h1>
+          <h2 class="display display-lg qz-hello">${t.outroTitle}</h2>
+          <p class="qz-lede">${t.outroSubtitle}</p>
+        </div>`;
+      foot = `<button type="button" class="plate-btn" id="qEnter">${t.enterAppBtn}</button>`;
     }
 
-    quizContentEl.innerHTML = html;
+    quizContentEl.classList.toggle("is-hero", s === 0 || s === 5);
+    quizContentEl.innerHTML = `
+      <div class="qz-main">${main}</div>
+      <div class="qz-scene" aria-hidden="true">${isleArtSvg(QUIZ_ISLES[s])}</div>
+      <div class="qz-foot">${foot}</div>`;
     wireQuizStep();
   }
 
@@ -8018,13 +8037,15 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       document.getElementById("qLastName").addEventListener("input", e => quiz.lastName = e.target.value);
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 2; renderQuiz(); });
     } else if (s === 2) {
-      document.getElementById("qAge").addEventListener("change", e => quiz.ageRange = e.target.value || null);
+      const unset = e => e.target.classList.toggle("is-unset", !e.target.value);
+      document.getElementById("qAge").addEventListener("change", e => { quiz.ageRange = e.target.value || null; unset(e); });
       document.getElementById("qGrade").addEventListener("change", e => {
         quiz.gradeLabel = e.target.value;
         const match = t.gradeOptions.find(g => g[1] === e.target.value);
         quiz.grade = match ? match[0] : null;
+        unset(e);
       });
-      document.getElementById("qArea").addEventListener("change", e => quiz.area = e.target.value || null);
+      document.getElementById("qArea").addEventListener("change", e => { quiz.area = e.target.value || null; unset(e); });
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 3; renderQuiz(); });
     } else if (s === 3) {
       quizContentEl.querySelectorAll("[data-topic]").forEach(btn =>
@@ -8040,12 +8061,13 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           quiz.interestTopics = quiz.interestTopics.filter(x => x !== v);
           renderQuiz();
         }));
-      document.getElementById("qAddTopicBtn").addEventListener("click", () => {
-        const input = document.getElementById("qAddTopic");
-        const v = input.value.trim();
-        if (v && !quiz.interestTopics.includes(v)) quiz.interestTopics.push(v);
-        renderQuiz();
-      });
+      const addInput = document.getElementById("qAddTopic");
+      const addBtn = document.getElementById("qAddTopicBtn");
+      const canAdd = () => { const v = addInput.value.trim(); return !!v && !quiz.interestTopics.includes(v); };
+      const addTopic = () => { if (!canAdd()) return; quiz.interestTopics.push(addInput.value.trim()); renderQuiz(); };
+      addInput.addEventListener("input", () => { addBtn.disabled = !canAdd(); });
+      addInput.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addTopic(); } });
+      addBtn.addEventListener("click", addTopic);
       if (nextBtn) nextBtn.addEventListener("click", async () => { await saveQuizProgress(); quiz.step = 4; renderQuiz(); });
     } else if (s === 4) {
       quizContentEl.querySelectorAll("[data-atype]").forEach(btn =>
